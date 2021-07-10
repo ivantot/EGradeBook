@@ -1,24 +1,32 @@
-package Brains2021.electronic.gradeBook.entites;
+package Brains2021.electronic.gradeBook.entites.users;
 
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import Brains2021.electronic.gradeBook.entites.RoleEntity;
+import Brains2021.electronic.gradeBook.security.Views;
 
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
 @Table(name = "Users")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AbstractUserEntity {
+public class UserEntity {
 
+	@JsonView(Views.Admin.class)
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -44,14 +52,19 @@ public abstract class AbstractUserEntity {
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
 
-	private Boolean archived;
+	//@AssertFalse(message = "Value must be false.")
+	@Column(nullable = false)
+	private Boolean deleted;
 
 	@Version
 	private Integer version;
 
-	public AbstractUserEntity() {
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = "role") // bitno za sql u app.prop
+	private RoleEntity role;
+
+	public UserEntity() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -78,38 +91,6 @@ public abstract class AbstractUserEntity {
 		this.surname = surname;
 	}
 
-	public String getJmbg() {
-		return jmbg;
-	}
-
-	public void setJmbg(String jmbg) {
-		this.jmbg = jmbg;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-	public String getUserName() {
-		return username;
-	}
-
-	public void setUserName(String userName) {
-		this.username = userName;
-	}
-
-	public String getPassWord() {
-		return password;
-	}
-
-	public void setPassWord(String passWord) {
-		this.password = passWord;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -134,6 +115,14 @@ public abstract class AbstractUserEntity {
 		this.password = password;
 	}
 
+	public String getJmbg() {
+		return jmbg;
+	}
+
+	public void setJmbg(String jmbg) {
+		this.jmbg = jmbg;
+	}
+
 	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
@@ -142,12 +131,28 @@ public abstract class AbstractUserEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Boolean getArchived() {
-		return archived;
+	public Boolean getDeleted() {
+		return deleted;
 	}
 
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public RoleEntity getRole() {
+		return role;
+	}
+
+	public void setRole(RoleEntity role) {
+		this.role = role;
 	}
 
 }

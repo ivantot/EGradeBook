@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ElectroncGradeBookApplication {
+public class EGradeBookApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ElectroncGradeBookApplication.class, args);
+		SpringApplication.run(EGradeBookApplication.class, args);
 	}
 
 }

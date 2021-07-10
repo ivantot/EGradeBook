@@ -17,6 +17,9 @@ import javax.persistence.Version;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
+
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
 @Table(name = "StudentGroup")
@@ -37,7 +40,7 @@ public class StudentGroupEntity {
 	private Set<StudentEntity> students = new HashSet<>();
 
 	@OneToOne(mappedBy = "inChargeOff", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	private HomeroomTeacherEntity homeroomTeacher;
+	private TeacherEntity homeroomTeacher;
 
 	private Boolean archived;
 
@@ -64,39 +67,6 @@ public class StudentGroupEntity {
 		this.year = year;
 	}
 
-	public Boolean getArchived() {
-		return archived;
-	}
-
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-	/*
-		public Set<StudentEntity> getStudents() {
-			return students;
-		}
-	
-		public void setStudents(Set<StudentEntity> students) {
-			this.students = students;
-		}
-	
-		public HomeroomTeacherEntity getHomeroomTeacher() {
-			return homeroomTeacher;
-		}
-	
-		public void setHomeroomTeacher(HomeroomTeacherEntity homeroomTeacher) {
-			this.homeroomTeacher = homeroomTeacher;
-		}
-	*/
-
 	public Integer getYear_index() {
 		return year_index;
 	}
@@ -113,11 +83,28 @@ public class StudentGroupEntity {
 		this.students = students;
 	}
 
-	public HomeroomTeacherEntity getHomeroomTeacher() {
+	public TeacherEntity getHomeroomTeacher() {
 		return homeroomTeacher;
 	}
 
-	public void setHomeroomTeacher(HomeroomTeacherEntity homeroomTeacher) {
+	public void setHomeroomTeacher(TeacherEntity homeroomTeacher) {
 		this.homeroomTeacher = homeroomTeacher;
 	}
+
+	public Boolean getArchived() {
+		return archived;
+	}
+
+	public void setArchived(Boolean archived) {
+		this.archived = archived;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 }

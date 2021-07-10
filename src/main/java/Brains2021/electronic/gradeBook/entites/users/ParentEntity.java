@@ -1,4 +1,4 @@
-package Brains2021.electronic.gradeBook.entites;
+package Brains2021.electronic.gradeBook.entites.users;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,16 +15,21 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import Brains2021.electronic.gradeBook.security.Views;
 
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
 @Table(name = "Parents")
 @PrimaryKeyJoinColumn(name = "ParentID")
-public class ParentEntity extends AbstractUserEntity {
+public class ParentEntity extends UserEntity {
 
+	@JsonView(Views.Parent.class)
 	@Column(nullable = false)
 	private String phoneNumber;
 
+	@JsonView(Views.Parent.class)
 	@JsonBackReference(value = "2")
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	@JoinTable(name = "Parents_and_Children", joinColumns = {
