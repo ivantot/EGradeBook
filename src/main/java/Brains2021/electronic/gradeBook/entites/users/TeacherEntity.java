@@ -11,10 +11,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 import Brains2021.electronic.gradeBook.security.Views;
 
 @Entity
@@ -32,10 +32,12 @@ public class TeacherEntity extends UserEntity {
 	private Double salary;
 
 	@JsonView(Views.Teacher.class)
-	@JsonBackReference(value = "3")
-	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "isHomeroomTeacher")
+	@Column(nullable = false)
 	private Boolean isHomeroomTeacher;
+
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = "inChargeOf")
+	private StudentGroupEntity inChargeOf;
 
 	@JsonView(Views.Teacher.class)
 	@Column(nullable = false)
@@ -83,6 +85,14 @@ public class TeacherEntity extends UserEntity {
 
 	public void setIsHomeroomTeacher(Boolean isHomeroomTeacher) {
 		this.isHomeroomTeacher = isHomeroomTeacher;
+	}
+
+	public StudentGroupEntity getInChargeOf() {
+		return inChargeOf;
+	}
+
+	public void setInChargeOf(StudentGroupEntity inChargeOf) {
+		this.inChargeOf = inChargeOf;
 	}
 
 	public Boolean getIsPrincipal() {

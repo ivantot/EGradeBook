@@ -39,7 +39,7 @@ public class StudentGroupEntity {
 	@OneToMany(mappedBy = "belongsToStudentGroup", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private Set<StudentEntity> students = new HashSet<>();
 
-	@OneToOne(mappedBy = "inChargeOff", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "inChargeOf", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private TeacherEntity homeroomTeacher;
 
 	private Boolean archived;
