@@ -13,11 +13,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
-import Brains2021.electronic.gradeBook.utils.enums.ERole;
+import Brains2021.electronic.gradeBook.security.Views;
 
 @Entity
 @Table(name = "Role")
@@ -26,20 +27,22 @@ public class RoleEntity {
 
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Admin.class)
 	@Column(name = "role_id") // bitno za app.prop
 	private Long id;
 
+	@JsonView(Views.Admin.class)
 	@NotNull(message = "Cannot be null.")
 	@Column(name = "role_name")
-	private ERole name;
+	private String name;
 
-	@JsonIgnore
+	@JsonView(Views.Admin.class)
+	@JsonManagedReference(value = "ref1")
 	@OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private List<UserEntity> users = new ArrayList<>();
 
 	public RoleEntity() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -50,11 +53,11 @@ public class RoleEntity {
 		this.id = id;
 	}
 
-	public ERole getName() {
+	public String getName() {
 		return name;
 	}
 
-	public void setName(ERole name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

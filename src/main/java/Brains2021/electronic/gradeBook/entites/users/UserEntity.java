@@ -13,7 +13,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -37,14 +40,20 @@ public class UserEntity {
 	@Column(nullable = false)
 	private String surname;
 
+	@JsonView(Views.Admin.class)
 	@Column(nullable = false)
 	private String email;
 
+	@JsonView(Views.Admin.class)
 	@Column(nullable = false)
 	private String username;
 
 	@Column(nullable = false)
 	private String password;
+
+	@Transient
+	@Column(nullable = false)
+	private String repeatedPassword;
 
 	@Column(nullable = false)
 	private String jmbg;
@@ -59,8 +68,10 @@ public class UserEntity {
 	@Version
 	private Integer version;
 
+	@JsonBackReference(value = "ref1")
+	@JsonView(Views.Admin.class)
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "role") // bitno za sql u app.prop
+	@JoinColumn(name = "role")
 	private RoleEntity role;
 
 	public UserEntity() {
@@ -113,6 +124,14 @@ public class UserEntity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRepeatedPassword() {
+		return repeatedPassword;
+	}
+
+	public void setRepeatedPassword(String repeatedPassword) {
+		this.repeatedPassword = repeatedPassword;
 	}
 
 	public String getJmbg() {

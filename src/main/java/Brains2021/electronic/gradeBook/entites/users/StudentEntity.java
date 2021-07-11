@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -28,18 +29,21 @@ import Brains2021.electronic.gradeBook.security.Views;
 public class StudentEntity extends UserEntity {
 
 	@JsonView(Views.Student.class)
-	@JsonBackReference(value = "1")
+	@JsonBackReference(value = "ref2")
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "belongsToStudentGroup")
 	private StudentGroupEntity belongsToStudentGroup;
 
 	@JsonView(Views.Student.class)
-	@JsonManagedReference(value = "2")
+	@JsonManagedReference(value = "ref3")
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	@JoinTable(name = "Parents_and_Children", joinColumns = {
 			@JoinColumn(name = "StudentID", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "ParentID", nullable = false, updatable = false) })
 	private Set<ParentEntity> parents = new HashSet<>();
+
+	@OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	private Set<AssignmentEntity> givenAssigmnents = new HashSet<>();
 
 	public StudentEntity() {
 		super();
@@ -59,6 +63,22 @@ public class StudentEntity extends UserEntity {
 
 	public void setParents(Set<ParentEntity> parents) {
 		this.parents = parents;
+	}
+
+	public StudentGroupEntity getBelongsToStudentGroup() {
+		return belongsToStudentGroup;
+	}
+
+	public void setBelongsToStudentGroup(StudentGroupEntity belongsToStudentGroup) {
+		this.belongsToStudentGroup = belongsToStudentGroup;
+	}
+
+	public Set<AssignmentEntity> getGivenAssigmnents() {
+		return givenAssigmnents;
+	}
+
+	public void setGivenAssigmnents(Set<AssignmentEntity> givenAssigmnents) {
+		this.givenAssigmnents = givenAssigmnents;
 	}
 
 }

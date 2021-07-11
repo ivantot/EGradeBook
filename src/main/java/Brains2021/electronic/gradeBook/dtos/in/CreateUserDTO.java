@@ -2,8 +2,8 @@ package Brains2021.electronic.gradeBook.dtos.in;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class CreateUserDTO {
 
 	@NotNull(message = "First name must be provided.")
+	@NotBlank(message = "First name can't be blank.")
 	private String name;
 
 	@NotNull(message = "Surname must be provided.")
@@ -34,7 +35,10 @@ public class CreateUserDTO {
 	private String password;
 
 	@NotNull(message = "Cannot be null.")
-	@Pattern(regexp = "^(0[1-9]|1[0-9]|2[0-9]|3[0-1])(0[1-9]|1[0-2])9\\d{8}$", message = "Provide a valid JMBG.")
+	private String repeatedPassword;
+
+	@NotNull(message = "Cannot be null.")
+	@Pattern(regexp = "^(0[1-9]|1[0-9]|2[0-9]|3[0-1])(0[1-9]|1[0-2])[0-9]\\d{8}$", message = "Provide a valid JMBG.")
 	private String jmbg;
 
 	@NotNull(message = "Cannot be null.")
@@ -42,22 +46,23 @@ public class CreateUserDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate dateOfBirth;
 
-	@DecimalMin(value = "25000", message = "Administrator bonus must be greater than 25000.")
+	@Min(value = 25000, message = "Administrator bonus must be greater than 25000.")
 	private Double adminBonus;
 
-	@DecimalMin(value = "20000", message = "Homeroom bonus must be greater than 20000.")
+	@Min(value = 20000, message = "Homeroom bonus must be greater than 20000.")
 	private Double homeroomBonus;
 
-	@DecimalMin(value = "30000", message = "Principal bonus must be greater than 30000.")
+	@Min(value = 30000, message = "Principal bonus must be greater than 30000.")
 	private Double principalBonus;
 
 	@Pattern(regexp = "^\\+381-6[0-5]-\\d{6,7}$", message = "Provide a valid phone number using the following pattern +381-6X-XXXXXXX.")
 	private String phoneNumber;
 
 	@Past(message = "Start of employment must be a date in the past.")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate startOfEmployment;
 
-	@DecimalMin(value = "25000", message = "Salary must be greater than 60000.")
+	@Min(value = 25000, message = "Salary must be greater than 60000.")
 	private Double salary;
 
 	@NotNull(message = "Cannot be null.")
@@ -106,6 +111,14 @@ public class CreateUserDTO {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRepeatedPassword() {
+		return repeatedPassword;
+	}
+
+	public void setRepeatedPassword(String repeatedPassword) {
+		this.repeatedPassword = repeatedPassword;
 	}
 
 	public String getJmbg() {

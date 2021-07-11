@@ -20,8 +20,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import Brains2021.electronic.gradeBook.dtos.in.CreateUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UserTokenDTO;
 import Brains2021.electronic.gradeBook.entites.RoleEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.services.user.UserService;
@@ -41,6 +43,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private StudentRepository studentRepo;
+
 	/**
 	 * POST login endpoint accessible to all
 	 * postman code
@@ -49,7 +54,7 @@ public class UserController {
 	 * @param password
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, path = "login") // putanja kao u configu
+	@RequestMapping(method = RequestMethod.POST, path = "/login") // putanja kao u configu
 	public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
 		// find user by username
 		Optional<UserEntity> user = userRepo.findByUsername(username);
@@ -78,7 +83,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newRole")
 	public ResponseEntity<?> postNewRole(@Valid @RequestBody RoleEntity role) {
 
-		if (roleRepo.findByName(role.getName().toString()).isEmpty()) {
+		if (roleRepo.findByName(role.getName()).isEmpty()) {
 			new ResponseEntity<RESTError>(
 					new RESTError(0, "Not an acceptable name for a ROLE, use roles provided in ERole enummeration."),
 					HttpStatus.BAD_REQUEST);
@@ -111,5 +116,39 @@ public class UserController {
 	public ResponseEntity<?> postNewUser(@Valid @RequestBody CreateUserDTO newUser) {
 
 		return userService.translateFromDTO(newUser);
+	}
+
+	/**
+	 * 
+	 * 
+	 * 
+	 */
+	@Secured({ "ROLE_ADMIN", "ROLE_STUDENT" })
+	@RequestMapping(method = RequestMethod.POST, path = "/newStudent")
+	public ResponseEntity<?> postNewStudent(@Valid @RequestBody CreateUserDTO newUser) {
+
+		if (!newUser.getPassword().equals(newUser.getRepeatedPassword())) {
+			new ResponseEntity<RESTError>(new RESTError(21, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
+		}
+		if (userRepo.findByUsername(newUser.getUsername()).isPresent()) {
+			new ResponseEntity<RESTError>(new RESTError(22, "Username already in database."), HttpStatus.BAD_REQUEST);
+		}
+		if (userRepo.findByJmbg(newUser.getJmbg()).isPresent()) {
+			new ResponseEntity<RESTError>(new RESTError(23, "Student with an existing JMBG in database."), HttpStatus.BAD_REQUEST);
+		}
+
+		StudentEntity newStudent = new StudentEntity();
+
+		newStudent.setName(newUser.getName());
+		newStudent.setSurname(newUser.getSurname());
+		newStudent.setEmail(newUser.getEmail());
+		newStudent.setUsername(newUser.getUsername());
+		newStudent.setPassword(Encryption.getPasswordEncoded(newUser.getPassword()));
+		newStudent.setJmbg(newUser.getJmbg());
+		newStudent.setDateOfBirth(newUser.getDateOfBirth());
+		newStudent.setRole(roleRepo.findByName(newUser.getRole()).get());
+		newStudent.setDeleted(false);
+
+		return new ResponseEntity<StudentEntity>(studentRepo.save(newStudent), HttpStatus.OK);
 	}
 }

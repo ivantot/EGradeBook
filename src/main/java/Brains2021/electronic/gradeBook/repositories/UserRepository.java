@@ -9,7 +9,9 @@ import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 public interface UserRepository extends PagingAndSortingRepository<UserEntity, Integer> {
 
 	public Optional<UserEntity> findByEmail(String email);
-	
+
 	public Optional<UserEntity> findByUsername(String username);
+
+	public Optional<UserEntity> findByJmbg(String jmbg);
 
 }

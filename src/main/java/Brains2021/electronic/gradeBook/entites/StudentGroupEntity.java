@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -33,14 +36,20 @@ public class StudentGroupEntity {
 	private Integer year;
 
 	@Column(nullable = false)
-	private Integer year_index;
+	private Integer yearIndex;
 
-	@JsonManagedReference(value = "1")
+	@JsonManagedReference(value = "ref2")
 	@OneToMany(mappedBy = "belongsToStudentGroup", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private Set<StudentEntity> students = new HashSet<>();
 
 	@OneToOne(mappedBy = "inChargeOf", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private TeacherEntity homeroomTeacher;
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	@JoinTable(name = "Subjects_and_StudentGroups", joinColumns = {
+			@JoinColumn(name = "StudentGroupID", nullable = false, updatable = false) }, inverseJoinColumns = {
+					@JoinColumn(name = "SubjectID", nullable = false, updatable = false) })
+	private Set<SubjectEntity> subjectsTaken = new HashSet<>();
 
 	private Boolean archived;
 
@@ -68,11 +77,11 @@ public class StudentGroupEntity {
 	}
 
 	public Integer getYear_index() {
-		return year_index;
+		return yearIndex;
 	}
 
 	public void setYear_index(Integer year_index) {
-		this.year_index = year_index;
+		this.yearIndex = year_index;
 	}
 
 	public Set<StudentEntity> getStudents() {
@@ -89,6 +98,14 @@ public class StudentGroupEntity {
 
 	public void setHomeroomTeacher(TeacherEntity homeroomTeacher) {
 		this.homeroomTeacher = homeroomTeacher;
+	}
+
+	public Set<SubjectEntity> getSubjectsTaken() {
+		return subjectsTaken;
+	}
+
+	public void setSubjectsTaken(Set<SubjectEntity> subjectsTaken) {
+		this.subjectsTaken = subjectsTaken;
 	}
 
 	public Boolean getArchived() {

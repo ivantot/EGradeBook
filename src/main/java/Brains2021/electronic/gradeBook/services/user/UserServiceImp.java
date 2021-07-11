@@ -72,7 +72,7 @@ public class UserServiceImp implements UserService {
 
 		// translate all parameters and populate if any are missing using logic per role provided
 
-		//TODO think about additional checks
+		//TODO think about additional checks - username existing
 
 		if (user.getRole().equals(ERole.ROLE_ADMIN.toString())) {
 
@@ -96,6 +96,9 @@ public class UserServiceImp implements UserService {
 			newTeacher.setIsAdministrator(true);
 			newTeacher.setIsHomeroomTeacher(false);
 			newTeacher.setDeleted(false);
+			if (user.getSalary() == null) {
+				newTeacher.setSalary(60000.00);
+			}
 			return new ResponseEntity<TeacherEntity>(teacherRepo.save(newTeacher), HttpStatus.OK);
 		}
 
@@ -121,6 +124,9 @@ public class UserServiceImp implements UserService {
 			newTeacher.setIsAdministrator(false);
 			newTeacher.setIsHomeroomTeacher(true);
 			newTeacher.setDeleted(false);
+			if (user.getSalary() == null) {
+				newTeacher.setSalary(60000.00);
+			}
 			return new ResponseEntity<TeacherEntity>(teacherRepo.save(newTeacher), HttpStatus.OK);
 		}
 
@@ -146,6 +152,9 @@ public class UserServiceImp implements UserService {
 			newTeacher.setIsAdministrator(false);
 			newTeacher.setIsHomeroomTeacher(false);
 			newTeacher.setDeleted(false);
+			if (user.getSalary() == null) {
+				newTeacher.setSalary(60000.00);
+			}
 			return new ResponseEntity<TeacherEntity>(teacherRepo.save(newTeacher), HttpStatus.OK);
 		}
 
@@ -167,6 +176,9 @@ public class UserServiceImp implements UserService {
 			newTeacher.setIsAdministrator(false);
 			newTeacher.setIsHomeroomTeacher(false);
 			newTeacher.setDeleted(false);
+			if (user.getSalary() == null) {
+				newTeacher.setSalary(60000.00);
+			}
 			return new ResponseEntity<TeacherEntity>(teacherRepo.save(newTeacher), HttpStatus.OK);
 		}
 

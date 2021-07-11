@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -26,11 +25,10 @@ import Brains2021.electronic.gradeBook.security.Views;
 public class ParentEntity extends UserEntity {
 
 	@JsonView(Views.Parent.class)
-	@Column(nullable = false)
 	private String phoneNumber;
 
 	@JsonView(Views.Parent.class)
-	@JsonBackReference(value = "2")
+	@JsonBackReference(value = "ref3")
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	@JoinTable(name = "Parents_and_Children", joinColumns = {
 			@JoinColumn(name = "ParentID", nullable = false, updatable = false) }, inverseJoinColumns = {

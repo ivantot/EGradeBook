@@ -13,5 +13,10 @@ public class Encryption {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder.matches(password, encodedPassword);
 	}
+	
+	//use for setting admin encoded password for db
+	public static void main(String[] args) {
+		System.out.println(getPasswordEncoded("admin"));
+	}
 
 }

@@ -4,7 +4,7 @@ public class Views {
 
 	public static class Student {
 	}
-	
+
 	public static class Parent extends Student {
 	}
 
@@ -18,5 +18,9 @@ public class Views {
 	}
 
 	public static class Admin extends Principal {
+	}
+
+	public static class SuperAdmin extends Admin {
+
 	}
 }

@@ -22,7 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()// u produkciji bismo ovo podesili
 				.addFilterAfter(new JWTAuthorizationFilter(this.securityKey),
 						UsernamePasswordAuthenticationFilter.class)
-				.authorizeRequests().antMatchers(HttpMethod.POST, "/login").permitAll().anyRequest().authenticated();
+				.authorizeRequests().antMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll().anyRequest()
+				.authenticated();
 		// loginu je dozvoljne pristup za sve korisnike, ostali samo autentifikovani
 	}
 
