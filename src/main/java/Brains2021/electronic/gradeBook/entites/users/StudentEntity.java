@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 import Brains2021.electronic.gradeBook.security.Views;
 

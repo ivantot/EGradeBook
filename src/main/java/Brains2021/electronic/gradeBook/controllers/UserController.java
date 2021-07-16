@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +30,7 @@ import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.services.user.UserService;
 import Brains2021.electronic.gradeBook.utils.Encryption;
 import Brains2021.electronic.gradeBook.utils.RESTError;
+import Brains2021.electronic.gradeBook.utils.enums.ERole;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
@@ -128,13 +130,15 @@ public class UserController {
 	public ResponseEntity<?> postNewStudent(@Valid @RequestBody CreateUserDTO newUser) {
 
 		if (!newUser.getPassword().equals(newUser.getRepeatedPassword())) {
-			new ResponseEntity<RESTError>(new RESTError(21, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
+			new ResponseEntity<RESTError>(new RESTError(21, "Passwords not matching, please check your entry."),
+					HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newUser.getUsername()).isPresent()) {
 			new ResponseEntity<RESTError>(new RESTError(22, "Username already in database."), HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByJmbg(newUser.getJmbg()).isPresent()) {
-			new ResponseEntity<RESTError>(new RESTError(23, "Student with an existing JMBG in database."), HttpStatus.BAD_REQUEST);
+			new ResponseEntity<RESTError>(new RESTError(23, "Student with an existing JMBG in database."),
+					HttpStatus.BAD_REQUEST);
 		}
 
 		StudentEntity newStudent = new StudentEntity();
@@ -146,9 +150,82 @@ public class UserController {
 		newStudent.setPassword(Encryption.getPasswordEncoded(newUser.getPassword()));
 		newStudent.setJmbg(newUser.getJmbg());
 		newStudent.setDateOfBirth(newUser.getDateOfBirth());
-		newStudent.setRole(roleRepo.findByName(newUser.getRole()).get());
+		//newStudent.setRole(roleRepo.findByRoleName(newUser.getRole()).get());
 		newStudent.setDeleted(false);
 
 		return new ResponseEntity<StudentEntity>(studentRepo.save(newStudent), HttpStatus.OK);
 	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/roles")
+	public ResponseEntity<?> getAllRoles() {
+
+		return new ResponseEntity<List<RoleEntity>>((List<RoleEntity>) roleRepo.findAll(), HttpStatus.OK);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/roles/{rolename}")
+	public ResponseEntity<?> getByRolename(@PathVariable String rolename) {
+
+		return new ResponseEntity<RoleEntity>(roleRepo.findByName(ERole.valueOf(rolename)).get(), HttpStatus.OK);
+	}
+
+	//TODO 
+
+	/**
+	 * 
+	 * ****ADMIN PANEL****
+	 * 
+	 * 1. add new student
+	 * 2. add new teacher/homeroom/admin/principal
+	 * 3. add new parent
+	 * 4. delete user
+	 * 5. change user role
+	 * 6. update user
+	 * 7. update teacher fetures
+	 * 8. update student features
+	 * 9. update parent fetures
+	 * 10. assign subjects to teachers
+	 * 11. get info for all entites
+	 *  # provide admin role to all endpoints throughout
+	 * 
+	 * 
+	 * ****PRINCIPAL PANEL****
+	 * 
+	 * 1. update teacher/homeroom/admin salary
+	 * 2. add new student group
+	 * 3. assign students and homeroom to student group
+	 * 4. remove students and homeroom from student group
+	 * 5. assign teachers to student groups
+	 * 6. remove teachers from student groups
+	 * 7. add overriden grades
+	 * 
+	 * 
+	 * ****HOMEROOM PANEL****
+	 *  
+	 * 1. get results for student group
+	 * 2. get parents info (for student group assigned)
+	 *  
+	 *  
+	 * ****TEACHER PANEL****
+	 * 
+	 * 1. add new assignment
+	 * 2. update assignments
+	 * 3. delete assignmets - not graded!
+	 * 4. assign grades to assignments
+	 * 5. get assignments for children taking the class
+	 * 6  get student grades for children taking the class
+	 * 
+	 * 
+	 * ****PARENT PANEL****
+	 * 
+	 * 1. get student grades - for related children
+	 * 2. get grades by subject - for related children
+	 * 
+	 * 
+	 * ****STUDENT PANEL****
+	 * 
+	 * 1. get my grades
+	 * 2. get my grades by subject
+	 * 	 
+	 * */
+
 }

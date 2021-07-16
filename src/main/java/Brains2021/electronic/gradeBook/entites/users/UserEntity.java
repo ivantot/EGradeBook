@@ -61,7 +61,6 @@ public class UserEntity {
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
 
-	//@AssertFalse(message = "Value must be false.")
 	@Column(nullable = false)
 	private Boolean deleted;
 

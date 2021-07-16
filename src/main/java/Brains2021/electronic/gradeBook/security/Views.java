@@ -14,10 +14,10 @@ public class Views {
 	public static class HomeroomT extends Teacher {
 	}
 
-	public static class Principal extends HomeroomT {
+	public static class Headmaster extends HomeroomT {
 	}
 
-	public static class Admin extends Principal {
+	public static class Admin extends Headmaster {
 	}
 
 	public static class SuperAdmin extends Admin {

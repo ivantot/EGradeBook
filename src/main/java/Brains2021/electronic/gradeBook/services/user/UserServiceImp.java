@@ -22,6 +22,7 @@ import Brains2021.electronic.gradeBook.repositories.ParentRepository;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherRepository;
+import Brains2021.electronic.gradeBook.utils.Encryption;
 import Brains2021.electronic.gradeBook.utils.RESTError;
 import Brains2021.electronic.gradeBook.utils.enums.ERole;
 import io.jsonwebtoken.Jwts;
@@ -82,16 +83,17 @@ public class UserServiceImp implements UserService {
 			newTeacher.setSurname(user.getSurname());
 			newTeacher.setEmail(user.getEmail());
 			newTeacher.setUsername(user.getUsername());
-			newTeacher.setPassword(user.getPassword());
+			newTeacher.setPassword(Encryption.getPasswordEncoded(user.getPassword()));
 			newTeacher.setJmbg(user.getJmbg());
 			newTeacher.setDateOfBirth(user.getDateOfBirth());
 			newTeacher.setStartOfEmployment(user.getStartOfEmployment());
 			newTeacher.setSalary(user.getSalary());
-			newTeacher.setRole(roleRepo.findByName(user.getRole()).get());
+			newTeacher.setRole(roleRepo.findByName(ERole.valueOf(user.getRole())).get());
 			if (user.getAdminBonus() == null) {
 				return new ResponseEntity<RESTError>(new RESTError(2, "Administrator must have a salary bonus."),
 						HttpStatus.BAD_REQUEST);
 			}
+			newTeacher.setSalaryAdminBonus(user.getAdminBonus());
 			newTeacher.setIsPrincipal(false);
 			newTeacher.setIsAdministrator(true);
 			newTeacher.setIsHomeroomTeacher(false);
@@ -110,16 +112,17 @@ public class UserServiceImp implements UserService {
 			newTeacher.setSurname(user.getSurname());
 			newTeacher.setEmail(user.getEmail());
 			newTeacher.setUsername(user.getUsername());
-			newTeacher.setPassword(user.getPassword());
+			newTeacher.setPassword(Encryption.getPasswordEncoded(user.getPassword()));
 			newTeacher.setJmbg(user.getJmbg());
 			newTeacher.setDateOfBirth(user.getDateOfBirth());
 			newTeacher.setStartOfEmployment(user.getStartOfEmployment());
 			newTeacher.setSalary(user.getSalary());
-			newTeacher.setRole(roleRepo.findByName(user.getRole()).get());
+			newTeacher.setRole(roleRepo.findByName(ERole.valueOf(user.getRole())).get());
 			if (user.getHomeroomBonus() == null) {
 				return new ResponseEntity<RESTError>(new RESTError(3, "Homeroom teacher must have a salary bonus."),
 						HttpStatus.BAD_REQUEST);
 			}
+			newTeacher.setSalaryHomeroomBonus(user.getHomeroomBonus());
 			newTeacher.setIsPrincipal(false);
 			newTeacher.setIsAdministrator(false);
 			newTeacher.setIsHomeroomTeacher(true);
@@ -138,16 +141,17 @@ public class UserServiceImp implements UserService {
 			newTeacher.setSurname(user.getSurname());
 			newTeacher.setEmail(user.getEmail());
 			newTeacher.setUsername(user.getUsername());
-			newTeacher.setPassword(user.getPassword());
+			newTeacher.setPassword(Encryption.getPasswordEncoded(user.getPassword()));
 			newTeacher.setJmbg(user.getJmbg());
 			newTeacher.setDateOfBirth(user.getDateOfBirth());
 			newTeacher.setStartOfEmployment(user.getStartOfEmployment());
 			newTeacher.setSalary(user.getSalary());
-			newTeacher.setRole(roleRepo.findByName(user.getRole()).get());
+			newTeacher.setRole(roleRepo.findByName(ERole.valueOf(user.getRole())).get());
 			if (user.getPrincipalBonus() == null) {
 				return new ResponseEntity<RESTError>(new RESTError(4, "Principal must have a salary bonus."),
 						HttpStatus.BAD_REQUEST);
 			}
+			newTeacher.setSalaryPrincipalBonus(user.getPrincipalBonus());
 			newTeacher.setIsPrincipal(true);
 			newTeacher.setIsAdministrator(false);
 			newTeacher.setIsHomeroomTeacher(false);
@@ -166,12 +170,12 @@ public class UserServiceImp implements UserService {
 			newTeacher.setSurname(user.getSurname());
 			newTeacher.setEmail(user.getEmail());
 			newTeacher.setUsername(user.getUsername());
-			newTeacher.setPassword(user.getPassword());
+			newTeacher.setPassword(Encryption.getPasswordEncoded(user.getPassword()));
 			newTeacher.setJmbg(user.getJmbg());
 			newTeacher.setDateOfBirth(user.getDateOfBirth());
 			newTeacher.setStartOfEmployment(user.getStartOfEmployment());
 			newTeacher.setSalary(user.getSalary());
-			newTeacher.setRole(roleRepo.findByName(user.getRole()).get());
+			newTeacher.setRole(roleRepo.findByName(ERole.valueOf(user.getRole())).get());
 			newTeacher.setIsPrincipal(false);
 			newTeacher.setIsAdministrator(false);
 			newTeacher.setIsHomeroomTeacher(false);
@@ -190,11 +194,11 @@ public class UserServiceImp implements UserService {
 			newParent.setSurname(user.getSurname());
 			newParent.setEmail(user.getEmail());
 			newParent.setUsername(user.getUsername());
-			newParent.setPassword(user.getPassword());
+			newParent.setPassword(Encryption.getPasswordEncoded(user.getPassword()));
 			newParent.setJmbg(user.getJmbg());
 			newParent.setDateOfBirth(user.getDateOfBirth());
 			newParent.setPhoneNumber(user.getPhoneNumber());
-			newParent.setRole(roleRepo.findByName(user.getRole()).get());
+			newParent.setRole(roleRepo.findByName(ERole.valueOf(user.getRole())).get());
 			newParent.setDeleted(false);
 			return new ResponseEntity<ParentEntity>(parentRepo.save(newParent), HttpStatus.OK);
 		}
@@ -207,10 +211,10 @@ public class UserServiceImp implements UserService {
 			newStudent.setSurname(user.getSurname());
 			newStudent.setEmail(user.getEmail());
 			newStudent.setUsername(user.getUsername());
-			newStudent.setPassword(user.getPassword());
+			newStudent.setPassword(Encryption.getPasswordEncoded(user.getPassword()));
 			newStudent.setJmbg(user.getJmbg());
 			newStudent.setDateOfBirth(user.getDateOfBirth());
-			newStudent.setRole(roleRepo.findByName(user.getRole()).get());
+			newStudent.setRole(roleRepo.findByName(ERole.valueOf(user.getRole())).get());
 			newStudent.setDeleted(false);
 			return new ResponseEntity<StudentEntity>(studentRepo.save(newStudent), HttpStatus.OK);
 		}

@@ -1,4 +1,4 @@
-package Brains2021.electronic.gradeBook.entites.users;
+package Brains2021.electronic.gradeBook.entites;
 
 import java.time.LocalDate;
 
@@ -15,7 +15,7 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import Brains2021.electronic.gradeBook.entites.GradeEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
@@ -46,15 +46,15 @@ public class AssignmentEntity {
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacherIssuing")
-	private TeacherEntity teacherIssuing;
+	private TeacherSubjectEntity teacherIssuing;
 
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "gradeRecieved")
-	private GradeEntity gradeRecieved;
+	private Integer gradeRecieved;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "assignedTo")
 	private StudentEntity assignedTo;
+
+	private Integer overridenGrade;
 
 	private Boolean deleted;
 
@@ -129,20 +129,28 @@ public class AssignmentEntity {
 		this.dateCompleted = dateCompleted;
 	}
 
-	public TeacherEntity getTeacherIssuing() {
+	public TeacherSubjectEntity getTeacherIssuing() {
 		return teacherIssuing;
 	}
 
-	public void setTeacherIssuing(TeacherEntity teacherIssuing) {
+	public void setTeacherIssuing(TeacherSubjectEntity teacherIssuing) {
 		this.teacherIssuing = teacherIssuing;
 	}
 
-	public GradeEntity getGradeRecieved() {
+	public Integer getGradeRecieved() {
 		return gradeRecieved;
 	}
 
-	public void setGradeRecieved(GradeEntity gradeRecieved) {
+	public void setGradeRecieved(Integer gradeRecieved) {
 		this.gradeRecieved = gradeRecieved;
+	}
+
+	public Integer getOverridenGrade() {
+		return overridenGrade;
+	}
+
+	public void setOverridenGrade(Integer overridenGrade) {
+		this.overridenGrade = overridenGrade;
 	}
 
 	public StudentEntity getAssignedTo() {

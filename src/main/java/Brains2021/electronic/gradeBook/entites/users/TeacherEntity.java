@@ -9,8 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -20,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
-import Brains2021.electronic.gradeBook.entites.SubjectEntity;
+import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.security.Views;
 
 @Entity
@@ -29,11 +27,11 @@ import Brains2021.electronic.gradeBook.security.Views;
 @PrimaryKeyJoinColumn(name = "TeacherID")
 public class TeacherEntity extends UserEntity {
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	@Column(nullable = false)
 	private LocalDate startOfEmployment;
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	@Column(nullable = false)
 	private Double salary;
 
@@ -43,33 +41,27 @@ public class TeacherEntity extends UserEntity {
 
 	@JsonView(Views.Teacher.class)
 	@Column(nullable = false)
-	private Boolean isPrincipal;
+	private Boolean isHeadmaster;
 
 	@JsonView(Views.Teacher.class)
 	@Column(nullable = false)
 	private Boolean isAdministrator;
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	private Double salaryHomeroomBonus;
 
-	@JsonView(Views.Principal.class)
-	private Double salaryPrincipalBonus;
+	@JsonView(Views.Headmaster.class)
+	private Double salaryHeadmasterBonus;
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	private Double salaryAdminBonus;
 
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "inChargeOf")
 	private StudentGroupEntity inChargeOf;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "Subjects_and_Teachers", joinColumns = {
-			@JoinColumn(name = "TeacherID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "SubjectID", nullable = false, updatable = false) })
-	private Set<SubjectEntity> subjectsTeaching = new HashSet<>();
-
-	@OneToMany(mappedBy = "teacherIssuing", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	private Set<AssignmentEntity> assignmentsGiven = new HashSet<>();
+	@OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	private Set<TeacherSubjectEntity> subjectsTeaching = new HashSet<>();
 
 	public TeacherEntity() {
 		super();
@@ -108,11 +100,11 @@ public class TeacherEntity extends UserEntity {
 	}
 
 	public Boolean getIsPrincipal() {
-		return isPrincipal;
+		return isHeadmaster;
 	}
 
 	public void setIsPrincipal(Boolean isPrincipal) {
-		this.isPrincipal = isPrincipal;
+		this.isHeadmaster = isPrincipal;
 	}
 
 	public Boolean getIsAdministrator() {
@@ -132,11 +124,11 @@ public class TeacherEntity extends UserEntity {
 	}
 
 	public Double getSalaryPrincipalBonus() {
-		return salaryPrincipalBonus;
+		return salaryHeadmasterBonus;
 	}
 
 	public void setSalaryPrincipalBonus(Double salaryPrincipalBonus) {
-		this.salaryPrincipalBonus = salaryPrincipalBonus;
+		this.salaryHeadmasterBonus = salaryPrincipalBonus;
 	}
 
 	public Double getSalaryAdminBonus() {
@@ -147,11 +139,11 @@ public class TeacherEntity extends UserEntity {
 		this.salaryAdminBonus = salaryAdminBonus;
 	}
 
-	public Set<SubjectEntity> getSubjectsTeaching() {
+	public Set<TeacherSubjectEntity> getSubjectsTeaching() {
 		return subjectsTeaching;
 	}
 
-	public void setSubjectsTeaching(Set<SubjectEntity> subjectsTeaching) {
+	public void setSubjectsTeaching(Set<TeacherSubjectEntity> subjectsTeaching) {
 		this.subjectsTeaching = subjectsTeaching;
 	}
 

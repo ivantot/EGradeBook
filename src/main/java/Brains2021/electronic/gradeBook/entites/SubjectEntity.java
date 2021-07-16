@@ -6,18 +6,18 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
+import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
@@ -28,22 +28,14 @@ public class SubjectEntity {
 	@GeneratedValue
 	private Long id;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private String name;
+	private ESubjectName name;
 
 	private String description;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "Subjects_and_StudentGroups", joinColumns = {
-			@JoinColumn(name = "SubjectID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "StudentGroupID", nullable = false, updatable = false) })
-	private Set<StudentGroupEntity> studentGroupsTaking = new HashSet<>();
-
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "Subjects_and_Teachers", joinColumns = {
-			@JoinColumn(name = "SubjectID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "TeacherID", nullable = false, updatable = false) })
-	private Set<TeacherEntity> teachersTeaching = new HashSet<>();
+	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	private Set<TeacherSubjectEntity> teachersTeaching = new HashSet<>();
 
 	private Boolean deleted;
 
@@ -62,11 +54,11 @@ public class SubjectEntity {
 		this.id = id;
 	}
 
-	public String getName() {
+	public ESubjectName getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(ESubjectName name) {
 		this.name = name;
 	}
 
@@ -78,19 +70,11 @@ public class SubjectEntity {
 		this.description = description;
 	}
 
-	public Set<StudentGroupEntity> getStudentGroupsTaking() {
-		return studentGroupsTaking;
-	}
-
-	public void setStudentGroupsTaking(Set<StudentGroupEntity> studentGroupsTaking) {
-		this.studentGroupsTaking = studentGroupsTaking;
-	}
-
-	public Set<TeacherEntity> getTeachersTeaching() {
+	public Set<TeacherSubjectEntity> getTeachersTeaching() {
 		return teachersTeaching;
 	}
 
-	public void setTeachersTeaching(Set<TeacherEntity> teachersTeaching) {
+	public void setTeachersTeaching(Set<TeacherSubjectEntity> teachersTeaching) {
 		this.teachersTeaching = teachersTeaching;
 	}
 

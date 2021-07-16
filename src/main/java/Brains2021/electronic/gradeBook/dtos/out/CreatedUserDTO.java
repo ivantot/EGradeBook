@@ -8,7 +8,7 @@ import Brains2021.electronic.gradeBook.security.Views;
 
 public class CreatedUserDTO {
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	private Long id;
 
 	@JsonView(Views.Student.class)
@@ -26,19 +26,19 @@ public class CreatedUserDTO {
 	@JsonView(Views.Admin.class)
 	private String password;
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	private String jmbg;
 
 	@JsonView(Views.Student.class)
 	private LocalDate dateOfBirth;
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	private Boolean deleted;
 
 	@JsonView(Views.Admin.class)
 	private Integer version;
 
-	@JsonView(Views.Principal.class)
+	@JsonView(Views.Headmaster.class)
 	private String role;
 
 	public CreatedUserDTO() {

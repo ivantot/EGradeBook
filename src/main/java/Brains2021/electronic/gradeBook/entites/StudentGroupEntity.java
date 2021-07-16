@@ -46,10 +46,10 @@ public class StudentGroupEntity {
 	private TeacherEntity homeroomTeacher;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "Subjects_and_StudentGroups", joinColumns = {
+	@JoinTable(name = "TeacherSubjects_and_StudentGroups", joinColumns = {
 			@JoinColumn(name = "StudentGroupID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "SubjectID", nullable = false, updatable = false) })
-	private Set<SubjectEntity> subjectsTaken = new HashSet<>();
+					@JoinColumn(name = "TeacherSubjectID", nullable = false, updatable = false) })
+	private Set<TeacherSubjectEntity> subjectsTaken = new HashSet<>();
 
 	private Boolean archived;
 
@@ -100,11 +100,11 @@ public class StudentGroupEntity {
 		this.homeroomTeacher = homeroomTeacher;
 	}
 
-	public Set<SubjectEntity> getSubjectsTaken() {
+	public Set<TeacherSubjectEntity> getSubjectsTaken() {
 		return subjectsTaken;
 	}
 
-	public void setSubjectsTaken(Set<SubjectEntity> subjectsTaken) {
+	public void setSubjectsTaken(Set<TeacherSubjectEntity> subjectsTaken) {
 		this.subjectsTaken = subjectsTaken;
 	}
 
