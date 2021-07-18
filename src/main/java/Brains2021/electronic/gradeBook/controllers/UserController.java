@@ -3,6 +3,7 @@ package Brains2021.electronic.gradeBook.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -23,7 +24,10 @@ import Brains2021.electronic.gradeBook.dtos.in.CreateParentDTO;
 import Brains2021.electronic.gradeBook.dtos.in.CreateStudentDTO;
 import Brains2021.electronic.gradeBook.dtos.in.CreateTeacherDTO;
 import Brains2021.electronic.gradeBook.dtos.in.UpdatePasswordDTO;
+import Brains2021.electronic.gradeBook.dtos.in.UpdatePhoneNumberDTO;
 import Brains2021.electronic.gradeBook.dtos.in.UpdateUserDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GetChildrenDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GetParentsDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UpdatedRoleDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UserTokenDTO;
@@ -446,7 +450,97 @@ public class UserController {
 	}
 
 	/***************************************************************************************
+	 * PUT endpoint for administrator looking to change parent's phone number
+	 * -- postman code adm015 --
+	 * 
+	 * @param phoneNumber DTO
+	 * @param username
+	 * @return if ok update parent's phone number
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Headmaster.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changeParentsPhoneNumber/{username}")
+	public ResponseEntity<?> changeParentsPhonenUmber(@PathVariable String username,
+			@Valid @RequestBody UpdatePhoneNumberDTO phoneNumber) {
+
+		// initial check for active parent existance in db
+		Optional<UserEntity> ogUser = userRepo
+				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), username);
+		if (ogUser.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(90, "Parent not found in database, please provide a valid username."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		ParentEntity ogParent = (ParentEntity) ogUser.get();
+		String oldPhoneNumber = ogParent.getPhoneNumber();
+		ogParent.setPhoneNumber(phoneNumber.getPhoneNumber());
+		userRepo.save(ogParent);
+
+		return new ResponseEntity<String>("Parent " + username + " has undergone a phone number change, used to be "
+				+ oldPhoneNumber + ", and now is " + ogParent.getPhoneNumber() + ".", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * PUT endpoint for administrator looking to assign children to parents
+	 * -- postman code adm016 --
+	 * 
+	 * @param username child
+	 * @param username parent
+	 * @return if ok update parent's children list
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Headmaster.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/assignChildToParent")
+	public ResponseEntity<?> assignChildToParent(@RequestParam String usernameParent,
+			@RequestParam String usernamChild) {
+
+		// initial check for active parent existance in db
+		Optional<UserEntity> ogParent = userRepo
+				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
+		if (ogParent.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(90, "Parent not found in database, please provide a valid username."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		// initial check for active student existance in db
+		Optional<UserEntity> ogStudent = userRepo
+				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernamChild);
+		if (ogStudent.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(100, "Student not found in database, please provide a valid username."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		StudentEntity updatedStudent = (StudentEntity) ogStudent.get();
+		ParentEntity updatedParent = (ParentEntity) ogParent.get();
+
+		// check for number of parents
+		if (updatedStudent.getParents().size() >= 2) {
+			return new ResponseEntity<RESTError>(new RESTError(110, "No more than 2 parent allowed per student."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		// check if child already assigned
+		Set<StudentEntity> children = (Set<StudentEntity>) updatedParent.getChildren();
+		if (children.contains(updatedStudent)) {
+			return new ResponseEntity<RESTError>(new RESTError(111, "Student already assigned to a parent."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		// add Student to list of children, update parent and save to db
+		children.add(updatedStudent);
+		updatedParent.setChildren(children);
+		userRepo.save(updatedParent);
+
+		return new ResponseEntity<String>("Student " + usernamChild + " assigned to parent " + usernameParent + ".",
+				HttpStatus.OK);
+	}
+
+	/***************************************************************************************
 	 * PUT/DELETE endpoint for administrator looking to soft delete a user.
+	 * on further updates think about chain deleting parents if all children get deleted
 	 * -- postman code adm020 --
 	 * 
 	 * @param username
@@ -522,10 +616,17 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/activeUsers")
 	public ResponseEntity<?> findAllActiveUsers() {
 
+		// translate to DTO useng a service
 		List<GetUserDTO> activeUsersDTO = new ArrayList<>();
-		List<UserEntity> activeUSers = (List<UserEntity>) userRepo.findAllByDeletedFalse();
-		for (UserEntity userEntity : activeUSers) {
+		List<UserEntity> activeUsers = (List<UserEntity>) userRepo.findAllByDeletedFalse();
+		for (UserEntity userEntity : activeUsers) {
 			activeUsersDTO.add(userService.foundUserDTOtranslation(userEntity));
+		}
+
+		// check if list is empty
+		if (activeUsersDTO.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(90, "No active users in database."),
+					HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity<List<GetUserDTO>>(activeUsersDTO, HttpStatus.OK);
@@ -542,10 +643,17 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/deletedUsers")
 	public ResponseEntity<?> findAllDeletedUsers() {
 
+		// translate to DTO useng a service
 		List<UserEntity> deletedUsers = (List<UserEntity>) userRepo.findAllByDeletedTrue();
 		List<GetUserDTO> deletedUsersDTO = new ArrayList<>();
 		for (UserEntity userEntity : deletedUsers) {
 			deletedUsersDTO.add(userService.foundUserDTOtranslation(userEntity));
+		}
+
+		// check if list is empty
+		if (deletedUsersDTO.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(90, "No deleted users in database."),
+					HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity<List<GetUserDTO>>(deletedUsersDTO, HttpStatus.OK);
@@ -566,6 +674,7 @@ public class UserController {
 					HttpStatus.BAD_REQUEST);
 		}
 
+		// translate to DTO useng a service
 		List<GetUserDTO> activeUsersDTO = new ArrayList<>();
 		List<UserEntity> activeUsersWithRole = (List<UserEntity>) userRepo
 				.findAllByDeletedFalseAndRole(roleRepo.findByName(ERole.valueOf(role)).get());
@@ -573,67 +682,175 @@ public class UserController {
 			activeUsersDTO.add(userService.foundUserDTOtranslation(userEntity));
 		}
 
+		// check if list is empty
+		if (activeUsersDTO.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(90, "No active users in database."),
+					HttpStatus.NOT_FOUND);
+		}
+
 		return new ResponseEntity<List<GetUserDTO>>(activeUsersDTO, HttpStatus.OK);
 	}
 
-	//TODO 
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch a specific active user.
+	 * postman code adm033
+	 * 
+	 * @return specifoc user
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/admin/user/{username}")
+	public ResponseEntity<?> findActiveUser(@PathVariable String username) {
 
-	/**
-	 * 
-	 * ****ADMIN PANEL****
-	 * 
-	 * 1. add new student -- ok
-	 * 2. add new teacher/homeroom/admin/principal -- ok
-	 * 3. add new parent -- ok
-	 * 4. delete user -- ok
-	 * 5. change user role -- ok
-	 * 6. update user -- ok
-	 * 7. update teacher fetures -- ok
-	 * 8. update student features -- ok
-	 * 9. update parent fetures TODO
-	 * 10. assign subjects to teachers
-	 * 11. get info for all entites
-	 *  # provide admin role to all endpoints throughout
-	 * 
-	 * 
-	 * ****PRINCIPAL PANEL****
-	 * 
-	 * 1. update teacher/homeroom/admin salary
-	 * 2. add new student group
-	 * 3. assign students and homeroom to student group
-	 * 4. remove students and homeroom from student group
-	 * 5. assign teachers to student groups
-	 * 6. remove teachers from student groups
-	 * 7. add overriden grades
-	 * 
-	 * 
-	 * ****HOMEROOM PANEL****
-	 *  
-	 * 1. get results for student group
-	 * 2. get parents info (for student group assigned)
-	 *  
-	 *  
-	 * ****TEACHER PANEL****
-	 * 
-	 * 1. add new assignment
-	 * 2. update assignments
-	 * 3. delete assignmets - not graded!
-	 * 4. assign grades to assignments
-	 * 5. get assignments for children taking the class
-	 * 6  get student grades for children taking the class
-	 * 
-	 * 
-	 * ****PARENT PANEL****
-	 * 
-	 * 1. get student grades - for related children
-	 * 2. get grades by subject - for related children
-	 * 
-	 * 
-	 * ****STUDENT PANEL****
-	 * 
-	 * 1. get my grades
-	 * 2. get my grades by subject
-	 * 	 
-	 * */
+		Optional<UserEntity> activeUser = userRepo.findByDeletedFalseAndUsername(username);
+		if (activeUser.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(90, "No active user in database."),
+					HttpStatus.NOT_FOUND);
+		}
 
+		// translate to DTO useng a service
+		GetUserDTO activeUserDTO = userService.foundUserDTOtranslation(activeUser.get());
+
+		return new ResponseEntity<GetUserDTO>(activeUserDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch children of specific active parent.
+	 * postman code adm034
+	 * 
+	 * @return children list
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/admin/students/{usernameParent}")
+	public ResponseEntity<?> findActiveStudentsFromParent(@PathVariable String usernameParent) {
+
+		// initial check for active parent existance in db
+		Optional<UserEntity> ogParent = userRepo
+				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
+		if (ogParent.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(100, "Parent not found in database, please provide a valid username."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		// prepare a list for output and get children list from parent, check if list is empty
+		List<GetChildrenDTO> activeChildrenDTOs = new ArrayList<>();
+		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
+		Set<StudentEntity> children = (Set<StudentEntity>) ogParentCast.getChildren();
+
+		if (children.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(110, "No students assigned to this user. Schedule for db maintenance."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		// translate to DTO using a service
+		for (StudentEntity studentEntity : children) {
+			activeChildrenDTOs.add(userService.foundChildrenDTOtranslation(studentEntity));
+		}
+
+		return new ResponseEntity<List<GetChildrenDTO>>(activeChildrenDTOs, HttpStatus.OK);
+
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch parents of specific active student.
+	 * postman code adm035
+	 * 
+	 * @return parents list
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/admin/parents/{usernameStudent}")
+	public ResponseEntity<?> findActiveParentsFromStudent(@PathVariable String usernameStudent) {
+
+		// initial check for active student existance in db
+		Optional<UserEntity> ogStudent = userRepo
+				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameStudent);
+		if (ogStudent.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(120, "Student not found in database, please provide a valid username."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		// prepare a list for output and get parents list from children, check if list is empty
+		List<GetParentsDTO> activeParentsDTOs = new ArrayList<>();
+		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
+		Set<ParentEntity> parents = (Set<ParentEntity>) ogStudentCast.getParents();
+
+		if (parents.isEmpty()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(130, "No parents assigned to this user. Schedule for db maintenance."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		// translate to DTO using a service
+		for (ParentEntity parentEntity : parents) {
+			activeParentsDTOs.add(userService.foundParentsDTOtranslation(parentEntity));
+		}
+
+		return new ResponseEntity<List<GetParentsDTO>>(activeParentsDTOs, HttpStatus.OK);
+
+	}
 }
+
+//TODO 
+
+/**
+ * 
+ * ****ADMIN PANEL****
+ * 
+ * 1. add new student -- ok
+ * 2. add new teacher/homeroom/admin/principal -- ok
+ * 3. add new parent -- ok
+ * 4. delete user -- ok
+ * 5. change user role -- ok
+ * 6. update user -- ok
+ * 7. update teacher fetures -- ok
+ * 8. update student features -- ok
+ * 9. update parent fetures -- ok
+ * 10. assign subjects to teachers
+ * 11. get info for all entites
+ *  # provide admin role to all endpoints throughout, asign specific roles if needed
+ * 
+ * 
+ * ****PRINCIPAL PANEL****
+ * 
+ * 1. update teacher/homeroom/admin salary -- ok
+ * 2. add new student group
+ * 3. assign students and homeroom to student group
+ * 4. remove students and homeroom from student group
+ * 5. assign teachers to student groups
+ * 6. remove teachers from student groups
+ * 7. add overriden grades
+ * 
+ * 
+ * ****HOMEROOM PANEL****
+ *  
+ * 1. get results for student group
+ * 2. get parents info (for student group assigned)
+ *  
+ *  
+ * ****TEACHER PANEL****
+ * 
+ * 1. add new assignment
+ * 2. update assignments
+ * 3. delete assignmets - not graded!
+ * 4. assign grades to assignments
+ * 5. get assignments for children taking the class
+ * 6  get student grades for children taking the class
+ * 
+ * 
+ * ****PARENT PANEL****
+ * 
+ * 1. get student grades - for related children
+ * 2. get grades by subject - for related children
+ * 
+ * 
+ * ****STUDENT PANEL****
+ * 
+ * 1. get my grades
+ * 2. get my grades by subject
+ * 	 
+ * */

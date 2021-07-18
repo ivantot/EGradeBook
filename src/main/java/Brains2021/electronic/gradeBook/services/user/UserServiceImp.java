@@ -1,7 +1,11 @@
 package Brains2021.electronic.gradeBook.services.user;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,8 @@ import Brains2021.electronic.gradeBook.dtos.out.CreatedParentDTO;
 import Brains2021.electronic.gradeBook.dtos.out.CreatedStudentDTO;
 import Brains2021.electronic.gradeBook.dtos.out.CreatedTeacherDTO;
 import Brains2021.electronic.gradeBook.dtos.out.DeletedUserDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GetChildrenDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GetParentsDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UpdatedUserDTO;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
@@ -383,6 +389,54 @@ public class UserServiceImp implements UserService {
 		getUser.setEmail(user.getEmail());
 
 		return getUser;
+	}
+
+	/**
+	 * 
+	 * service that takes an entity and translates to DTO for pretty output
+	 * used for fetching Students via Parent
+	 * 
+	 */
+	@Override
+	public GetChildrenDTO foundChildrenDTOtranslation(StudentEntity student) {
+
+		GetChildrenDTO getStudent = new GetChildrenDTO();
+		getStudent.setName(student.getName());
+		getStudent.setSurname(student.getSurname());
+		getStudent.setRole(student.getRole().getName().toString());
+		getStudent.setUsername(student.getUsername());
+		getStudent.setBelongsToStudentGroup(student.getBelongsToStudentGroup());
+		Map<String, String> parents = new HashMap<String, String>();
+		for (ParentEntity parent : student.getParents()) {
+			parents.put(parent.getUsername(), parent.getPhoneNumber());
+		}
+		getStudent.setParents(parents);
+
+		return getStudent;
+	}
+
+	/**
+	 * 
+	 * service that takes an entity and translates to DTO for pretty output
+	 * used for fetching Parents via Student
+	 * 
+	 */
+	@Override
+	public GetParentsDTO foundParentsDTOtranslation(ParentEntity parent) {
+
+		GetParentsDTO getParent = new GetParentsDTO();
+		getParent.setName(parent.getName());
+		getParent.setSurname(parent.getSurname());
+		getParent.setRole(parent.getRole().getName().toString());
+		getParent.setUsername(parent.getUsername());
+		getParent.setPhoneNumber(parent.getPhoneNumber());
+		Set<String> children = new HashSet<String>();
+		for (StudentEntity child : parent.getChildren()) {
+			children.add(child.getUsername());
+		}
+		getParent.setChildren(children);
+
+		return getParent;
 	}
 
 }

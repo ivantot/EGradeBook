@@ -46,7 +46,7 @@ public class CreateParentDTO {
 	private LocalDate dateOfBirth;
 
 	@NotNull(message = "Cannot be null.")
-	@Pattern(regexp = "^\\+381-6[0-5]-\\d{3}-\\d{3,4}$", message = "Provide a valid phone number using the following pattern +381-6X-XXX-XXXx.")
+	@Pattern(regexp = "^\\+381-6[0-9]-\\d{3}-\\d{3,4}$", message = "Provide a valid phone number using the following pattern +381-6X-XXX-XXXx.")
 	private String phoneNumber;
 
 	public CreateParentDTO() {

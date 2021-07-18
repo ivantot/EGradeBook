@@ -6,6 +6,8 @@ import Brains2021.electronic.gradeBook.dtos.in.CreateParentDTO;
 import Brains2021.electronic.gradeBook.dtos.in.CreateStudentDTO;
 import Brains2021.electronic.gradeBook.dtos.in.CreateTeacherDTO;
 import Brains2021.electronic.gradeBook.dtos.in.UpdateUserDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GetChildrenDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GetParentsDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
@@ -41,5 +43,9 @@ public interface UserService {
 	public TeacherEntity updateTeacherRole(TeacherEntity teacher, String role, Double bonus);
 
 	public GetUserDTO foundUserDTOtranslation(UserEntity user);
+
+	public GetChildrenDTO foundChildrenDTOtranslation(StudentEntity student);
+
+	public GetParentsDTO foundParentsDTOtranslation(ParentEntity parent);
 
 }

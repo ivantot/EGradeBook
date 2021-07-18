@@ -50,12 +50,12 @@ public class StudentEntity extends UserEntity {
 		super();
 	}
 
-	public StudentGroupEntity getBelongsToClass() {
+	public StudentGroupEntity getBelongsToStudentGroup() {
 		return belongsToStudentGroup;
 	}
 
-	public void setBelongsToClass(StudentGroupEntity belongsToClass) {
-		this.belongsToStudentGroup = belongsToClass;
+	public void setBelongsToStudentGroup(StudentGroupEntity belongsToStudentGroup) {
+		this.belongsToStudentGroup = belongsToStudentGroup;
 	}
 
 	public Set<ParentEntity> getParents() {
@@ -64,14 +64,6 @@ public class StudentEntity extends UserEntity {
 
 	public void setParents(Set<ParentEntity> parents) {
 		this.parents = parents;
-	}
-
-	public StudentGroupEntity getBelongsToStudentGroup() {
-		return belongsToStudentGroup;
-	}
-
-	public void setBelongsToStudentGroup(StudentGroupEntity belongsToStudentGroup) {
-		this.belongsToStudentGroup = belongsToStudentGroup;
 	}
 
 	public Set<AssignmentEntity> getGivenAssigmnents() {

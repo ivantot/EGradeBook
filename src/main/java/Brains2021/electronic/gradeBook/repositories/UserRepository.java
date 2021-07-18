@@ -20,6 +20,10 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, I
 
 	public List<UserEntity> findAllByDeletedFalse();
 
+	public Optional<UserEntity> findByDeletedFalseAndUsername(String username);
+
 	public List<UserEntity> findAllByDeletedFalseAndRole(RoleEntity role);
+
+	public Optional<UserEntity> findByDeletedFalseAndRoleAndUsername(RoleEntity role, String Username);
 
 }

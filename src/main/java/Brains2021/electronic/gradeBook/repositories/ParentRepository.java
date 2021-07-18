@@ -6,4 +6,5 @@ import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 
 public interface ParentRepository extends PagingAndSortingRepository<ParentEntity, Long> {
 
+
 }
