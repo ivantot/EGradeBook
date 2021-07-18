@@ -94,12 +94,12 @@ public class UserController {
 	public ResponseEntity<?> postNewRole(@RequestParam String role) {
 
 		if (!userService.isRoleInEnum(role)) {
-			return new ResponseEntity<RESTError>(new RESTError(0, "Role name not allowed, check ERole for details."),
+			return new ResponseEntity<RESTError>(new RESTError(1000, "Role name not allowed, check ERole for details."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		if (roleRepo.findByName(ERole.valueOf(role)).isPresent()) {
-			return new ResponseEntity<RESTError>(new RESTError(1, "Role already in the database."),
+			return new ResponseEntity<RESTError>(new RESTError(1001, "Role already in the database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -125,11 +125,11 @@ public class UserController {
 
 		// standard checks for new users, password match, username availability, no students with same IDs allowed
 		if (!newStudent.getPassword().equals(newStudent.getRepeatedPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(20, "Passwords not matching, please check your entry."),
+			return new ResponseEntity<RESTError>(new RESTError(1020, "Passwords not matching, please check your entry."),
 					HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newStudent.getUsername()).isPresent()) {
-			return new ResponseEntity<RESTError>(new RESTError(21, "Username already in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByJmbg(newStudent.getJmbg()).isPresent()) {
@@ -163,11 +163,11 @@ public class UserController {
 
 		// standard checks for new users, password match and username availability
 		if (!newParent.getPassword().equals(newParent.getRepeatedPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(20, "Passwords not matching, please check your entry."),
+			return new ResponseEntity<RESTError>(new RESTError(1020, "Passwords not matching, please check your entry."),
 					HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newParent.getUsername()).isPresent()) {
-			return new ResponseEntity<RESTError>(new RESTError(21, "Username already in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -198,11 +198,11 @@ public class UserController {
 
 		// standard checks for new users, password match and username availability
 		if (!newTeacher.getPassword().equals(newTeacher.getRepeatedPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(20, "Passwords not matching, please check your entry."),
+			return new ResponseEntity<RESTError>(new RESTError(1020, "Passwords not matching, please check your entry."),
 					HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newTeacher.getUsername()).isPresent()) {
-			return new ResponseEntity<RESTError>(new RESTError(21, "Username already in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -215,6 +215,7 @@ public class UserController {
 		// invoke service for Entity translation to DTO
 		return userService.createdTeacherDTOtranslation(newTeacher);
 	}
+	
 
 	/***************************************************************************************
 	 * PUT endpoint for administrator looking to update general user info
@@ -234,20 +235,20 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
 		if (ogUser.get().getDeleted().equals(true)) {
-			return new ResponseEntity<RESTError>(new RESTError(31, "User previously deleted and not accesible."),
+			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// chaeck if username taken, see if same as old to avoid RESTError for taken username
 		if (updatedUser.getUsername() != null && !updatedUser.getUsername().equals(ogUser.get().getUsername())
 				&& userRepo.findByUsername(updatedUser.getUsername()).isPresent()) {
-			return new ResponseEntity<RESTError>(new RESTError(32, "Username taken, please choose another."),
+			return new ResponseEntity<RESTError>(new RESTError(1032, "Username taken, please choose another."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -275,20 +276,20 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
 		if (ogUser.get().getDeleted().equals(true)) {
-			return new ResponseEntity<RESTError>(new RESTError(31, "User previously deleted and not accesible."),
+			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check for role in db
 		if (!userService.isRoleInEnum(role)) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(40, "Role not in the system, contact the Ministry of Education."),
+					new RESTError(1040, "Role not in the system, contact the Ministry of Education."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -322,26 +323,26 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
 		if (ogUser.get().getDeleted().equals(true)) {
-			return new ResponseEntity<RESTError>(new RESTError(31, "User previously deleted and not accesible."),
+			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if old password matches the passwrod stored in db
 		if (!Encryption.validatePassword(passwordsUpdate.getOldPassword(), ogUser.get().getPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(50, "Old password not correct, please try again."),
+			return new ResponseEntity<RESTError>(new RESTError(1050, "Old password not correct, please try again."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if new and repeated passwords match
 		if (!passwordsUpdate.getNewPassword().equals(passwordsUpdate.getRepeatedPassword())) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(51, "New password and repeated password don't match. Check your inputs."),
+					new RESTError(1051, "New password and repeated password don't match. Check your inputs."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -371,7 +372,7 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -380,14 +381,14 @@ public class UserController {
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HEADMASTER)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HOMEROOM)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_TEACHER)) {
-			return new ResponseEntity<RESTError>(new RESTError(60, "User is not a teacher."), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RESTError>(new RESTError(1060, "User is not a teacher."), HttpStatus.BAD_REQUEST);
 		}
 
 		// check if new role is valid
 		if (!role.equals(ERole.ROLE_ADMIN.toString()) && !role.equals(ERole.ROLE_HEADMASTER.toString())
 				&& !role.equals(ERole.ROLE_HOMEROOM.toString()) && !role.equals(ERole.ROLE_TEACHER.toString())) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(61, "You must choose one of teacher roles available in ERole."),
+					new RESTError(1061, "You must choose one of teacher roles available in ERole."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -422,13 +423,13 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
 		if (ogUser.get().getDeleted().equals(true)) {
-			return new ResponseEntity<RESTError>(new RESTError(31, "User previously deleted and not accesible."),
+			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -437,7 +438,7 @@ public class UserController {
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HEADMASTER)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HOMEROOM)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_TEACHER)) {
-			return new ResponseEntity<RESTError>(new RESTError(60, "User is not a teacher."), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RESTError>(new RESTError(1060, "User is not a teacher."), HttpStatus.BAD_REQUEST);
 		}
 
 		TeacherEntity ogTeacher = (TeacherEntity) ogUser.get();
@@ -468,7 +469,7 @@ public class UserController {
 				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(90, "Parent not found in database, please provide a valid username."),
+					new RESTError(1090, "Parent not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -500,7 +501,7 @@ public class UserController {
 				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
 		if (ogParent.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(90, "Parent not found in database, please provide a valid username."),
+					new RESTError(1090, "Parent not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -509,7 +510,7 @@ public class UserController {
 				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernamChild);
 		if (ogStudent.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(100, "Student not found in database, please provide a valid username."),
+					new RESTError(1100, "Student not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -518,14 +519,14 @@ public class UserController {
 
 		// check for number of parents
 		if (updatedStudent.getParents().size() >= 2) {
-			return new ResponseEntity<RESTError>(new RESTError(110, "No more than 2 parent allowed per student."),
+			return new ResponseEntity<RESTError>(new RESTError(1101, "No more than 2 parent allowed per student."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if child already assigned
 		Set<StudentEntity> children = (Set<StudentEntity>) updatedParent.getChildren();
 		if (children.contains(updatedStudent)) {
-			return new ResponseEntity<RESTError>(new RESTError(111, "Student already assigned to a parent."),
+			return new ResponseEntity<RESTError>(new RESTError(1110, "Student already assigned to a parent."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -555,14 +556,14 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user existing, but already deleted
 		if (ogUser.get().getDeleted().equals(true)) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(70,
+					new RESTError(1070,
 							"User previously deleted and not accesible. Use different endpoint to restore the user."),
 					HttpStatus.BAD_REQUEST);
 		}
@@ -588,14 +589,14 @@ public class UserController {
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(30, "Username not found in database, please provide a valid username."),
+					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user existing, and set to deleted
 		if (ogUser.get().getDeleted().equals(false)) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(80, "User is active. Use different endpoint to delete the user."),
+					new RESTError(1080, "User is active. Use different endpoint to delete the user."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -625,7 +626,7 @@ public class UserController {
 
 		// check if list is empty
 		if (activeUsersDTO.isEmpty()) {
-			return new ResponseEntity<RESTError>(new RESTError(90, "No active users in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1090, "No active users in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -652,7 +653,7 @@ public class UserController {
 
 		// check if list is empty
 		if (deletedUsersDTO.isEmpty()) {
-			return new ResponseEntity<RESTError>(new RESTError(90, "No deleted users in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1090, "No deleted users in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -670,7 +671,7 @@ public class UserController {
 
 		// role check
 		if (!userService.isRoleInEnum(role)) {
-			return new ResponseEntity<RESTError>(new RESTError(0, "Role name not allowed, check ERole for details."),
+			return new ResponseEntity<RESTError>(new RESTError(1000, "Role name not allowed, check ERole for details."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -684,7 +685,7 @@ public class UserController {
 
 		// check if list is empty
 		if (activeUsersDTO.isEmpty()) {
-			return new ResponseEntity<RESTError>(new RESTError(90, "No active users in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1090, "No active users in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -704,7 +705,7 @@ public class UserController {
 
 		Optional<UserEntity> activeUser = userRepo.findByDeletedFalseAndUsername(username);
 		if (activeUser.isEmpty()) {
-			return new ResponseEntity<RESTError>(new RESTError(90, "No active user in database."),
+			return new ResponseEntity<RESTError>(new RESTError(1090, "No active user in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -730,7 +731,7 @@ public class UserController {
 				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
 		if (ogParent.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(100, "Parent not found in database, please provide a valid username."),
+					new RESTError(1100, "Parent not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -741,7 +742,7 @@ public class UserController {
 
 		if (children.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(110, "No students assigned to this user. Schedule for db maintenance."),
+					new RESTError(1110, "No students assigned to this user. Schedule for db maintenance."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -770,7 +771,7 @@ public class UserController {
 				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameStudent);
 		if (ogStudent.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(120, "Student not found in database, please provide a valid username."),
+					new RESTError(1120, "Student not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -781,7 +782,7 @@ public class UserController {
 
 		if (parents.isEmpty()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(130, "No parents assigned to this user. Schedule for db maintenance."),
+					new RESTError(1130, "No parents assigned to this user. Schedule for db maintenance."),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -846,6 +847,7 @@ public class UserController {
  * 
  * 1. get student grades - for related children
  * 2. get grades by subject - for related children
+ * 3. get email updates when grade is assigned
  * 
  * 
  * ****STUDENT PANEL****

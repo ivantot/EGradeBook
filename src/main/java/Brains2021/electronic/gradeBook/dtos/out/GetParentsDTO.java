@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.security.Views;
 
 //@JsonRootName(value = "Student")

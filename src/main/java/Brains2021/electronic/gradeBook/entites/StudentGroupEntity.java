@@ -33,7 +33,7 @@ public class StudentGroupEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private Integer year;
+	private String year;
 
 	@Column(nullable = false)
 	private Integer yearIndex;
@@ -51,7 +51,7 @@ public class StudentGroupEntity {
 					@JoinColumn(name = "TeacherSubjectID", nullable = false, updatable = false) })
 	private Set<TeacherSubjectEntity> subjectsTaken = new HashSet<>();
 
-	private Boolean archived;
+	private Boolean deleted;
 
 	@Version
 	private Integer version;
@@ -68,20 +68,12 @@ public class StudentGroupEntity {
 		this.id = id;
 	}
 
-	public Integer getYear() {
+	public String getYear() {
 		return year;
 	}
 
-	public void setYear(Integer year) {
+	public void setYear(String year) {
 		this.year = year;
-	}
-
-	public Integer getYear_index() {
-		return yearIndex;
-	}
-
-	public void setYear_index(Integer year_index) {
-		this.yearIndex = year_index;
 	}
 
 	public Set<StudentEntity> getStudents() {
@@ -108,12 +100,20 @@ public class StudentGroupEntity {
 		this.subjectsTaken = subjectsTaken;
 	}
 
-	public Boolean getArchived() {
-		return archived;
+	public Integer getYearIndex() {
+		return yearIndex;
 	}
 
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
+	public void setYearIndex(Integer yearIndex) {
+		this.yearIndex = yearIndex;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	public Integer getVersion() {
