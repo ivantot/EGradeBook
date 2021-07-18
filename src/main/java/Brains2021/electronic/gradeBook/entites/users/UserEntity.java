@@ -29,7 +29,6 @@ import Brains2021.electronic.gradeBook.security.Views;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class UserEntity {
 
-	@JsonView(Views.Admin.class)
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -41,10 +40,8 @@ public class UserEntity {
 	private String surname;
 
 	@JsonView(Views.Admin.class)
-	@Column(nullable = false)
 	private String email;
 
-	@JsonView(Views.Admin.class)
 	@Column(nullable = false)
 	private String username;
 

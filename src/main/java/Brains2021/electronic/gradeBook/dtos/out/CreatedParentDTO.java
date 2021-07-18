@@ -2,55 +2,48 @@ package Brains2021.electronic.gradeBook.dtos.out;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.security.Views;
 
-public class CreatedUserDTO {
+//@JsonRootName(value = "New Parent")
+@JsonPropertyOrder({ "name", "surname", "username", "email", "jmbg", "dateOfBirth", "phoneNumber" })
+public class CreatedParentDTO {
 
-	@JsonView(Views.Headmaster.class)
-	private Long id;
-
-	@JsonView(Views.Student.class)
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "Name")
 	private String name;
 
-	@JsonView(Views.Student.class)
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "Surname")
 	private String surname;
 
-	@JsonView(Views.Student.class)
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "E-mail")
 	private String email;
 
-	@JsonView(Views.Student.class)
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "Username")
 	private String username;
 
 	@JsonView(Views.Admin.class)
-	private String password;
-
-	@JsonView(Views.Headmaster.class)
+	@JsonProperty(value = "Unique ID number")
 	private String jmbg;
 
-	@JsonView(Views.Student.class)
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "Date of birth")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate dateOfBirth;
 
-	@JsonView(Views.Headmaster.class)
-	private Boolean deleted;
-
 	@JsonView(Views.Admin.class)
-	private Integer version;
+	@JsonProperty(value = "Phone number")
+	private String phoneNumber;
 
-	@JsonView(Views.Headmaster.class)
-	private String role;
-
-	public CreatedUserDTO() {
+	public CreatedParentDTO() {
 		super();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -85,14 +78,6 @@ public class CreatedUserDTO {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getJmbg() {
 		return jmbg;
 	}
@@ -109,28 +94,12 @@ public class CreatedUserDTO {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Boolean getDeleted() {
-		return deleted;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 }
