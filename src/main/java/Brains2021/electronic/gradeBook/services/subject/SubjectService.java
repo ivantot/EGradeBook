@@ -1,4 +1,4 @@
-package Brains2021.electronic.gradeBook.services.subjects;
+package Brains2021.electronic.gradeBook.services.subject;
 
 public interface SubjectService {
 

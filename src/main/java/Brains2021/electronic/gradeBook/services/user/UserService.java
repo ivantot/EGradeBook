@@ -18,6 +18,8 @@ public interface UserService {
 
 	public String createJWTToken(UserEntity user);
 
+	public String whoAmI();
+
 	public Boolean isRoleInEnum(String role);
 
 	public String encodePassword(String passwordToEncode);

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,6 +18,7 @@ import javax.persistence.Version;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.utils.enums.EAssignmentType;
 
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
@@ -27,7 +30,8 @@ public class AssignmentEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private String name;
+	@Enumerated(EnumType.STRING)
+	private EAssignmentType type;
 
 	private String description;
 
@@ -35,7 +39,7 @@ public class AssignmentEntity {
 	private Integer semester;
 
 	@Column(nullable = false)
-	private Integer studyYear;
+	private String studyYear;
 
 	@Column(nullable = false)
 	private LocalDate dateCreated;
@@ -73,12 +77,12 @@ public class AssignmentEntity {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public EAssignmentType getType() {
+		return type;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setType(EAssignmentType type) {
+		this.type = type;
 	}
 
 	public String getDescription() {
@@ -97,11 +101,11 @@ public class AssignmentEntity {
 		this.semester = semester;
 	}
 
-	public Integer getStudyYear() {
+	public String getStudyYear() {
 		return studyYear;
 	}
 
-	public void setStudyYear(Integer studyYear) {
+	public void setStudyYear(String studyYear) {
 		this.studyYear = studyYear;
 	}
 

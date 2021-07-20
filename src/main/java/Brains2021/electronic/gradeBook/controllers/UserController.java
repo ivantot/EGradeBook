@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -125,8 +127,8 @@ public class UserController {
 
 		// standard checks for new users, password match, username availability, no students with same IDs allowed
 		if (!newStudent.getPassword().equals(newStudent.getRepeatedPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(1020, "Passwords not matching, please check your entry."),
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RESTError>(
+					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newStudent.getUsername()).isPresent()) {
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
@@ -163,8 +165,8 @@ public class UserController {
 
 		// standard checks for new users, password match and username availability
 		if (!newParent.getPassword().equals(newParent.getRepeatedPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(1020, "Passwords not matching, please check your entry."),
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RESTError>(
+					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newParent.getUsername()).isPresent()) {
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
@@ -198,8 +200,8 @@ public class UserController {
 
 		// standard checks for new users, password match and username availability
 		if (!newTeacher.getPassword().equals(newTeacher.getRepeatedPassword())) {
-			return new ResponseEntity<RESTError>(new RESTError(1020, "Passwords not matching, please check your entry."),
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RESTError>(
+					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newTeacher.getUsername()).isPresent()) {
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
@@ -215,7 +217,6 @@ public class UserController {
 		// invoke service for Entity translation to DTO
 		return userService.createdTeacherDTOtranslation(newTeacher);
 	}
-	
 
 	/***************************************************************************************
 	 * PUT endpoint for administrator looking to update general user info
@@ -793,6 +794,29 @@ public class UserController {
 
 		return new ResponseEntity<List<GetParentsDTO>>(activeParentsDTOs, HttpStatus.OK);
 
+	}
+
+	/***************************************************************************************
+	 * GET to find logged user's username
+	 * -- postman code whoAmI --
+	 * 	
+	 * @return username
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/whoAmI")
+	public ResponseEntity<?> loggedUser() {
+
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username;
+
+		if (principal instanceof UserDetails) {
+			username = ((UserDetails) principal).getUsername();
+		} else {
+			username = principal.toString();
+		}
+
+		return new ResponseEntity<String>("User " + username + " is logged in the system.", HttpStatus.OK);
 	}
 }
 

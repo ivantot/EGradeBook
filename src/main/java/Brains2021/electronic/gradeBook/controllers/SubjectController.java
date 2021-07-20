@@ -18,12 +18,12 @@ import Brains2021.electronic.gradeBook.dtos.out.CreatedSubjectDTO;
 import Brains2021.electronic.gradeBook.entites.SubjectEntity;
 import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
 import Brains2021.electronic.gradeBook.security.Views;
-import Brains2021.electronic.gradeBook.services.subjects.SubjectService;
+import Brains2021.electronic.gradeBook.services.subject.SubjectService;
 import Brains2021.electronic.gradeBook.utils.RESTError;
 import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 @RestController
-@RequestMapping(path = "api/v1/subjects")
+@RequestMapping(path = "/api/v1/subjects")
 public class SubjectController {
 
 	@Autowired

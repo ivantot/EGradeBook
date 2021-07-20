@@ -20,7 +20,7 @@ import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.utils.RESTError;
 
 @RestController
-@RequestMapping(path = "api/v1/studentGroup")
+@RequestMapping(path = "/api/v1/studentGroup")
 public class StudentGroupController {
 
 	@Autowired
@@ -30,7 +30,7 @@ public class StudentGroupController {
 	 * POST endpoint for administrator looking to create new subject group
 	 * -- postman code adm006 --
 	 * 
-	 * @param stident group
+	 * @param student group
 	 * @return if ok, new student group
 	 ***************************************************************************************/
 	@Secured("ROLE_ADMIN")
@@ -56,6 +56,25 @@ public class StudentGroupController {
 
 		return new ResponseEntity<String>(
 				"Student Group " + newStudentGroup.getYear() + "-" + newStudentGroup.getYearIndex() + " created.",
+				HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * PUT endpoint for administrator or headmaster looking to assign a student to a student grooup
+	 * -- postman code adm017 --
+	 * 
+	 * @param student group
+	 * @param student
+	 * @return if ok, student linked to a student group
+	 ***************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Headmaster.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/assignStudentToStudentGroup")
+	public ResponseEntity<?> assignToStudentGroup(String username, Long studentGroupID) {
+
+		// TODO
+
+		return new ResponseEntity<String>("Student " + "TODO" + " asigned to student group " + "TODO" + "-" + "TODO.",
 				HttpStatus.OK);
 	}
 

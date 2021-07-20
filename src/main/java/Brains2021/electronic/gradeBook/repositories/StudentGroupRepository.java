@@ -9,4 +9,7 @@ import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 public interface StudentGroupRepository extends CrudRepository<StudentGroupEntity, Long> {
 
 	Optional<StudentGroupEntity> findByYearAndYearIndex(String year, Integer yearIndex);
+
+	Optional<StudentGroupEntity> findByIdAndDeletedFalse(Long id);
+
 }
