@@ -9,6 +9,8 @@ import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 public interface SubjectRepository extends CrudRepository<SubjectEntity, Long> {
 
+	Optional<SubjectEntity> findByNameAndYearOfSchooling(ESubjectName subjectName, String yearOfSchooling);
+
 	Optional<SubjectEntity> findByName(ESubjectName subjectName);
 
 }

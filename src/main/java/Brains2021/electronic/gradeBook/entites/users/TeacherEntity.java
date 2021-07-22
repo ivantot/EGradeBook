@@ -56,6 +56,13 @@ public class TeacherEntity extends UserEntity {
 	@JsonView(Views.Headmaster.class)
 	private Double salaryAdminBonus;
 
+	@JsonView(Views.Headmaster.class)
+	@Column(nullable = false)
+	private Integer weeklyHourCapacity;
+
+	@JsonView(Views.Headmaster.class)
+	private Integer currentWeeklyEngagement;
+
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "inChargeOf")
 	private StudentGroupEntity inChargeOf;
@@ -91,20 +98,12 @@ public class TeacherEntity extends UserEntity {
 		this.isHomeroomTeacher = isHomeroomTeacher;
 	}
 
-	public StudentGroupEntity getInChargeOf() {
-		return inChargeOf;
-	}
-
-	public void setInChargeOf(StudentGroupEntity inChargeOf) {
-		this.inChargeOf = inChargeOf;
-	}
-
-	public Boolean getIsPrincipal() {
+	public Boolean getIsHeadmaster() {
 		return isHeadmaster;
 	}
 
-	public void setIsPrincipal(Boolean isPrincipal) {
-		this.isHeadmaster = isPrincipal;
+	public void setIsHeadmaster(Boolean isHeadmaster) {
+		this.isHeadmaster = isHeadmaster;
 	}
 
 	public Boolean getIsAdministrator() {
@@ -123,12 +122,12 @@ public class TeacherEntity extends UserEntity {
 		this.salaryHomeroomBonus = salaryHomeroomBonus;
 	}
 
-	public Double getSalaryPrincipalBonus() {
+	public Double getSalaryHeadmasterBonus() {
 		return salaryHeadmasterBonus;
 	}
 
-	public void setSalaryPrincipalBonus(Double salaryPrincipalBonus) {
-		this.salaryHeadmasterBonus = salaryPrincipalBonus;
+	public void setSalaryHeadmasterBonus(Double salaryHeadmasterBonus) {
+		this.salaryHeadmasterBonus = salaryHeadmasterBonus;
 	}
 
 	public Double getSalaryAdminBonus() {
@@ -137,6 +136,30 @@ public class TeacherEntity extends UserEntity {
 
 	public void setSalaryAdminBonus(Double salaryAdminBonus) {
 		this.salaryAdminBonus = salaryAdminBonus;
+	}
+
+	public Integer getWeeklyHourCapacity() {
+		return weeklyHourCapacity;
+	}
+
+	public void setWeeklyHourCapacity(Integer weeklyHourCapacity) {
+		this.weeklyHourCapacity = weeklyHourCapacity;
+	}
+
+	public Integer getCurrentWeeklyEngagement() {
+		return currentWeeklyEngagement;
+	}
+
+	public void setCurrentWeeklyEngagement(Integer currentWeeklyEngagement) {
+		this.currentWeeklyEngagement = currentWeeklyEngagement;
+	}
+
+	public StudentGroupEntity getInChargeOf() {
+		return inChargeOf;
+	}
+
+	public void setInChargeOf(StudentGroupEntity inChargeOf) {
+		this.inChargeOf = inChargeOf;
 	}
 
 	public Set<TeacherSubjectEntity> getSubjectsTeaching() {

@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import Brains2021.electronic.gradeBook.security.Views;
 
 //@JsonRootName(value = "New Teacher")
-@JsonPropertyOrder({ "name", "surname", "username", "email", "jmbg", "dateOfBirth", "startOfEmployment", "salary" })
+@JsonPropertyOrder({ "name", "surname", "username", "email", "jmbg", "dateOfBirth", "startOfEmployment", "salary",
+		"weeklyHourCapacity" })
 public class CreatedTeacherDTO {
 
 	@JsonView(Views.Admin.class)
@@ -46,6 +47,10 @@ public class CreatedTeacherDTO {
 	@JsonView(Views.Admin.class)
 	@JsonProperty(value = "Salary")
 	private Double salary;
+
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "Weekly hour capacity")
+	private Integer weeklyHourCapacity;
 
 	public CreatedTeacherDTO() {
 		super();
@@ -113,6 +118,14 @@ public class CreatedTeacherDTO {
 
 	public void setSalary(Double salary) {
 		this.salary = salary;
+	}
+
+	public Integer getWeeklyHourCapacity() {
+		return weeklyHourCapacity;
+	}
+
+	public void setWeeklyHourCapacity(Integer weeklyHourCapacity) {
+		this.weeklyHourCapacity = weeklyHourCapacity;
 	}
 
 }

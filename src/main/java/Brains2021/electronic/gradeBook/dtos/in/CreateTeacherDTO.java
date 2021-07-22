@@ -53,6 +53,10 @@ public class CreateTeacherDTO {
 	@Min(value = 60000, message = "Salary must be greater than 60000.")
 	private Double salary;
 
+	@NotNull(message = "Cannot be null.")
+	@Min(value = 4, message = "Teacher's capcaity must be at least 4 hours per week.")
+	private Integer weeklyHourCapacity;
+
 	public CreateTeacherDTO() {
 		super();
 	}
@@ -135,6 +139,14 @@ public class CreateTeacherDTO {
 
 	public void setSalary(Double salary) {
 		this.salary = salary;
+	}
+
+	public Integer getWeeklyHourCapacity() {
+		return weeklyHourCapacity;
+	}
+
+	public void setWeeklyHourCapacity(Integer weeklyHourCapacity) {
+		this.weeklyHourCapacity = weeklyHourCapacity;
 	}
 
 }

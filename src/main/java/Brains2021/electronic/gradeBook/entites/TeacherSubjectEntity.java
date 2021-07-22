@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -31,19 +29,18 @@ public class TeacherSubjectEntity {
 	@Column(name = "SubjectTeacherID")
 	private Long id;
 
+	private Integer weeklyHoursAlloted;
+
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "teacherID")
+	@JoinColumn(name = "teacher")
 	private TeacherEntity teacher;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "subjectID")
+	@JoinColumn(name = "subject")
 	private SubjectEntity subject;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "TeacherSubjects_and_StudentGroups", joinColumns = {
-			@JoinColumn(name = "TeacherSubjectID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "StudentGroupID", nullable = false, updatable = false) })
-	private Set<StudentGroupEntity> studentGroupsTaking = new HashSet<>();
+	@OneToMany(mappedBy = "teacherSubject", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	private Set<StudentGroupTakingASubjectEntity> studentGroupsTakingASubject = new HashSet<>();
 
 	@OneToMany(mappedBy = "teacherIssuing", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<AssignmentEntity> assignmentsGiven = new HashSet<>();
@@ -81,12 +78,12 @@ public class TeacherSubjectEntity {
 		this.subject = subject;
 	}
 
-	public Set<StudentGroupEntity> getStudentGroupsTaking() {
-		return studentGroupsTaking;
+	public Set<StudentGroupTakingASubjectEntity> getStudentGroupsTakingASubject() {
+		return studentGroupsTakingASubject;
 	}
 
-	public void setStudentGroupsTaking(Set<StudentGroupEntity> studentGroupsTaking) {
-		this.studentGroupsTaking = studentGroupsTaking;
+	public void setStudentGroupsTakingASubject(Set<StudentGroupTakingASubjectEntity> studentGroupsTakingASubject) {
+		this.studentGroupsTakingASubject = studentGroupsTakingASubject;
 	}
 
 	public Set<AssignmentEntity> getAssignmentsGiven() {
@@ -95,6 +92,14 @@ public class TeacherSubjectEntity {
 
 	public void setAssignmentsGiven(Set<AssignmentEntity> assignmentsGiven) {
 		this.assignmentsGiven = assignmentsGiven;
+	}
+
+	public Integer getWeeklyHoursAlloted() {
+		return weeklyHoursAlloted;
+	}
+
+	public void setWeeklyHoursAlloted(Integer weeklyHoursAlloted) {
+		this.weeklyHoursAlloted = weeklyHoursAlloted;
 	}
 
 	public Boolean getDeleted() {

@@ -236,10 +236,11 @@ public class UserServiceImp implements UserService {
 		} else {
 			newTeacher.setSalary(60000.00);
 		}
+		newTeacher.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
 		newTeacher.setRole(roleRepo.findByName(ERole.ROLE_TEACHER).get());
 		newTeacher.setIsAdministrator(false);
 		newTeacher.setIsHomeroomTeacher(false);
-		newTeacher.setIsPrincipal(false);
+		newTeacher.setIsHeadmaster(false);
 		newTeacher.setDeleted(false);
 
 		return newTeacher;
@@ -263,6 +264,7 @@ public class UserServiceImp implements UserService {
 		newTeacherDTO.setJmbg(teacher.getJmbg());
 		newTeacherDTO.setUsername(teacher.getUsername());
 		newTeacherDTO.setSalary(teacher.getSalary());
+		newTeacherDTO.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
 		newTeacherDTO.setStartOfEmployment(teacher.getStartOfEmployment());
 
 		return new ResponseEntity<CreatedTeacherDTO>(newTeacherDTO, HttpStatus.OK);
@@ -353,16 +355,16 @@ public class UserServiceImp implements UserService {
 		if (role.equals(ERole.ROLE_ADMIN.toString())) {
 			teacher.setIsAdministrator(true);
 			teacher.setIsHomeroomTeacher(false);
-			teacher.setIsPrincipal(false);
-			teacher.setSalaryPrincipalBonus(0.00);
+			teacher.setIsHeadmaster(false);
+			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
 			teacher.setSalaryAdminBonus(bonus);
 		}
 		if (role.equals(ERole.ROLE_HOMEROOM.toString())) {
 			teacher.setIsAdministrator(false);
 			teacher.setIsHomeroomTeacher(true);
-			teacher.setIsPrincipal(false);
-			teacher.setSalaryPrincipalBonus(0.00);
+			teacher.setIsHeadmaster(false);
+			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(bonus);
 
@@ -370,16 +372,16 @@ public class UserServiceImp implements UserService {
 		if (role.equals(ERole.ROLE_HEADMASTER.toString())) {
 			teacher.setIsAdministrator(false);
 			teacher.setIsHomeroomTeacher(false);
-			teacher.setIsPrincipal(true);
+			teacher.setIsHeadmaster(true);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
-			teacher.setSalaryPrincipalBonus(bonus);
+			teacher.setSalaryHeadmasterBonus(bonus);
 		}
 		if (role.equals(ERole.ROLE_TEACHER.toString())) {
 			teacher.setIsAdministrator(false);
 			teacher.setIsHomeroomTeacher(false);
-			teacher.setIsPrincipal(false);
-			teacher.setSalaryPrincipalBonus(0.00);
+			teacher.setIsHeadmaster(false);
+			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
 		}

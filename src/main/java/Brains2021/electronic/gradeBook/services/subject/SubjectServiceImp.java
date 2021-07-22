@@ -47,6 +47,8 @@ public class SubjectServiceImp implements SubjectService {
 		SubjectEntity newSubject = new SubjectEntity();
 		newSubject.setName(ESubjectName.valueOf(subject.getName()));
 		newSubject.setDescription(subject.getDescription());
+		newSubject.setYearOfSchooling(subject.getYerofSchooling());
+		newSubject.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
 		newSubject.setDeleted(false);
 
 		return subjectRepo.save(newSubject);
@@ -64,6 +66,8 @@ public class SubjectServiceImp implements SubjectService {
 		CreatedSubjectDTO newSubjectDTO = new CreatedSubjectDTO();
 		newSubjectDTO.setDescription(subject.getDescription());
 		newSubjectDTO.setName(subject.getName().toString());
+		newSubjectDTO.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
+		newSubjectDTO.setYerofSchooling(subject.getYearOfSchooling());
 
 		return new ResponseEntity<CreatedSubjectDTO>(newSubjectDTO, HttpStatus.OK);
 	}

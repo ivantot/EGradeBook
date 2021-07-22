@@ -87,7 +87,7 @@ public class StudentGroupController {
 		// validate yaer
 		if (!year.matches("^I|II|III|IV|V|VI|VII|VIII$")) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(3005, "Provide a valid year value, using roman numerals between I and VIII."),
+					new RESTError(3005, "Provide a valid year value by using roman numerals between I and VIII."),
 					HttpStatus.BAD_REQUEST);
 		}
 

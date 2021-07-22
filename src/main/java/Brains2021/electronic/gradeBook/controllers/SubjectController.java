@@ -50,8 +50,11 @@ public class SubjectController {
 		}
 
 		// check db for subject
-		if (subjectRepo.findByName(ESubjectName.valueOf(subject.getName())).isPresent()) {
-			return new ResponseEntity<RESTError>(new RESTError(2001, "Subject already in the database."),
+		if (subjectRepo
+				.findByNameAndYearOfSchooling(ESubjectName.valueOf(subject.getName()), subject.getYerofSchooling())
+				.isPresent()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(2001, "Subject for a given year of schooling already in the database."),
 					HttpStatus.BAD_REQUEST);
 		}
 

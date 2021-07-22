@@ -9,9 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -45,11 +42,8 @@ public class StudentGroupEntity {
 	@OneToOne(mappedBy = "inChargeOf", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private TeacherEntity homeroomTeacher;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "TeacherSubjects_and_StudentGroups", joinColumns = {
-			@JoinColumn(name = "StudentGroupID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "TeacherSubjectID", nullable = false, updatable = false) })
-	private Set<TeacherSubjectEntity> subjectsTaken = new HashSet<>();
+	@OneToMany(mappedBy = "studentGroup", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	private Set<StudentGroupTakingASubjectEntity> subjectsTaken = new HashSet<>();
 
 	private Boolean deleted;
 
@@ -92,11 +86,11 @@ public class StudentGroupEntity {
 		this.homeroomTeacher = homeroomTeacher;
 	}
 
-	public Set<TeacherSubjectEntity> getSubjectsTaken() {
+	public Set<StudentGroupTakingASubjectEntity> getSubjectsTaken() {
 		return subjectsTaken;
 	}
 
-	public void setSubjectsTaken(Set<TeacherSubjectEntity> subjectsTaken) {
+	public void setSubjectsTaken(Set<StudentGroupTakingASubjectEntity> subjectsTaken) {
 		this.subjectsTaken = subjectsTaken;
 	}
 

@@ -32,7 +32,13 @@ public class SubjectEntity {
 	@Column(nullable = false)
 	private ESubjectName name;
 
+	@Column(nullable = false)
+	private String yearOfSchooling;
+
 	private String description;
+
+	@Column(nullable = false)
+	private Integer weeklyHoursRequired;
 
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<TeacherSubjectEntity> teachersTeaching = new HashSet<>();
@@ -68,6 +74,22 @@ public class SubjectEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getYearOfSchooling() {
+		return yearOfSchooling;
+	}
+
+	public void setYearOfSchooling(String yearofSchooling) {
+		this.yearOfSchooling = yearofSchooling;
+	}
+
+	public Integer getWeeklyHoursRequired() {
+		return weeklyHoursRequired;
+	}
+
+	public void setWeeklyHoursRequired(Integer weeklyHoursRequired) {
+		this.weeklyHoursRequired = weeklyHoursRequired;
 	}
 
 	public Set<TeacherSubjectEntity> getTeachersTeaching() {
