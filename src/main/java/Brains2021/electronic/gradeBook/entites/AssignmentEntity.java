@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
@@ -47,6 +48,9 @@ public class AssignmentEntity {
 	private LocalDate dateAssigned;
 
 	private LocalDate dateCompleted;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private LocalDate dueDate;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacherIssuing")
@@ -123,6 +127,14 @@ public class AssignmentEntity {
 
 	public void setDateAssigned(LocalDate dateAssigned) {
 		this.dateAssigned = dateAssigned;
+	}
+
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
 	}
 
 	public LocalDate getDateCompleted() {

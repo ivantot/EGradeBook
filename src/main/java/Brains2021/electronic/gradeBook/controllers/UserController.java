@@ -543,7 +543,7 @@ public class UserController {
 	/***************************************************************************************
 	 * PUT/DELETE endpoint for administrator looking to soft delete a user.
 	 * on further updates think about chain deleting parents if all children get deleted
-	 * -- postman code adm020 --
+	 * -- postman code adm030 --
 	 * 
 	 * @param username
 	 * @return if ok set user to deleted
@@ -576,7 +576,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * PUT endpoint for administrator looking to restore a deleted user.
-	 * -- postman code adm021 --
+	 * -- postman code adm031 --
 	 * 
 	 * @param username
 	 * @return if ok set user to restored
@@ -609,7 +609,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * GET endpoint for administrator looking to fetch all active users.
-	 * postman code adm030
+	 * postman code adm040
 	 * 
 	 * @return list of active users
 	 **************************************************************************************/
@@ -636,7 +636,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * GET endpoint for administrator looking to fetch all deleted users.
-	 * postman code adm031
+	 * postman code adm041
 	 * 
 	 * @return list of deleted users
 	 **************************************************************************************/
@@ -663,7 +663,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * GET endpoint for administrator looking to fetch all users with specific role.
-	 * postman code adm032
+	 * postman code adm042
 	 * 
 	 * @return list of active users with role
 	 **************************************************************************************/
@@ -695,7 +695,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * GET endpoint for administrator looking to fetch a specific active user.
-	 * postman code adm033
+	 * postman code adm043
 	 * 
 	 * @return specifoc user
 	 **************************************************************************************/
@@ -718,7 +718,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * GET endpoint for administrator looking to fetch children of specific active parent.
-	 * postman code adm034
+	 * postman code adm044
 	 * 
 	 * @return children list
 	 **************************************************************************************/
@@ -758,7 +758,7 @@ public class UserController {
 
 	/***************************************************************************************
 	 * GET endpoint for administrator looking to fetch parents of specific active student.
-	 * postman code adm035
+	 * postman code adm045
 	 * 
 	 * @return parents list
 	 **************************************************************************************/

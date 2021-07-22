@@ -1,11 +1,21 @@
 package Brains2021.electronic.gradeBook.services.subject;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import Brains2021.electronic.gradeBook.dtos.in.CreateSubjectDTO;
+import Brains2021.electronic.gradeBook.dtos.out.CreatedSubjectDTO;
+import Brains2021.electronic.gradeBook.entites.SubjectEntity;
+import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
 import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 @Service
 public class SubjectServiceImp implements SubjectService {
+
+	@Autowired
+	private SubjectRepository subjectRepo;
 
 	/**
 	 * 
@@ -23,4 +33,39 @@ public class SubjectServiceImp implements SubjectService {
 		}
 		return false;
 	}
+
+	/**
+	 * 
+	 * service that takes an input DTO and translates to entity and populates remaining fields
+	 * used for creating Subjects
+	 * 
+	 */
+	@Override
+	public SubjectEntity createSubjectDTOtranslation(CreateSubjectDTO subject) {
+
+		// translate DTO to entity and save to db
+		SubjectEntity newSubject = new SubjectEntity();
+		newSubject.setName(ESubjectName.valueOf(subject.getName()));
+		newSubject.setDescription(subject.getDescription());
+		newSubject.setDeleted(false);
+
+		return subjectRepo.save(newSubject);
+	}
+
+	/**
+	 * 
+	 * service that takes an entity and translates to DTO for pretty output
+	 * used for creating Subjects
+	 * 
+	 */
+	@Override
+	public ResponseEntity<?> createdSubjectDTOtranslation(SubjectEntity subject) {
+		// translate entity to DTO 
+		CreatedSubjectDTO newSubjectDTO = new CreatedSubjectDTO();
+		newSubjectDTO.setDescription(subject.getDescription());
+		newSubjectDTO.setName(subject.getName().toString());
+
+		return new ResponseEntity<CreatedSubjectDTO>(newSubjectDTO, HttpStatus.OK);
+	}
+
 }

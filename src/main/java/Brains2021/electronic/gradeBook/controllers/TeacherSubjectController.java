@@ -103,14 +103,14 @@ public class TeacherSubjectController {
 		return new ResponseEntity<String>("Teacher " + username + " to teach " + subject + ".", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
+	/*******************************************************************************************
 	 * PUT endpoint for administrator or headmaster looking to link a student group to a subject
 	 * -- postman code adm017 --
 	 * 
 	 * @param student group
 	 * @param subject taught by a teacher
 	 * @return if ok, student group linked to a subject
-	 ***************************************************************************************/
+	 *******************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/assignSubjectToStudentGroup")

@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateSubjectDTO;
-import Brains2021.electronic.gradeBook.dtos.out.CreatedSubjectDTO;
-import Brains2021.electronic.gradeBook.entites.SubjectEntity;
 import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
 import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.services.subject.SubjectService;
@@ -57,21 +55,7 @@ public class SubjectController {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		// translate DTO to entity and save to db
-		SubjectEntity newSubject = new SubjectEntity();
-		newSubject.setName(ESubjectName.valueOf(subject.getName()));
-		newSubject.setDescription(subject.getDescription());
-		newSubject.setDeleted(false);
-
-		subjectRepo.save(newSubject);
-
-		// translate entity to DTO 
-		CreatedSubjectDTO newSubjectDTO = new CreatedSubjectDTO();
-
-		newSubjectDTO.setDescription(newSubject.getDescription());
-		newSubjectDTO.setName(newSubject.getName().toString());
-
-		return new ResponseEntity<CreatedSubjectDTO>(newSubjectDTO, HttpStatus.OK);
+		return subjectService.createdSubjectDTOtranslation(subjectService.createSubjectDTOtranslation(subject));
 
 	}
 }

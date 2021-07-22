@@ -1,25 +1,36 @@
 package Brains2021.electronic.gradeBook.controllers;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateAssignmentDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.AssignmentRepository;
+import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
+import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.services.assignment.AssignmentService;
 import Brains2021.electronic.gradeBook.services.subject.SubjectService;
+import Brains2021.electronic.gradeBook.services.user.UserService;
 import Brains2021.electronic.gradeBook.utils.RESTError;
+import Brains2021.electronic.gradeBook.utils.enums.ERole;
 
 @RestController
 @RequestMapping(path = "/api/v1/assignments")
@@ -33,6 +44,15 @@ public class AssignmentController {
 
 	@Autowired
 	private SubjectService subjectService;
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private UserRepository userRepo;
+
+	@Autowired
+	private TeacherSubjectRepository teacherSubjectRepo;
 
 	/***************************************************************************************
 	 * POST endpoint for teaching staff looking to create a new assignment
@@ -53,7 +73,8 @@ public class AssignmentController {
 		}
 
 		// invoke a service to verify that the teacher with credentials used to log in teaches the subject from the assignment
-		if (assignmentService.createAssignmentDTOtranslation(assignment) == null) {
+		if (assignmentService.createAssignmentDTOtranslation(assignment) == null
+				|| !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
 			return new ResponseEntity<RESTError>(new RESTError(5001,
 					"Logged teacher not teaching the subject posted in the assignment, please verify the subject."),
 					HttpStatus.BAD_REQUEST);
@@ -67,7 +88,7 @@ public class AssignmentController {
 
 	/***************************************************************************************
 	 * PUT endpoint for teaching staff looking to link and assignment to a student
-	 * -- postman code adm017 --
+	 * -- postman code adm019 --
 	 * 
 	 * @param assignment
 	 * @param student
@@ -75,15 +96,79 @@ public class AssignmentController {
 	 ***************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
-	@RequestMapping(method = RequestMethod.PUT, path = "/assignToStudent")
-	public ResponseEntity<?> assignToStudent(String assignment, String student) {
+	@RequestMapping(method = RequestMethod.PUT, path = "/giveAssignmentToStudent")
+	public ResponseEntity<?> assignToStudent(@RequestParam Long assignmentID, @RequestParam String username,
+			@RequestParam("dueDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dueDate) {
 
-		// TODO check if teacher was the one who issued the assignment
-		// TODO check if student belongs to a group taking the subject taught by the teacher
-		// TODO asign to student
+		Optional<AssignmentEntity> assignment = assignmentRepo.findById(assignmentID);
+
+		// check if id is valid and active
+		if (assignment.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(5002, "Not a valid assignment id, check and retry."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		if (assignment.get().getDeleted() == true) {
+			return new ResponseEntity<RESTError>(new RESTError(5003, "Not an active assignment."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		// check if teacher was the one who issued the assignment
+		if (!assignment.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
+				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(5004, "Logged user didn't post the assignment with the give id."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		Optional<UserEntity> user = userRepo.findByUsername(username);
+
+		if (user.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(3003, "Student not in database."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		if (user.get().getDeleted() == true) {
+			return new ResponseEntity<RESTError>(new RESTError(3004, "Not an active student."), HttpStatus.BAD_REQUEST);
+		}
+
+		if (!user.get().getRole().getName().equals(ERole.ROLE_STUDENT)) {
+			return new ResponseEntity<RESTError>(new RESTError(3005, "User is not a student."), HttpStatus.BAD_REQUEST);
+		}
+
+		StudentEntity student = (StudentEntity) user.get();
+
+		// check if student belongs to a group taking the subject taught by the teacher
+		if (!student.getBelongsToStudentGroup().getSubjectsTaken()
+				.contains(teacherSubjectRepo.findBySubjectAndTeacher(
+						assignment.get().getTeacherIssuing().getSubject().getName(), userService.whoAmI()))
+				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(5004, "Logged teacher not teaching the student group the student belongs to."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		// check that student attends the study year corresponding with the one in assignment
+		if (!assignment.get().getStudyYear().equals(student.getBelongsToStudentGroup().getYear())) {
+
+			return new ResponseEntity<RESTError>(
+					new RESTError(3006, "Can't assign, check student's and assignment's study year."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		// asign to student
+
+		assignment.get().setAssignedTo(student);
+		assignment.get().setDateAssigned(LocalDate.now());
+		assignment.get().setDueDate(dueDate);
+		assignmentRepo.save(assignment.get());
 
 		return new ResponseEntity<String>(
-				"Assignment " + "TODO" + " given by " + "TODO" + " asigned to student " + "TODO" + ".", HttpStatus.OK);
-	}
+				"Assignment " + assignment.get().getType() + " in subject "
+						+ assignment.get().getTeacherIssuing().getSubject().getName() + " given by "
+						+ assignment.get().getTeacherIssuing().getTeacher().getUsername() + " asigned to student "
+						+ username + " on " + assignment.get().getDateAssigned() + " with due date " + dueDate + ".",
+				HttpStatus.OK);
 
+	}
 }
