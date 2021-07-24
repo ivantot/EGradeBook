@@ -13,16 +13,12 @@ public class CreateAssignmentDTO {
 	private String type;
 
 	@NotEmpty(message = "Description must be provided.")
-	@Size(max = 50, message = "Description must be less than {max} characters long.")
+	@Size(max = 60, message = "Description must be less than {max} characters long.")
 	private String description;
 
 	@Min(value = 1, message = "Select a valid semester (1 or 2).")
 	@Max(value = 2, message = "Select a valid semester (1 or 2).")
 	private Integer semester;
-
-	@NotEmpty(message = "Study year must be provided.")
-	@Pattern(regexp = "^I|II|III|IV|V|VI|VII|VIII$", message = "Provide a valid year value, using roman numerals between I and VIII.")
-	private String studyYear;
 
 	@NotEmpty(message = "Subject must be provided.")
 	private String subject;
@@ -53,14 +49,6 @@ public class CreateAssignmentDTO {
 
 	public void setSemester(Integer semester) {
 		this.semester = semester;
-	}
-
-	public String getStudyYear() {
-		return studyYear;
-	}
-
-	public void setStudyYear(String studyYear) {
-		this.studyYear = studyYear;
 	}
 
 	public String getSubject() {

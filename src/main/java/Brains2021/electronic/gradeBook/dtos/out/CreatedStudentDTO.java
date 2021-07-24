@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import Brains2021.electronic.gradeBook.security.Views;
 
 //@JsonRootName(value = "New Student")
-@JsonPropertyOrder({ "name", "surname", "username", "email", "jmbg", "dateOfBirth" })
+@JsonPropertyOrder({ "name", "surname", "username", "email", "jmbg", "studentUniqueNumber", "dateOfBirth" })
 public class CreatedStudentDTO {
 
 	@JsonView(Views.Admin.class)
@@ -37,6 +37,10 @@ public class CreatedStudentDTO {
 	@JsonProperty(value = "Date of birth")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate dateOfBirth;
+
+	@JsonView(Views.Admin.class)
+	@JsonProperty(value = "Student unique number")
+	private String studentUniqueNumber;
 
 	public CreatedStudentDTO() {
 		super();
@@ -80,6 +84,14 @@ public class CreatedStudentDTO {
 
 	public void setJmbg(String jmbg) {
 		this.jmbg = jmbg;
+	}
+
+	public String getStudentUniqueNumber() {
+		return studentUniqueNumber;
+	}
+
+	public void setStudentUniqueNumber(String studentUniqueNumber) {
+		this.studentUniqueNumber = studentUniqueNumber;
 	}
 
 	public LocalDate getDateOfBirth() {

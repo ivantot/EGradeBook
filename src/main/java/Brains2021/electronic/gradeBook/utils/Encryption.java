@@ -16,7 +16,7 @@ public class Encryption {
 	
 	//use for setting admin encoded password for db
 	public static void main(String[] args) {
-		System.out.println(getPasswordEncoded("admin"));
+		System.out.println(getPasswordEncoded("angel"));
 	}
 
 }

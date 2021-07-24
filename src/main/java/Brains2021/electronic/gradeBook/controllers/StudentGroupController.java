@@ -59,7 +59,7 @@ public class StudentGroupController {
 
 		// populate fields and save to db
 		StudentGroupEntity newStudentGroup = new StudentGroupEntity();
-		newStudentGroup.setDeleted(false);
+		newStudentGroup.setDeleted(0);
 		newStudentGroup.setYear(studentGroup.getYear());
 		newStudentGroup.setYearIndex(Integer.parseInt(studentGroup.getYearIndex()));
 
@@ -106,7 +106,7 @@ public class StudentGroupController {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		if (user.get().getDeleted() == true) {
+		if (user.get().getDeleted() == 1) {
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Not an active student."), HttpStatus.BAD_REQUEST);
 		}
 
@@ -136,7 +136,7 @@ public class StudentGroupController {
 	public ResponseEntity<?> assignHomeroomToStudentGroup(@RequestParam String username, @RequestParam String year,
 			@RequestParam Integer yearIndex) {
 
-		// validate yaer
+		// validate year
 		if (!year.matches("^I|II|III|IV|V|VI|VII|VIII$")) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(3005, "Provide a valid year value, using roman numerals between I and VIII."),
@@ -158,7 +158,7 @@ public class StudentGroupController {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		if (user.get().getDeleted() == true) {
+		if (user.get().getDeleted() == 1) {
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Not an active teacher."), HttpStatus.BAD_REQUEST);
 		}
 

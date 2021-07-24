@@ -16,6 +16,6 @@ public interface TeacherSubjectRepository extends CrudRepository<TeacherSubjectE
 	Optional<TeacherSubjectEntity> findBySubjectAndTeacher(@Param("subject") ESubjectName subject,
 			@Param("username") String username);
 
-	Optional<TeacherSubjectEntity> findByIdAndDeletedFalse(Long id);
+	Optional<TeacherSubjectEntity> findByIdAndDeleted(Long id, Integer deleted);
 
 }

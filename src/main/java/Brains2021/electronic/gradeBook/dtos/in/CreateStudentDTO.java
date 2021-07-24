@@ -44,6 +44,11 @@ public class CreateStudentDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate dateOfBirth;
 
+	@NotNull(message = "Unique number must be provided.")
+	@NotBlank(message = "Unique number can't be blank.")
+	@Size(min = 7, max = 7, message = "School ID must be between {min} and {max} characters long.")
+	private String studentUniqueNumber;
+
 	public CreateStudentDTO() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -103,6 +108,14 @@ public class CreateStudentDTO {
 
 	public void setJmbg(String jmbg) {
 		this.jmbg = jmbg;
+	}
+
+	public String getStudentUniqueNumber() {
+		return studentUniqueNumber;
+	}
+
+	public void setStudentUniqueNumber(String studentUniqueNumber) {
+		this.studentUniqueNumber = studentUniqueNumber;
 	}
 
 	public LocalDate getDateOfBirth() {

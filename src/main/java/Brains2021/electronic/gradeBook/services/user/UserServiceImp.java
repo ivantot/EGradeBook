@@ -32,6 +32,7 @@ import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UpdatedUserDTO;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
@@ -133,9 +134,10 @@ public class UserServiceImp implements UserService {
 		newStudent.setPassword(student.getPassword());
 		newStudent.setRepeatedPassword(student.getRepeatedPassword());
 		newStudent.setJmbg(student.getJmbg());
+		newStudent.setStudentUniqueNumber(student.getStudentUniqueNumber());
 		newStudent.setDateOfBirth(student.getDateOfBirth());
 		newStudent.setRole(roleRepo.findByName(ERole.ROLE_STUDENT).get());
-		newStudent.setDeleted(false);
+		newStudent.setDeleted(0);
 
 		return newStudent;
 
@@ -157,6 +159,7 @@ public class UserServiceImp implements UserService {
 		newStudentDTO.setDateOfBirth(student.getDateOfBirth());
 		newStudentDTO.setEmail(student.getEmail());
 		newStudentDTO.setJmbg(student.getJmbg());
+		newStudentDTO.setStudentUniqueNumber(student.getStudentUniqueNumber());
 		newStudentDTO.setUsername(student.getUsername());
 
 		return new ResponseEntity<CreatedStudentDTO>(newStudentDTO, HttpStatus.OK);
@@ -183,7 +186,7 @@ public class UserServiceImp implements UserService {
 		newParent.setDateOfBirth(parent.getDateOfBirth());
 		newParent.setPhoneNumber(parent.getPhoneNumber());
 		newParent.setRole(roleRepo.findByName(ERole.ROLE_PARENT).get());
-		newParent.setDeleted(false);
+		newParent.setDeleted(0);
 
 		return newParent;
 	}
@@ -238,10 +241,10 @@ public class UserServiceImp implements UserService {
 		}
 		newTeacher.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
 		newTeacher.setRole(roleRepo.findByName(ERole.ROLE_TEACHER).get());
-		newTeacher.setIsAdministrator(false);
-		newTeacher.setIsHomeroomTeacher(false);
-		newTeacher.setIsHeadmaster(false);
-		newTeacher.setDeleted(false);
+		newTeacher.setIsAdministrator(0);
+		newTeacher.setIsHomeroomTeacher(0);
+		newTeacher.setIsHeadmaster(0);
+		newTeacher.setDeleted(0);
 
 		return newTeacher;
 	}
@@ -353,34 +356,34 @@ public class UserServiceImp implements UserService {
 
 		// logic for assigning role-specific salary bonuses
 		if (role.equals(ERole.ROLE_ADMIN.toString())) {
-			teacher.setIsAdministrator(true);
-			teacher.setIsHomeroomTeacher(false);
-			teacher.setIsHeadmaster(false);
+			teacher.setIsAdministrator(1);
+			teacher.setIsHomeroomTeacher(0);
+			teacher.setIsHeadmaster(0);
 			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
 			teacher.setSalaryAdminBonus(bonus);
 		}
 		if (role.equals(ERole.ROLE_HOMEROOM.toString())) {
-			teacher.setIsAdministrator(false);
-			teacher.setIsHomeroomTeacher(true);
-			teacher.setIsHeadmaster(false);
+			teacher.setIsAdministrator(0);
+			teacher.setIsHomeroomTeacher(1);
+			teacher.setIsHeadmaster(0);
 			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(bonus);
 
 		}
 		if (role.equals(ERole.ROLE_HEADMASTER.toString())) {
-			teacher.setIsAdministrator(false);
-			teacher.setIsHomeroomTeacher(false);
-			teacher.setIsHeadmaster(true);
+			teacher.setIsAdministrator(0);
+			teacher.setIsHomeroomTeacher(0);
+			teacher.setIsHeadmaster(1);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
 			teacher.setSalaryHeadmasterBonus(bonus);
 		}
 		if (role.equals(ERole.ROLE_TEACHER.toString())) {
-			teacher.setIsAdministrator(false);
-			teacher.setIsHomeroomTeacher(false);
-			teacher.setIsHeadmaster(false);
+			teacher.setIsAdministrator(0);
+			teacher.setIsHomeroomTeacher(0);
+			teacher.setIsHeadmaster(0);
 			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
@@ -415,17 +418,17 @@ public class UserServiceImp implements UserService {
 	 * 
 	 */
 	@Override
-	public GetChildrenDTO foundChildrenDTOtranslation(StudentEntity student) {
+	public GetChildrenDTO foundChildrenDTOtranslation(StudentParentEntity student) {
 
 		GetChildrenDTO getStudent = new GetChildrenDTO();
-		getStudent.setName(student.getName());
-		getStudent.setSurname(student.getSurname());
-		getStudent.setRole(student.getRole().getName().toString());
-		getStudent.setUsername(student.getUsername());
-		getStudent.setBelongsToStudentGroup(student.getBelongsToStudentGroup());
+		getStudent.setName(student.getStudent().getName());
+		getStudent.setSurname(student.getStudent().getSurname());
+		getStudent.setRole(student.getStudent().getRole().getName().toString());
+		getStudent.setUsername(student.getStudent().getUsername());
+		getStudent.setBelongsToStudentGroup(student.getStudent().getBelongsToStudentGroup());
 		Map<String, String> parents = new HashMap<String, String>();
-		for (ParentEntity parent : student.getParents()) {
-			parents.put(parent.getUsername(), parent.getPhoneNumber());
+		for (StudentParentEntity parent : student.getStudent().getParents()) {
+			parents.put(parent.getParent().getName(), parent.getParent().getPhoneNumber());
 		}
 		getStudent.setParents(parents);
 
@@ -439,17 +442,17 @@ public class UserServiceImp implements UserService {
 	 * 
 	 */
 	@Override
-	public GetParentsDTO foundParentsDTOtranslation(ParentEntity parent) {
+	public GetParentsDTO foundParentsDTOtranslation(StudentParentEntity parent) {
 
 		GetParentsDTO getParent = new GetParentsDTO();
-		getParent.setName(parent.getName());
-		getParent.setSurname(parent.getSurname());
-		getParent.setRole(parent.getRole().getName().toString());
-		getParent.setUsername(parent.getUsername());
-		getParent.setPhoneNumber(parent.getPhoneNumber());
+		getParent.setName(parent.getParent().getName());
+		getParent.setSurname(parent.getParent().getSurname());
+		getParent.setRole(parent.getParent().getRole().getName().toString());
+		getParent.setUsername(parent.getParent().getUsername());
+		getParent.setPhoneNumber(parent.getParent().getPhoneNumber());
 		Set<String> children = new HashSet<String>();
-		for (StudentEntity child : parent.getChildren()) {
-			children.add(child.getUsername());
+		for (StudentParentEntity child : parent.getParent().getChildren()) {
+			children.add(child.getStudent().getName() + " " + child.getStudent().getSurname());
 		}
 		getParent.setChildren(children);
 

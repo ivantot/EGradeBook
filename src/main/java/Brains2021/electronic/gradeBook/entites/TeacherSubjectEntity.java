@@ -32,11 +32,11 @@ public class TeacherSubjectEntity {
 	private Integer weeklyHoursAlloted;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "teacher")
+	@JoinColumn(name = "teacherID")
 	private TeacherEntity teacher;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "subject")
+	@JoinColumn(name = "subjectID")
 	private SubjectEntity subject;
 
 	@OneToMany(mappedBy = "teacherSubject", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
@@ -45,7 +45,7 @@ public class TeacherSubjectEntity {
 	@OneToMany(mappedBy = "teacherIssuing", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<AssignmentEntity> assignmentsGiven = new HashSet<>();
 
-	private Boolean deleted;
+	private Integer deleted;
 
 	@Version
 	private Integer version;
@@ -102,11 +102,11 @@ public class TeacherSubjectEntity {
 		this.weeklyHoursAlloted = weeklyHoursAlloted;
 	}
 
-	public Boolean getDeleted() {
+	public Integer getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
 

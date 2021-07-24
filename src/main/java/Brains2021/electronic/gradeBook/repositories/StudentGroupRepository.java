@@ -10,6 +10,6 @@ public interface StudentGroupRepository extends CrudRepository<StudentGroupEntit
 
 	Optional<StudentGroupEntity> findByYearAndYearIndex(String year, Integer yearIndex);
 
-	Optional<StudentGroupEntity> findByIdAndDeletedFalse(Long id);
+	Optional<StudentGroupEntity> findByIdAndDeleted(Long id, Integer deleted);
 
 }

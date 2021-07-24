@@ -59,7 +59,7 @@ public class UserEntity {
 	private LocalDate dateOfBirth;
 
 	@Column(nullable = false)
-	private Boolean deleted;
+	private Integer deleted;
 
 	@Version
 	private Integer version;
@@ -146,11 +146,11 @@ public class UserEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Boolean getDeleted() {
+	public Integer getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
 

@@ -45,7 +45,7 @@ public class StudentGroupEntity {
 	@OneToMany(mappedBy = "studentGroup", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<StudentGroupTakingASubjectEntity> subjectsTaken = new HashSet<>();
 
-	private Boolean deleted;
+	private Integer deleted;
 
 	@Version
 	private Integer version;
@@ -102,11 +102,11 @@ public class StudentGroupEntity {
 		this.yearIndex = yearIndex;
 	}
 
-	public Boolean getDeleted() {
+	public Integer getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
 

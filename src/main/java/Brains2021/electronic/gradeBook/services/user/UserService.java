@@ -11,6 +11,7 @@ import Brains2021.electronic.gradeBook.dtos.out.GetParentsDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 
@@ -46,8 +47,8 @@ public interface UserService {
 
 	public GetUserDTO foundUserDTOtranslation(UserEntity user);
 
-	public GetChildrenDTO foundChildrenDTOtranslation(StudentEntity student);
+	public GetChildrenDTO foundChildrenDTOtranslation(StudentParentEntity student);
 
-	public GetParentsDTO foundParentsDTOtranslation(ParentEntity parent);
+	public GetParentsDTO foundParentsDTOtranslation(StudentParentEntity parent);
 
 }

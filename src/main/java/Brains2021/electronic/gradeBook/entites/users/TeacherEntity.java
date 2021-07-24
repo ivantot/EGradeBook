@@ -37,15 +37,15 @@ public class TeacherEntity extends UserEntity {
 
 	@JsonView(Views.Teacher.class)
 	@Column(nullable = false)
-	private Boolean isHomeroomTeacher;
+	private Integer isHomeroomTeacher;
 
 	@JsonView(Views.Teacher.class)
 	@Column(nullable = false)
-	private Boolean isHeadmaster;
+	private Integer isHeadmaster;
 
 	@JsonView(Views.Teacher.class)
 	@Column(nullable = false)
-	private Boolean isAdministrator;
+	private Integer isAdministrator;
 
 	@JsonView(Views.Headmaster.class)
 	private Double salaryHomeroomBonus;
@@ -59,9 +59,6 @@ public class TeacherEntity extends UserEntity {
 	@JsonView(Views.Headmaster.class)
 	@Column(nullable = false)
 	private Integer weeklyHourCapacity;
-
-	@JsonView(Views.Headmaster.class)
-	private Integer currentWeeklyEngagement;
 
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "inChargeOf")
@@ -90,27 +87,27 @@ public class TeacherEntity extends UserEntity {
 		this.salary = salary;
 	}
 
-	public Boolean getIsHomeroomTeacher() {
+	public Integer getIsHomeroomTeacher() {
 		return isHomeroomTeacher;
 	}
 
-	public void setIsHomeroomTeacher(Boolean isHomeroomTeacher) {
+	public void setIsHomeroomTeacher(Integer isHomeroomTeacher) {
 		this.isHomeroomTeacher = isHomeroomTeacher;
 	}
 
-	public Boolean getIsHeadmaster() {
+	public Integer getIsHeadmaster() {
 		return isHeadmaster;
 	}
 
-	public void setIsHeadmaster(Boolean isHeadmaster) {
+	public void setIsHeadmaster(Integer isHeadmaster) {
 		this.isHeadmaster = isHeadmaster;
 	}
 
-	public Boolean getIsAdministrator() {
+	public Integer getIsAdministrator() {
 		return isAdministrator;
 	}
 
-	public void setIsAdministrator(Boolean isAdministrator) {
+	public void setIsAdministrator(Integer isAdministrator) {
 		this.isAdministrator = isAdministrator;
 	}
 
@@ -144,14 +141,6 @@ public class TeacherEntity extends UserEntity {
 
 	public void setWeeklyHourCapacity(Integer weeklyHourCapacity) {
 		this.weeklyHourCapacity = weeklyHourCapacity;
-	}
-
-	public Integer getCurrentWeeklyEngagement() {
-		return currentWeeklyEngagement;
-	}
-
-	public void setCurrentWeeklyEngagement(Integer currentWeeklyEngagement) {
-		this.currentWeeklyEngagement = currentWeeklyEngagement;
 	}
 
 	public StudentGroupEntity getInChargeOf() {

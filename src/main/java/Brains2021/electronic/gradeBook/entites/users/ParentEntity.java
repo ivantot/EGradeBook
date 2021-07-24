@@ -6,13 +6,10 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -28,12 +25,9 @@ public class ParentEntity extends UserEntity {
 	private String phoneNumber;
 
 	@JsonView(Views.Parent.class)
-	@JsonBackReference(value = "ref3")
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-	@JoinTable(name = "Parents_and_Children", joinColumns = {
-			@JoinColumn(name = "ParentID", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "StudentID", nullable = false, updatable = false) })
-	private Set<StudentEntity> children = new HashSet<>();
+	//@JsonBackReference(value = "ref3")
+	@OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	private Set<StudentParentEntity> children = new HashSet<>();
 
 	public ParentEntity() {
 		super();
@@ -47,11 +41,11 @@ public class ParentEntity extends UserEntity {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public Set<StudentEntity> getChildren() {
+	public Set<StudentParentEntity> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<StudentEntity> children) {
+	public void setChildren(Set<StudentParentEntity> children) {
 		this.children = children;
 	}
 

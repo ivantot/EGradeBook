@@ -23,7 +23,7 @@ import Brains2021.electronic.gradeBook.utils.enums.EAssignmentType;
 
 @Entity
 @JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
-@Table(name = "Asignments")
+@Table(name = "Assignments")
 public class AssignmentEntity {
 
 	@Id
@@ -38,9 +38,6 @@ public class AssignmentEntity {
 
 	@Column(nullable = false)
 	private Integer semester;
-
-	@Column(nullable = false)
-	private String studyYear;
 
 	@Column(nullable = false)
 	private LocalDate dateCreated;
@@ -64,7 +61,7 @@ public class AssignmentEntity {
 
 	private Integer overridenGrade;
 
-	private Boolean deleted;
+	private Integer deleted;
 
 	@Version
 	private Integer version;
@@ -103,14 +100,6 @@ public class AssignmentEntity {
 
 	public void setSemester(Integer semester) {
 		this.semester = semester;
-	}
-
-	public String getStudyYear() {
-		return studyYear;
-	}
-
-	public void setStudyYear(String studyYear) {
-		this.studyYear = studyYear;
 	}
 
 	public LocalDate getDateCreated() {
@@ -177,11 +166,11 @@ public class AssignmentEntity {
 		this.assignedTo = assignedTo;
 	}
 
-	public Boolean getDeleted() {
+	public Integer getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
 

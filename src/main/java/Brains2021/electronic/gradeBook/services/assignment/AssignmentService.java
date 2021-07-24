@@ -11,4 +11,6 @@ public interface AssignmentService {
 
 	public ResponseEntity<?> createdAssignmentDTOtranslation(AssignmentEntity assignment);
 
+	public ResponseEntity<?> sendEmailForGradedAssignemnt(AssignmentEntity assignment);
+
 }

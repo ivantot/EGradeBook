@@ -36,9 +36,11 @@ import Brains2021.electronic.gradeBook.dtos.out.UserTokenDTO;
 import Brains2021.electronic.gradeBook.entites.RoleEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.services.user.UserService;
@@ -58,6 +60,8 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	private StudentRepository studentRepo;
 
 	/***************************************************************************************
 	 * POST login endpoint accessible to all
@@ -136,7 +140,12 @@ public class UserController {
 		}
 		if (userRepo.findByJmbg(newStudent.getJmbg()).isPresent()) {
 			return new ResponseEntity<RESTError>(
-					new RESTError(22, "Student with an existing unique ID number in database."),
+					new RESTError(1022, "Student with an existing unique ID number in database."),
+					HttpStatus.BAD_REQUEST);
+		}
+		if (studentRepo.findByStudentUniqueNumber(newStudent.getStudentUniqueNumber()).isPresent()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(1023, "Student with an existing school ID number in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -517,6 +526,9 @@ public class UserController {
 
 		StudentEntity updatedStudent = (StudentEntity) ogStudent.get();
 		ParentEntity updatedParent = (ParentEntity) ogParent.get();
+		StudentParentEntity studentParent = new StudentParentEntity();
+		studentParent.setParent(updatedParent);
+		studentParent.setStudent(updatedStudent);
 
 		// check for number of parents
 		if (updatedStudent.getParents().size() >= 2) {
@@ -525,14 +537,14 @@ public class UserController {
 		}
 
 		// check if child already assigned
-		Set<StudentEntity> children = (Set<StudentEntity>) updatedParent.getChildren();
-		if (children.contains(updatedStudent)) {
+		Set<StudentParentEntity> children = updatedParent.getChildren();
+		if (children.contains(studentParent)) {
 			return new ResponseEntity<RESTError>(new RESTError(1110, "Student already assigned to a parent."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// add Student to list of children, update parent and save to db
-		children.add(updatedStudent);
+		children.add(studentParent);
 		updatedParent.setChildren(children);
 		userRepo.save(updatedParent);
 
@@ -562,14 +574,14 @@ public class UserController {
 		}
 
 		// check if user existing, but already deleted
-		if (ogUser.get().getDeleted().equals(true)) {
+		if (ogUser.get().getDeleted().equals(1)) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1070,
 							"User previously deleted and not accesible. Use different endpoint to restore the user."),
 					HttpStatus.BAD_REQUEST);
 		}
 		// set to deleted and save
-		ogUser.get().setDeleted(true);
+		ogUser.get().setDeleted(1);
 		userRepo.save(ogUser.get());
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
@@ -595,14 +607,14 @@ public class UserController {
 		}
 
 		// check if user existing, and set to deleted
-		if (ogUser.get().getDeleted().equals(false)) {
+		if (ogUser.get().getDeleted().equals(0)) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1080, "User is active. Use different endpoint to delete the user."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// restore user and save
-		ogUser.get().setDeleted(false);
+		ogUser.get().setDeleted(0);
 		userRepo.save(ogUser.get());
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
@@ -739,7 +751,7 @@ public class UserController {
 		// prepare a list for output and get children list from parent, check if list is empty
 		List<GetChildrenDTO> activeChildrenDTOs = new ArrayList<>();
 		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
-		Set<StudentEntity> children = (Set<StudentEntity>) ogParentCast.getChildren();
+		Set<StudentParentEntity> children = (Set<StudentParentEntity>) ogParentCast.getChildren();
 
 		if (children.isEmpty()) {
 			return new ResponseEntity<RESTError>(
@@ -748,7 +760,7 @@ public class UserController {
 		}
 
 		// translate to DTO using a service
-		for (StudentEntity studentEntity : children) {
+		for (StudentParentEntity studentEntity : children) {
 			activeChildrenDTOs.add(userService.foundChildrenDTOtranslation(studentEntity));
 		}
 
@@ -779,7 +791,7 @@ public class UserController {
 		// prepare a list for output and get parents list from children, check if list is empty
 		List<GetParentsDTO> activeParentsDTOs = new ArrayList<>();
 		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
-		Set<ParentEntity> parents = (Set<ParentEntity>) ogStudentCast.getParents();
+		Set<StudentParentEntity> parents = (Set<StudentParentEntity>) ogStudentCast.getParents();
 
 		if (parents.isEmpty()) {
 			return new ResponseEntity<RESTError>(
@@ -788,7 +800,7 @@ public class UserController {
 		}
 
 		// translate to DTO using a service
-		for (ParentEntity parentEntity : parents) {
+		for (StudentParentEntity parentEntity : parents) {
 			activeParentsDTOs.add(userService.foundParentsDTOtranslation(parentEntity));
 		}
 

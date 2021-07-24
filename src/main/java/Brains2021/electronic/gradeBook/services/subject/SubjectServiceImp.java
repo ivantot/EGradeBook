@@ -49,7 +49,7 @@ public class SubjectServiceImp implements SubjectService {
 		newSubject.setDescription(subject.getDescription());
 		newSubject.setYearOfSchooling(subject.getYerofSchooling());
 		newSubject.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
-		newSubject.setDeleted(false);
+		newSubject.setDeleted(0);
 
 		return subjectRepo.save(newSubject);
 	}

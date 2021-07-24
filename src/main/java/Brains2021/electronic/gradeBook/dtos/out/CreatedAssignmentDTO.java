@@ -26,10 +26,6 @@ public class CreatedAssignmentDTO {
 	private Integer semester;
 
 	@JsonView(Views.Teacher.class)
-	@JsonProperty(value = "Study year")
-	private String studyYear;
-
-	@JsonView(Views.Teacher.class)
 	@JsonProperty(value = "Date of creation")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate dateCreated;
@@ -68,14 +64,6 @@ public class CreatedAssignmentDTO {
 
 	public void setSemester(Integer semester) {
 		this.semester = semester;
-	}
-
-	public String getStudyYear() {
-		return studyYear;
-	}
-
-	public void setStudyYear(String studyYear) {
-		this.studyYear = studyYear;
 	}
 
 	public LocalDate getDateCreated() {

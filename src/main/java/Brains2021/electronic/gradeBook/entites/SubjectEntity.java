@@ -43,7 +43,7 @@ public class SubjectEntity {
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<TeacherSubjectEntity> teachersTeaching = new HashSet<>();
 
-	private Boolean deleted;
+	private Integer deleted;
 
 	@Version
 	private Integer version;
@@ -100,11 +100,11 @@ public class SubjectEntity {
 		this.teachersTeaching = teachersTeaching;
 	}
 
-	public Boolean getDeleted() {
+	public Integer getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
 

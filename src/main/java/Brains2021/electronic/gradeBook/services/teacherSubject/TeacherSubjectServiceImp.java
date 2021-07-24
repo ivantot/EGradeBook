@@ -41,7 +41,7 @@ public class TeacherSubjectServiceImp implements TeacherSubjectService {
 				.setSubject(subjectRepo.findByNameAndYearOfSchooling(ESubjectName.valueOf(teacherSubject.getSubject()),
 						teacherSubject.getYearOfSchooling()).get());
 		newTeacherSubject.setTeacher((TeacherEntity) userRepo.findByUsername(teacherSubject.getUsername()).get());
-		newTeacherSubject.setDeleted(false);
+		newTeacherSubject.setDeleted(0);
 		newTeacherSubject.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
 
 		return teacherSubjectRepo.save(newTeacherSubject);

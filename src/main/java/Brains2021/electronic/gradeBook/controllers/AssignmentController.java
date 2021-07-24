@@ -74,7 +74,7 @@ public class AssignmentController {
 
 		// invoke a service to verify that the teacher with credentials used to log in teaches the subject from the assignment
 		if (assignmentService.createAssignmentDTOtranslation(assignment) == null
-				|| !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
 			return new ResponseEntity<RESTError>(new RESTError(5001,
 					"Logged teacher not teaching the subject posted in the assignment, please verify the subject."),
 					HttpStatus.BAD_REQUEST);
@@ -97,7 +97,7 @@ public class AssignmentController {
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/giveAssignmentToStudent")
-	public ResponseEntity<?> assignToStudent(@RequestParam Long assignmentID, @RequestParam String username,
+	public ResponseEntity<?> assignToStudent(@RequestParam Long assignmentID, @RequestParam String studentUsername,
 			@RequestParam("dueDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dueDate) {
 
 		Optional<AssignmentEntity> assignment = assignmentRepo.findById(assignmentID);
@@ -108,7 +108,7 @@ public class AssignmentController {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		if (assignment.get().getDeleted() == true) {
+		if (assignment.get().getDeleted() == 1) {
 			return new ResponseEntity<RESTError>(new RESTError(5003, "Not an active assignment."),
 					HttpStatus.BAD_REQUEST);
 		}
@@ -121,14 +121,14 @@ public class AssignmentController {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		Optional<UserEntity> user = userRepo.findByUsername(username);
+		Optional<UserEntity> user = userRepo.findByUsername(studentUsername);
 
 		if (user.isEmpty()) {
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Student not in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
-		if (user.get().getDeleted() == true) {
+		if (user.get().getDeleted() == 1) {
 			return new ResponseEntity<RESTError>(new RESTError(3004, "Not an active student."), HttpStatus.BAD_REQUEST);
 		}
 
@@ -138,7 +138,7 @@ public class AssignmentController {
 
 		StudentEntity student = (StudentEntity) user.get();
 
-		// check if student belongs to a group taking the subject taught by the teacher
+		// check if student belongs to a group taking the subject taught by the teacher ---- FIX THIS ! -----
 		if (!student.getBelongsToStudentGroup().getSubjectsTaken()
 				.contains(teacherSubjectRepo.findBySubjectAndTeacher(
 						assignment.get().getTeacherIssuing().getSubject().getName(), userService.whoAmI()))
@@ -149,7 +149,8 @@ public class AssignmentController {
 		}
 
 		// check that student attends the study year corresponding with the one in assignment
-		if (!assignment.get().getStudyYear().equals(student.getBelongsToStudentGroup().getYear())) {
+		if (!assignment.get().getTeacherIssuing().getSubject().getYearOfSchooling()
+				.equals(student.getBelongsToStudentGroup().getYear())) {
 
 			return new ResponseEntity<RESTError>(
 					new RESTError(3006, "Can't assign, check student's and assignment's study year."),
@@ -163,12 +164,57 @@ public class AssignmentController {
 		assignment.get().setDueDate(dueDate);
 		assignmentRepo.save(assignment.get());
 
-		return new ResponseEntity<String>(
-				"Assignment " + assignment.get().getType() + " in subject "
-						+ assignment.get().getTeacherIssuing().getSubject().getName() + " given by "
-						+ assignment.get().getTeacherIssuing().getTeacher().getUsername() + " asigned to student "
-						+ username + " on " + assignment.get().getDateAssigned() + " with due date " + dueDate + ".",
+		return new ResponseEntity<String>("Assignment " + assignment.get().getType() + " in subject "
+				+ assignment.get().getTeacherIssuing().getSubject().getName() + " given by "
+				+ assignment.get().getTeacherIssuing().getTeacher().getUsername() + " asigned to student "
+				+ studentUsername + " on " + assignment.get().getDateAssigned() + " with due date " + dueDate + ".",
 				HttpStatus.OK);
 
 	}
+
+	/***************************************************************************************
+	 * PUT endpoint for teaching staff looking to grade an assignment
+	 * -- postman code adm020 --
+	 * 
+	 * @param assignmentID
+	 * @return if ok, give grade to assignment
+	 ***************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
+	@JsonView(Views.Teacher.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/gradeAssignment")
+	public ResponseEntity<?> gradeAssignment(@RequestParam Long assignmentID, @RequestParam Integer grade) {
+
+		// validate grade
+		if (grade != 1 && grade != 2 && grade != 3 && grade != 4 && grade != 5) {
+			return new ResponseEntity<RESTError>(new RESTError(5007, "Provide a valid grade between 1 and 5."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		Optional<AssignmentEntity> assignmentForGrading = assignmentRepo.findById(assignmentID);
+
+		// check if id is valid and active
+		if (assignmentForGrading.isEmpty()) {
+			return new ResponseEntity<RESTError>(new RESTError(5002, "Not a valid assignment id, check and retry."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		assignmentForGrading.get().setGradeRecieved(grade);
+		assignmentForGrading.get().setDateCompleted(LocalDate.now());
+
+		assignmentRepo.save(assignmentForGrading.get());
+
+		assignmentService.sendEmailForGradedAssignemnt(assignmentForGrading.get());
+
+		return new ResponseEntity<String>("Assignment " + assignmentForGrading.get().getType() + " in subject "
+				+ assignmentForGrading.get().getTeacherIssuing().getSubject().getName() + " given by "
+				+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getName()
+				+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getSurname() + " asigned to student "
+				+ assignmentForGrading.get().getAssignedTo().getName()
+				+ assignmentForGrading.get().getAssignedTo().getSurname() + " on "
+				+ assignmentForGrading.get().getDateAssigned() + " with due date "
+				+ assignmentForGrading.get().getDueDate() + " has just been graded and recieved "
+				+ assignmentForGrading.get().getGradeRecieved()
+				+ ". And email has been sent to the parent(s) as a notification.", HttpStatus.OK);
+	}
+
 }

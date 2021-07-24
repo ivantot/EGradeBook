@@ -84,7 +84,7 @@ public class TeacherSubjectController {
 					HttpStatus.NOT_FOUND);
 		}
 
-		if (ogSubject.get().getDeleted() == true) {
+		if (ogSubject.get().getDeleted() == 1) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(5031, "Not an active subject, please contact the administrator to reinstate."),
 					HttpStatus.BAD_REQUEST);
@@ -98,7 +98,7 @@ public class TeacherSubjectController {
 					HttpStatus.NOT_FOUND);
 		}
 
-		if (ogUser.get().getDeleted() == true) {
+		if (ogUser.get().getDeleted() == 1) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1031, "Not an active user, please contact the administrator to reinstate."),
 					HttpStatus.BAD_REQUEST);
@@ -133,7 +133,7 @@ public class TeacherSubjectController {
 	public ResponseEntity<?> assignToStudentGroup(@RequestParam Long studentGroupID, @RequestParam Long subjectTaughtID,
 			@RequestParam Integer weeklyHours) {
 
-		Optional<StudentGroupEntity> studentGroup = studentGroupRepository.findByIdAndDeletedFalse(studentGroupID);
+		Optional<StudentGroupEntity> studentGroup = studentGroupRepository.findByIdAndDeleted(studentGroupID, 0);
 
 		if (studentGroup.isEmpty()) {
 			return new ResponseEntity<RESTError>(
@@ -141,7 +141,7 @@ public class TeacherSubjectController {
 					HttpStatus.NOT_FOUND);
 		}
 
-		Optional<TeacherSubjectEntity> teacherSubject = teacherSubjectRepo.findByIdAndDeletedFalse(subjectTaughtID);
+		Optional<TeacherSubjectEntity> teacherSubject = teacherSubjectRepo.findByIdAndDeleted(subjectTaughtID, 0);
 
 		if (teacherSubject.isEmpty()) {
 			return new ResponseEntity<RESTError>(
@@ -153,7 +153,7 @@ public class TeacherSubjectController {
 
 		StudentGroupTakingASubjectEntity newStudentGroupTakingASubject = new StudentGroupTakingASubjectEntity();
 
-		newStudentGroupTakingASubject.setDeleted(false);
+		newStudentGroupTakingASubject.setDeleted(0);
 		newStudentGroupTakingASubject.setStudentGroup(studentGroup.get());
 		newStudentGroupTakingASubject.setTeacherSubject(teacherSubject.get());
 		newStudentGroupTakingASubject.setWeeklyHours(weeklyHours);

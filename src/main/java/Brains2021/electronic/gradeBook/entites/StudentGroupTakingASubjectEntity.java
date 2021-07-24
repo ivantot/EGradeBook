@@ -20,7 +20,7 @@ public class StudentGroupTakingASubjectEntity {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "SubjectTeacherID")
+	@Column(name = "Student_groups_and_SubjectsID")
 	private Long id;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -33,7 +33,7 @@ public class StudentGroupTakingASubjectEntity {
 
 	private Integer weeklyHours;
 
-	private Boolean deleted;
+	private Integer deleted;
 
 	@Version
 	private Integer version;
@@ -74,11 +74,11 @@ public class StudentGroupTakingASubjectEntity {
 		this.weeklyHours = weeklyHours;
 	}
 
-	public Boolean getDeleted() {
+	public Integer getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
 
