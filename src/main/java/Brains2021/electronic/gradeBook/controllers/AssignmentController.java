@@ -198,6 +198,19 @@ public class AssignmentController {
 					HttpStatus.BAD_REQUEST);
 		}
 
+		if (!assignmentForGrading.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
+				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(5002,
+							"Looged teacher not responsible for this assignment. Please check assignment ID"),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		if (assignmentForGrading.get().getAssignedTo() == null) {
+			return new ResponseEntity<RESTError>(new RESTError(5009, "Assignment not yet given out."),
+					HttpStatus.BAD_REQUEST);
+		}
+
 		assignmentForGrading.get().setGradeRecieved(grade);
 		assignmentForGrading.get().setDateCompleted(LocalDate.now());
 
@@ -207,14 +220,14 @@ public class AssignmentController {
 
 		return new ResponseEntity<String>("Assignment " + assignmentForGrading.get().getType() + " in subject "
 				+ assignmentForGrading.get().getTeacherIssuing().getSubject().getName() + " given by "
-				+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getName()
+				+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getName() + " "
 				+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getSurname() + " asigned to student "
-				+ assignmentForGrading.get().getAssignedTo().getName()
+				+ assignmentForGrading.get().getAssignedTo().getName() + " "
 				+ assignmentForGrading.get().getAssignedTo().getSurname() + " on "
 				+ assignmentForGrading.get().getDateAssigned() + " with due date "
 				+ assignmentForGrading.get().getDueDate() + " has just been graded and recieved "
 				+ assignmentForGrading.get().getGradeRecieved()
-				+ ". And email has been sent to the parent(s) as a notification.", HttpStatus.OK);
+				+ ". An email has been sent to the parent(s) as a notification.", HttpStatus.OK);
 	}
 
 }
