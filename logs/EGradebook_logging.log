@@ -1,0 +1,278 @@
+2021-07-25 17:12:33.806  INFO 15948 --- [main] B.e.gradeBook.EGradeBookApplication      : Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 15948 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+2021-07-25 17:12:33.808  INFO 15948 --- [main] B.e.gradeBook.EGradeBookApplication      : No active profile set, falling back to default profiles: default
+2021-07-25 17:12:34.393  INFO 15948 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-07-25 17:12:34.475  INFO 15948 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 72 ms. Found 11 JPA repository interfaces.
+2021-07-25 17:12:34.733  INFO 15948 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@6a87026' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-07-25 17:12:34.737  INFO 15948 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-07-25 17:12:34.919  INFO 15948 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8090 (http)
+2021-07-25 17:12:34.927  INFO 15948 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-07-25 17:12:34.927  INFO 15948 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.48]
+2021-07-25 17:12:35.023  INFO 15948 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-07-25 17:12:35.023  INFO 15948 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1174 ms
+2021-07-25 17:12:35.389  INFO 15948 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-07-25 17:12:35.674  INFO 15948 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-07-25 17:12:36.584  INFO 15948 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-07-25 17:12:36.618  WARN 15948 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2021-07-25 17:12:37.176  INFO 15948 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: e2498c5a-ad01-4cd8-9a66-613d09255ae8
+
+2021-07-25 17:12:37.247  INFO 15948 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1f596988, org.springframework.security.web.context.SecurityContextPersistenceFilter@7f65639e, org.springframework.security.web.header.HeaderWriterFilter@a1689e8, org.springframework.security.web.authentication.logout.LogoutFilter@24bc06dd, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@6bf34912, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4cf1ec2, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@69efdfd9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1bcdd302, org.springframework.security.web.session.SessionManagementFilter@9fd5dd0, org.springframework.security.web.access.ExceptionTranslationFilter@60510791, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@76efa2b7]
+2021-07-25 17:12:37.573  INFO 15948 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8090 (http) with context path ''
+2021-07-25 17:12:37.580  INFO 15948 --- [main] B.e.gradeBook.EGradeBookApplication      : Started EGradeBookApplication in 4.102 seconds (JVM running for 4.753)
+2021-07-25 17:42:37.816  INFO 15948 --- [RMI TCP Connection(32)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2021-07-25 17:42:37.864  INFO 15948 --- [RMI TCP Connection(32)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-07-25 17:42:37.866  INFO 15948 --- [RMI TCP Connection(32)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-07-25 17:42:37.871  INFO 15948 --- [RMI TCP Connection(32)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+[34mINFO [0;39m [33m25 Jul 2021 - 17:42:42.460[0;39m [34m[main][0;39m [36mB.e.gradeBook.EGradeBookApplication[0;39m - [32mStarting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 14592 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:42.462[0;39m [34m[main][0;39m [36mB.e.gradeBook.EGradeBookApplication[0;39m - [32mNo active profile set, falling back to default profiles: default
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.073[0;39m [34m[main][0;39m [36mo.s.d.r.c.RepositoryConfigurationDelegate[0;39m - [32mBootstrapping Spring Data JPA repositories in DEFAULT mode.
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.151[0;39m [34m[main][0;39m [36mo.s.d.r.c.RepositoryConfigurationDelegate[0;39m - [32mFinished Spring Data repository scanning in 73 ms. Found 11 JPA repository interfaces.
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.410[0;39m [34m[main][0;39m [36mo.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker[0;39m - [32mBean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@77f68df' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.414[0;39m [34m[main][0;39m [36mo.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker[0;39m - [32mBean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.637[0;39m [34m[main][0;39m [36mo.s.b.w.e.tomcat.TomcatWebServer[0;39m - [32mTomcat initialized with port(s): 8090 (http)
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.647[0;39m [34m[main][0;39m [36mo.a.catalina.core.StandardService[0;39m - [32mStarting service [Tomcat]
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.648[0;39m [34m[main][0;39m [36mo.a.catalina.core.StandardEngine[0;39m - [32mStarting Servlet engine: [Apache Tomcat/9.0.48]
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.774[0;39m [34m[main][0;39m [36mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - [32mInitializing Spring embedded WebApplicationContext
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:43.775[0;39m [34m[main][0;39m [36mo.s.b.w.s.c.ServletWebServerApplicationContext[0;39m - [32mRoot WebApplicationContext: initialization completed in 1280 ms
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:44.281[0;39m [34m[main][0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - [32mHikariPool-1 - Starting...
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:44.583[0;39m [34m[main][0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - [32mHikariPool-1 - Start completed.
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:45.605[0;39m [34m[main][0;39m [36mo.s.o.j.LocalContainerEntityManagerFactoryBean[0;39m - [32mInitialized JPA EntityManagerFactory for persistence unit 'default'
+[0;39m[31mWARN [0;39m [33m25 Jul 2021 - 17:42:45.639[0;39m [34m[main][0;39m [36mo.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration[0;39m - [32mspring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:46.240[0;39m [34m[main][0;39m [36mo.s.b.a.s.s.UserDetailsServiceAutoConfiguration[0;39m - [32m
+
+Using generated security password: 60403f8f-89f9-44e9-baf7-69b37fe5cfac
+
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:46.308[0;39m [34m[main][0;39m [36mo.s.s.web.DefaultSecurityFilterChain[0;39m - [32mWill secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7925e772, org.springframework.security.web.context.SecurityContextPersistenceFilter@48619f15, org.springframework.security.web.header.HeaderWriterFilter@7c928399, org.springframework.security.web.authentication.logout.LogoutFilter@32eac39b, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@365a4b9b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@78a7fccd, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7f65639e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@240e61, org.springframework.security.web.session.SessionManagementFilter@4598961d, org.springframework.security.web.access.ExceptionTranslationFilter@4f3b11e6, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1964ef9]
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:46.646[0;39m [34m[main][0;39m [36mo.s.b.w.e.tomcat.TomcatWebServer[0;39m - [32mTomcat started on port(s): 8090 (http) with context path ''
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:42:46.654[0;39m [34m[main][0;39m [36mB.e.gradeBook.EGradeBookApplication[0;39m - [32mStarted EGradeBookApplication in 4.516 seconds (JVM running for 5.165)
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:44:02.572[0;39m [34m[RMI TCP Connection(4)-127.0.0.1][0;39m [36mo.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin[0;39m - [32mApplication shutdown requested.
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:44:02.617[0;39m [34m[RMI TCP Connection(4)-127.0.0.1][0;39m [36mo.s.o.j.LocalContainerEntityManagerFactoryBean[0;39m - [32mClosing JPA EntityManagerFactory for persistence unit 'default'
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:44:02.618[0;39m [34m[RMI TCP Connection(4)-127.0.0.1][0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - [32mHikariPool-1 - Shutdown initiated...
+[0;39m[34mINFO [0;39m [33m25 Jul 2021 - 17:44:02.623[0;39m [34m[RMI TCP Connection(4)-127.0.0.1][0;39m [36mcom.zaxxer.hikari.HikariDataSource[0;39m - [32mHikariPool-1 - Shutdown completed.
+[0;39m25 Jul 2021 - 17:44:07.031 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 14188 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+25 Jul 2021 - 17:44:07.033 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+25 Jul 2021 - 17:44:07.606 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25 Jul 2021 - 17:44:07.694 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 82 ms. Found 11 JPA repository interfaces.
+25 Jul 2021 - 17:44:07.953 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@44b21f9f' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 17:44:07.956 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 17:44:08.140 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+25 Jul 2021 - 17:44:08.147 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+25 Jul 2021 - 17:44:08.148 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+25 Jul 2021 - 17:44:08.242 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+25 Jul 2021 - 17:44:08.242 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1174 ms
+25 Jul 2021 - 17:44:08.603 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+25 Jul 2021 - 17:44:08.887 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+25 Jul 2021 - 17:44:09.814 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 17:44:09.848 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+25 Jul 2021 - 17:44:10.382 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: fb0a84a4-4634-421f-856c-0da0cabe5142
+
+25 Jul 2021 - 17:44:10.456 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@93c66ef, org.springframework.security.web.context.SecurityContextPersistenceFilter@434a2a10, org.springframework.security.web.header.HeaderWriterFilter@67b2c8bb, org.springframework.security.web.authentication.logout.LogoutFilter@6fc3f1a7, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@7e916dc2, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@701da311, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@721fc228, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1a18e68a, org.springframework.security.web.session.SessionManagementFilter@684eb4a0, org.springframework.security.web.access.ExceptionTranslationFilter@4ef0bc5b, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@493489dd]
+25 Jul 2021 - 17:44:10.774 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
+25 Jul 2021 - 17:44:10.781 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.073 seconds (JVM running for 4.71)
+25 Jul 2021 - 19:35:08.746 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 7248 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+25 Jul 2021 - 19:35:08.748 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+25 Jul 2021 - 19:35:09.438 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25 Jul 2021 - 19:35:09.521 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 78 ms. Found 11 JPA repository interfaces.
+25 Jul 2021 - 19:35:09.827 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@56399b9e' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:35:09.832 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:35:10.127 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+25 Jul 2021 - 19:35:10.138 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+25 Jul 2021 - 19:35:10.138 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+25 Jul 2021 - 19:35:10.259 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+25 Jul 2021 - 19:35:10.259 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1472 ms
+25 Jul 2021 - 19:35:10.997 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+25 Jul 2021 - 19:35:11.385 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+25 Jul 2021 - 19:35:12.553 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:35:12.586 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+25 Jul 2021 - 19:35:13.141 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userController': Unsatisfied dependency expressed through field 'downloadService'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'downloadServiceImp' defined in file [C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes\Brains2021\electronic\gradeBook\services\DownloadServiceImp.class]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [Brains2021.electronic.gradeBook.services.DownloadServiceImp]: Constructor threw exception; nested exception is java.nio.file.InvalidPathException: Illegal char <:> at index 9: classpath:logs/
+25 Jul 2021 - 19:35:13.143 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:35:13.144 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+25 Jul 2021 - 19:35:13.154 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+25 Jul 2021 - 19:35:13.156 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+25 Jul 2021 - 19:35:13.165 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+25 Jul 2021 - 19:35:13.188 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userController': Unsatisfied dependency expressed through field 'downloadService'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'downloadServiceImp' defined in file [C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes\Brains2021\electronic\gradeBook\services\DownloadServiceImp.class]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [Brains2021.electronic.gradeBook.services.DownloadServiceImp]: Constructor threw exception; nested exception is java.nio.file.InvalidPathException: Illegal char <:> at index 9: classpath:logs/
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:660)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:119)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1413)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:601)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:944)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:145)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:434)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:338)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1332)
+	at Brains2021.electronic.gradeBook.EGradeBookApplication.main(EGradeBookApplication.java:10)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'downloadServiceImp' defined in file [C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes\Brains2021\electronic\gradeBook\services\DownloadServiceImp.class]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [Brains2021.electronic.gradeBook.services.DownloadServiceImp]: Constructor threw exception; nested exception is java.nio.file.InvalidPathException: Illegal char <:> at index 9: classpath:logs/
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1316)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1214)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:564)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1380)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1300)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:657)
+	... 20 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [Brains2021.electronic.gradeBook.services.DownloadServiceImp]: Constructor threw exception; nested exception is java.nio.file.InvalidPathException: Illegal char <:> at index 9: classpath:logs/
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:225)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:87)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1308)
+	... 31 common frames omitted
+Caused by: java.nio.file.InvalidPathException: Illegal char <:> at index 9: classpath:logs/
+	at java.base/sun.nio.fs.WindowsPathParser.normalize(WindowsPathParser.java:182)
+	at java.base/sun.nio.fs.WindowsPathParser.parse(WindowsPathParser.java:153)
+	at java.base/sun.nio.fs.WindowsPathParser.parse(WindowsPathParser.java:77)
+	at java.base/sun.nio.fs.WindowsPath.parse(WindowsPath.java:92)
+	at java.base/sun.nio.fs.WindowsFileSystem.getPath(WindowsFileSystem.java:229)
+	at java.base/java.nio.file.Path.of(Path.java:147)
+	at java.base/java.nio.file.Paths.get(Paths.java:69)
+	at Brains2021.electronic.gradeBook.services.DownloadServiceImp.<init>(DownloadServiceImp.java:16)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:64)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:481)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:212)
+	... 33 common frames omitted
+25 Jul 2021 - 19:37:24.478 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 12888 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+25 Jul 2021 - 19:37:24.480 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+25 Jul 2021 - 19:37:25.045 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25 Jul 2021 - 19:37:25.123 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 72 ms. Found 11 JPA repository interfaces.
+25 Jul 2021 - 19:37:25.377 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@661d88a' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:37:25.381 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:37:25.560 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+25 Jul 2021 - 19:37:25.567 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+25 Jul 2021 - 19:37:25.567 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+25 Jul 2021 - 19:37:25.667 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+25 Jul 2021 - 19:37:25.668 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1154 ms
+25 Jul 2021 - 19:37:26.033 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+25 Jul 2021 - 19:37:26.314 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+25 Jul 2021 - 19:37:27.227 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:37:27.260 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+25 Jul 2021 - 19:37:27.809 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 97be2f5c-044f-4614-adaf-83ec33f20499
+
+25 Jul 2021 - 19:37:27.880 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7dbe858f, org.springframework.security.web.context.SecurityContextPersistenceFilter@41d8ac75, org.springframework.security.web.header.HeaderWriterFilter@6fb51e17, org.springframework.security.web.authentication.logout.LogoutFilter@4f9e9c21, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@387ef6a7, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1964ef9, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@365a4b9b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2330c995, org.springframework.security.web.session.SessionManagementFilter@2b569858, org.springframework.security.web.access.ExceptionTranslationFilter@4fe9fb65, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@133d0471]
+25 Jul 2021 - 19:37:28.172 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'; nested exception is org.springframework.boot.web.server.PortInUseException: Port 8090 is already in use
+25 Jul 2021 - 19:37:28.175 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:37:28.177 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+25 Jul 2021 - 19:37:28.182 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+25 Jul 2021 - 19:37:28.183 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+25 Jul 2021 - 19:37:28.191 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+25 Jul 2021 - 19:37:28.202 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8090 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8090 or configure this application to listen on another port.
+
+25 Jul 2021 - 19:37:33.113 [RMI TCP Connection(117)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
+25 Jul 2021 - 19:37:33.410 [RMI TCP Connection(117)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:37:33.466 [RMI TCP Connection(117)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+25 Jul 2021 - 19:37:33.477 [RMI TCP Connection(117)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+25 Jul 2021 - 19:37:44.110 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 10532 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+25 Jul 2021 - 19:37:44.113 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+25 Jul 2021 - 19:37:44.715 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25 Jul 2021 - 19:37:44.799 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 76 ms. Found 11 JPA repository interfaces.
+25 Jul 2021 - 19:37:45.064 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@661d88a' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:37:45.069 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:37:45.253 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+25 Jul 2021 - 19:37:45.261 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+25 Jul 2021 - 19:37:45.262 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+25 Jul 2021 - 19:37:45.370 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+25 Jul 2021 - 19:37:45.370 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1224 ms
+25 Jul 2021 - 19:37:45.841 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+25 Jul 2021 - 19:37:46.222 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+25 Jul 2021 - 19:37:47.146 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:37:47.176 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+25 Jul 2021 - 19:37:47.733 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 828d3dca-4f0d-4f14-a57f-246ab7c886bd
+
+25 Jul 2021 - 19:37:47.801 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3ae91bcc, org.springframework.security.web.context.SecurityContextPersistenceFilter@6fb51e17, org.springframework.security.web.header.HeaderWriterFilter@26d02dc6, org.springframework.security.web.authentication.logout.LogoutFilter@648f48d3, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@679886ad, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@721fc228, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@134ec0f3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5625e7e1, org.springframework.security.web.session.SessionManagementFilter@4fe9fb65, org.springframework.security.web.access.ExceptionTranslationFilter@55bafbc1, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7e916dc2]
+25 Jul 2021 - 19:37:48.122 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
+25 Jul 2021 - 19:37:48.129 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.357 seconds (JVM running for 4.964)
+25 Jul 2021 - 19:38:55.069 [RMI TCP Connection(3)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
+25 Jul 2021 - 19:38:55.113 [RMI TCP Connection(3)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:38:55.114 [RMI TCP Connection(3)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+25 Jul 2021 - 19:38:55.119 [RMI TCP Connection(3)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+25 Jul 2021 - 19:38:59.412 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 12724 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+25 Jul 2021 - 19:38:59.414 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+25 Jul 2021 - 19:38:59.989 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25 Jul 2021 - 19:39:00.070 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74 ms. Found 11 JPA repository interfaces.
+25 Jul 2021 - 19:39:00.329 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@661d88a' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:39:00.333 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:39:00.516 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+25 Jul 2021 - 19:39:00.523 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+25 Jul 2021 - 19:39:00.524 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+25 Jul 2021 - 19:39:00.624 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+25 Jul 2021 - 19:39:00.624 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1177 ms
+25 Jul 2021 - 19:39:00.981 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+25 Jul 2021 - 19:39:01.266 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+25 Jul 2021 - 19:39:02.164 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:39:02.199 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+25 Jul 2021 - 19:39:02.748 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 789e4535-6d45-4c27-bec1-a8366d6718e6
+
+25 Jul 2021 - 19:39:02.821 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7dbe858f, org.springframework.security.web.context.SecurityContextPersistenceFilter@2b569858, org.springframework.security.web.header.HeaderWriterFilter@4fe9fb65, org.springframework.security.web.authentication.logout.LogoutFilter@2709e075, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@387ef6a7, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@41d8ac75, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4a778943, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2330c995, org.springframework.security.web.session.SessionManagementFilter@3d0ce151, org.springframework.security.web.access.ExceptionTranslationFilter@6debf1b8, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@133d0471]
+25 Jul 2021 - 19:39:03.133 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
+25 Jul 2021 - 19:39:03.139 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.052 seconds (JVM running for 4.645)
+25 Jul 2021 - 19:41:06.416 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+25 Jul 2021 - 19:41:06.572 [http-nio-8090-exec-1] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.bind.MissingPathVariableException: Required URI template variable 'fileName' for method parameter type String is not present]
+25 Jul 2021 - 19:41:51.275 [RMI TCP Connection(5)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
+25 Jul 2021 - 19:41:51.319 [RMI TCP Connection(5)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:41:51.320 [RMI TCP Connection(5)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+25 Jul 2021 - 19:41:51.325 [RMI TCP Connection(5)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+25 Jul 2021 - 19:41:55.765 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 14432 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+25 Jul 2021 - 19:41:55.767 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+25 Jul 2021 - 19:41:56.354 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+25 Jul 2021 - 19:41:56.433 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 72 ms. Found 11 JPA repository interfaces.
+25 Jul 2021 - 19:41:56.697 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@53a7a60c' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:41:56.701 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+25 Jul 2021 - 19:41:56.892 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+25 Jul 2021 - 19:41:56.900 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+25 Jul 2021 - 19:41:56.900 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+25 Jul 2021 - 19:41:56.993 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+25 Jul 2021 - 19:41:56.994 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1193 ms
+25 Jul 2021 - 19:41:57.384 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+25 Jul 2021 - 19:41:57.675 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+25 Jul 2021 - 19:41:58.611 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+25 Jul 2021 - 19:41:58.649 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+25 Jul 2021 - 19:41:59.263 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 1f9083ce-54ed-488d-8e0a-c00a78c93414
+
+25 Jul 2021 - 19:41:59.330 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@493489dd, org.springframework.security.web.context.SecurityContextPersistenceFilter@26b150cd, org.springframework.security.web.header.HeaderWriterFilter@175745fc, org.springframework.security.web.authentication.logout.LogoutFilter@7925e772, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@3358805a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@45e68fac, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@434a2a10, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@77e261e3, org.springframework.security.web.session.SessionManagementFilter@26d02dc6, org.springframework.security.web.access.ExceptionTranslationFilter@682482ee, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@2ca464bb]
+25 Jul 2021 - 19:41:59.647 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
+25 Jul 2021 - 19:41:59.654 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.214 seconds (JVM running for 4.845)
+25 Jul 2021 - 19:42:13.796 [http-nio-8090-exec-4] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'

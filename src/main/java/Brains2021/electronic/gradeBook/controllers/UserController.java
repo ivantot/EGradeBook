@@ -1,14 +1,21 @@
 package Brains2021.electronic.gradeBook.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +50,7 @@ import Brains2021.electronic.gradeBook.repositories.RoleRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
+import Brains2021.electronic.gradeBook.services.DownloadServiceImp;
 import Brains2021.electronic.gradeBook.services.user.UserService;
 import Brains2021.electronic.gradeBook.utils.Encryption;
 import Brains2021.electronic.gradeBook.utils.RESTError;
@@ -61,7 +69,13 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
 	private StudentRepository studentRepo;
+
+	@Autowired
+	private DownloadServiceImp downloadService;
+
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/***************************************************************************************
 	 * POST login endpoint accessible to all
@@ -829,6 +843,38 @@ public class UserController {
 		}
 
 		return new ResponseEntity<String>("User " + username + " is logged in the system.", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET to download logfile
+	 * -- postman code getLogs --
+	 * 	
+	 * @return username
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/downloadLogs")
+	public ResponseEntity<Resource> downloadLogs(@RequestParam String fileName, HttpServletRequest request) {
+
+		// Load file as Resource
+		Resource resource = downloadService.loadFileAsResource(fileName);
+
+		// Try to determine file's content type
+		String contentType = null;
+		try {
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+		} catch (IOException ex) {
+			logger.info("Could not determine file type.");
+		}
+
+		// Fallback to the default content type if type could not be determined
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
 	}
 }
 
