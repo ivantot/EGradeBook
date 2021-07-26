@@ -5,11 +5,14 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,6 +57,8 @@ public class AssignmentController {
 	@Autowired
 	private TeacherSubjectRepository teacherSubjectRepo;
 
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+
 	/***************************************************************************************
 	 * POST endpoint for teaching staff looking to create a new assignment
 	 * -- postman code adm008 --
@@ -87,7 +92,7 @@ public class AssignmentController {
 	}
 
 	/***************************************************************************************
-	 * PUT endpoint for teaching staff looking to link and assignment to a student
+	 * PUT endpoint for teaching staff looking to link an assignment to a student
 	 * -- postman code adm019 --
 	 * 
 	 * @param assignment
@@ -211,6 +216,11 @@ public class AssignmentController {
 					HttpStatus.BAD_REQUEST);
 		}
 
+		if (assignmentForGrading.get().getGradeRecieved() != null) {
+			return new ResponseEntity<RESTError>(new RESTError(5010, "Assignment already graded."),
+					HttpStatus.BAD_REQUEST);
+		}
+
 		assignmentForGrading.get().setGradeRecieved(grade);
 		assignmentForGrading.get().setDateCompleted(LocalDate.now());
 
@@ -230,4 +240,81 @@ public class AssignmentController {
 				+ ". An email has been sent to the parent(s) as a notification.", HttpStatus.OK);
 	}
 
+	/***************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete an assignment.
+	 * -- postman code adm036 --
+	 * 
+	 * @param assignment id
+	 * @return if ok set deleted to 1
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteAssignment/{assignmentID}")
+	public ResponseEntity<?> deleteAssignment(@PathVariable Long assignmentID) {
+
+		logger.info("**DELETE ASSIGNMENT** Access to the endpoint successful.");
+
+		logger.info("**DELETE ASSIGNMENT** Attempt to find an active assignment in database.");
+		// initial check for existance in db
+		Optional<AssignmentEntity> ogAssignment = assignmentRepo.findById(assignmentID);
+		if (ogAssignment.isEmpty() || ogAssignment.get().getDeleted() == 1) {
+			logger.warn("**DELETE ASSIGNMENT** Assignment not in database or deleted.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7530, "Assignment not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**DELETE ASSIGNMENT** Attempt successful.");
+
+		logger.info("**DELETE ASSIGNMENT** Attempt to find if assignment is given out.");
+		// cehck if assignement is given to student
+		if (ogAssignment.get().getAssignedTo() != null) {
+			logger.warn("**DELETE ASSIGNMENT** Assignment given out, can't delete.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7531, "Assignment has been assigned to a student, can't delete."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**DELETE ASSIGNMENT** Attempt successful, not given out.");
+
+		// set to deleted and save
+		logger.info("**DELETE ASSIGNMENT** Attempt on editing deleted field and saving to db.");
+		ogAssignment.get().setDeleted(1);
+		assignmentRepo.save(ogAssignment.get());
+		logger.info("**DELETE ASSIGNMENT** Attempt successful.");
+
+		return new ResponseEntity<String>("Assignment with id " + assignmentID + " deleted.", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * PUT endpoint for administrator looking to restore a deleted assignment.
+	 * -- postman code adm037 --
+	 * 
+	 * @param assignment id
+	 * @return if ok set deleted to 0
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreAssignment/{assignmentID}")
+	public ResponseEntity<?> restoreAssignment(@PathVariable Long assignmentID) {
+
+		logger.info("**RESTORE ASSIGNMENT** Access to the endpoint successful.");
+
+		logger.info("**RESTORE ASSIGNMENT** Attempt to find a deleted assignment in database.");
+		// initial check for existance in db
+		Optional<AssignmentEntity> ogAssignment = assignmentRepo.findById(assignmentID);
+		if (ogAssignment.isEmpty() || ogAssignment.get().getDeleted() == 0) {
+			logger.warn("**RESTORE ASSIGNMENT** Assignment not in database or active.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7532, "Assignment not found in database or is active, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**RESTORE ASSIGNMENT** Attempt successful.");
+
+		// set to active and save
+		logger.info("**RESTORE ASSIGNMENT** Attempt on editing deleted field and saving to db.");
+		ogAssignment.get().setDeleted(0);
+		assignmentRepo.save(ogAssignment.get());
+		logger.info("**RESTORE ASSIGNMENT** Attempt successful.");
+
+		return new ResponseEntity<String>("Assignment with id " + assignmentID + " restored.", HttpStatus.OK);
+	}
 }

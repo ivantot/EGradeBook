@@ -15,6 +15,7 @@ public class EmailObjectDTO {
 	private String grade;
 	private LocalDate date;
 	private String assignment;
+	private String description;
 
 	public String getAssignment() {
 		return assignment;
@@ -105,6 +106,14 @@ public class EmailObjectDTO {
 
 	public void setDate(LocalDate date) {
 		this.date = date;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

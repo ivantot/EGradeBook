@@ -47,10 +47,11 @@ import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentParentRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
-import Brains2021.electronic.gradeBook.services.DownloadServiceImp;
+import Brains2021.electronic.gradeBook.services.download.DownloadServiceImp;
 import Brains2021.electronic.gradeBook.services.user.UserService;
 import Brains2021.electronic.gradeBook.utils.Encryption;
 import Brains2021.electronic.gradeBook.utils.RESTError;
@@ -75,6 +76,9 @@ public class UserController {
 	@Autowired
 	private DownloadServiceImp downloadService;
 
+	@Autowired
+	private StudentParentRepository studentParentRepo;
+
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/***************************************************************************************
@@ -88,14 +92,21 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path = "/login")
 	public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
 		// find user by username
+		logger.info("**LOGIN** User " + username + " attempting to log into the system.");
 		Optional<UserEntity> user = userRepo.findByUsername(username);
 		if (user.isPresent() && Encryption.validatePassword(password, user.get().getPassword())) {
+			logger.info("**LOGIN** Both attempt to find user " + username
+					+ " in the database and password validation turned out to be successful.");
 			// if found, try password
+			logger.info("**LOGIN** Attempting to create a token.");
 			String token = userService.createJWTToken(user.get());
 			// if ok make token
-			UserTokenDTO retVal = new UserTokenDTO(username, "Bearer " + token); //Bearer moze da se postavi ovde ili na frontendu
+			logger.info("**LOGIN** Assigning the token to a DTO.");
+			UserTokenDTO retVal = new UserTokenDTO(username, "Bearer " + token);
+			logger.info("**LOGIN** User " + username + " has successfuly logged in the system.");
 			return new ResponseEntity<UserTokenDTO>(retVal, HttpStatus.OK);
 		}
+		logger.warn("**LOGIN** User " + username + " not found or password not correct.");
 
 		// otherwise return 401 unauthorized
 		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -157,6 +168,7 @@ public class UserController {
 					new RESTError(1022, "Student with an existing unique ID number in database."),
 					HttpStatus.BAD_REQUEST);
 		}
+
 		if (studentRepo.findByStudentUniqueNumber(newStudent.getStudentUniqueNumber()).isPresent()) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1023, "Student with an existing school ID number in database."),
@@ -219,25 +231,56 @@ public class UserController {
 	public ResponseEntity<?> postNewTeacher(@Valid @RequestBody CreateTeacherDTO teacher) {
 
 		// invoke a service for DTO translation to Entity
+		logger.info("**POST NEW TEACHER** Endpoint for posting a new teacher entered successfuly.");
+		logger.info("**POST NEW TEACHER** Attempting to translate input DTO to Entity.");
 		TeacherEntity newTeacher = userService.createTeacherDTOtranslation(teacher);
+		logger.info("**POST NEW TEACHER** Translation successful.");
 
 		// standard checks for new users, password match and username availability
+		logger.info("**POST NEW TEACHER** Attempt to match password and repeated password.");
 		if (!newTeacher.getPassword().equals(newTeacher.getRepeatedPassword())) {
+			logger.warn("**POST NEW TEACHER** Passwords not matching.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**POST NEW TEACHER** Passwords matching.");
+
+		logger.info("**POST NEW TEACHER** Attempt to see if username exists in db.");
 		if (userRepo.findByUsername(newTeacher.getUsername()).isPresent()) {
+			logger.warn("**POST NEW TEACHER** Existing username.");
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**POST NEW TEACHER** Username available.");
+
+		logger.info("**POST NEW TEACHER** Attempt to see if unique ID number exists in db.");
+		if (userRepo.findByJmbg(newTeacher.getJmbg()).isPresent()) {
+			logger.warn("**POST NEW TEACHER** Existing unique ID number.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(1022, "Teacher with an existing unique ID number in database."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**POST NEW TEACHER** Existing unique ID number not in database.");
+
+		logger.info("**POST NEW TEACHER** Attempt to see if username exists as deleted in db.");
+		if (userRepo.findByDeletedAndUsername(1, newTeacher.getUsername()).isPresent()) {
+			logger.warn("**POST NEW TEACHER** Deleted username confirmed.");
+			return new ResponseEntity<RESTError>(new RESTError(1091,
+					"Teacher with this username previously deleted, please reinstate old teacher or use a different username."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**POST NEW TEACHER** Username not previously used and deleted.");
 
 		//allow for teacher being a parent in the database, no unique ID check
 
 		// encript password and save user
+		logger.info("**POST NEW TEACHER** Attempt to encode user password.");
 		newTeacher.setPassword(Encryption.getPasswordEncoded(newTeacher.getPassword()));
 		userRepo.save(newTeacher);
+		logger.info("**POST NEW TEACHER** Encoding complete and teacher saved to db.");
 
 		// invoke service for Entity translation to DTO
+		logger.info("**POST NEW TEACHER** Attempting to translate Entity to output DTO.");
 		return userService.createdTeacherDTOtranslation(newTeacher);
 	}
 
@@ -489,8 +532,8 @@ public class UserController {
 			@Valid @RequestBody UpdatePhoneNumberDTO phoneNumber) {
 
 		// initial check for active parent existance in db
-		Optional<UserEntity> ogUser = userRepo
-				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), username);
+		Optional<UserEntity> ogUser = userRepo.findByDeletedAndRoleAndUsername(0,
+				roleRepo.findByName(ERole.ROLE_PARENT).get(), username);
 		if (ogUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1090, "Parent not found in database, please provide a valid username."),
@@ -518,51 +561,68 @@ public class UserController {
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/assignChildToParent")
 	public ResponseEntity<?> assignChildToParent(@RequestParam String usernameParent,
-			@RequestParam String usernamChild) {
-
+			@RequestParam String usernameChild) {
+		logger.info("**ASSIGN STUDENT TO PARENT** Access to the endpoint for assigning student to parent successful.");
 		// initial check for active parent existance in db
-		Optional<UserEntity> ogParent = userRepo
-				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
+		logger.info("**ASSIGN STUDENT TO PARENT** Atempt to find the parent in database.");
+		Optional<UserEntity> ogParent = userRepo.findByDeletedAndRoleAndUsername(0,
+				roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
 		if (ogParent.isEmpty()) {
+			logger.warn("**ASSIGN STUDENT TO PARENT** Atempt failed.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1090, "Parent not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
-
+		logger.info("**ASSIGN STUDENT TO PARENT** Parent found.");
 		// initial check for active student existance in db
-		Optional<UserEntity> ogStudent = userRepo
-				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernamChild);
+		logger.info("**ASSIGN STUDENT TO PARENT** Atempt to find the student in database.");
+		Optional<UserEntity> ogStudent = userRepo.findByDeletedAndRoleAndUsername(0,
+				roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameChild);
 		if (ogStudent.isEmpty()) {
+			logger.warn("**ASSIGN STUDENT TO PARENT** Atempt failed.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1100, "Student not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**ASSIGN STUDENT TO PARENT** Student found.");
 
+		logger.info("**ASSIGN STUDENT TO PARENT** Casting user entities to parent and student.");
 		StudentEntity updatedStudent = (StudentEntity) ogStudent.get();
 		ParentEntity updatedParent = (ParentEntity) ogParent.get();
-		StudentParentEntity studentParent = new StudentParentEntity();
-		studentParent.setParent(updatedParent);
-		studentParent.setStudent(updatedStudent);
 
 		// check for number of parents
+		logger.info("**ASSIGN STUDENT TO PARENT** Atempting to find number of parents related to student.");
 		if (updatedStudent.getParents().size() >= 2) {
+			logger.warn("**ASSIGN STUDENT TO PARENT** Parents number more than 3.");
 			return new ResponseEntity<RESTError>(new RESTError(1101, "No more than 2 parent allowed per student."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**ASSIGN STUDENT TO PARENT** Number of parents is " + updatedStudent.getParents().size() + ".");
+
+		logger.info("**ASSIGN STUDENT TO PARENT** Creating a new student-parent database entry.");
+		StudentParentEntity studentParent = new StudentParentEntity();
+		studentParent.setParent(updatedParent);
+		studentParent.setStudent(updatedStudent);
+		studentParent.setDeleted(0);
+		logger.info("**ASSIGN STUDENT TO PARENT** Database entry created.");
 
 		// check if child already assigned
-		Set<StudentParentEntity> children = updatedParent.getChildren();
-		if (children.contains(studentParent)) {
-			return new ResponseEntity<RESTError>(new RESTError(1110, "Student already assigned to a parent."),
+		logger.info("**ASSIGN STUDENT TO PARENT** Atempting to see if student is already associated with the parent.");
+		if (studentParentRepo.findByStudentAndParentAndDeleted(studentParent.getStudent(), studentParent.getParent(), 0)
+				.isPresent()) {
+			logger.warn("**ASSIGN STUDENT TO PARENT** Relationship already exsisting.");
+			return new ResponseEntity<RESTError>(new RESTError(1112, "Student already assigned to a parent."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**ASSIGN STUDENT TO PARENT** Student not associated with the parent.");
 
 		// add Student to list of children, update parent and save to db
-		children.add(studentParent);
-		updatedParent.setChildren(children);
-		userRepo.save(updatedParent);
 
-		return new ResponseEntity<String>("Student " + usernamChild + " assigned to parent " + usernameParent + ".",
+		logger.info("**ASSIGN STUDENT TO PARENT** Atempting to save to studentParent Repository.");
+		studentParentRepo.save(studentParent);
+		logger.info("**ASSIGN STUDENT TO PARENT** Entry saved.Exiting endpoint.");
+
+		return new ResponseEntity<String>("Student " + usernameChild + " assigned to parent " + usernameParent + ".",
 				HttpStatus.OK);
 	}
 
@@ -646,7 +706,7 @@ public class UserController {
 
 		// translate to DTO useng a service
 		List<GetUserDTO> activeUsersDTO = new ArrayList<>();
-		List<UserEntity> activeUsers = (List<UserEntity>) userRepo.findAllByDeletedFalse();
+		List<UserEntity> activeUsers = (List<UserEntity>) userRepo.findAllByDeleted(0);
 		for (UserEntity userEntity : activeUsers) {
 			activeUsersDTO.add(userService.foundUserDTOtranslation(userEntity));
 		}
@@ -672,7 +732,7 @@ public class UserController {
 	public ResponseEntity<?> findAllDeletedUsers() {
 
 		// translate to DTO useng a service
-		List<UserEntity> deletedUsers = (List<UserEntity>) userRepo.findAllByDeletedTrue();
+		List<UserEntity> deletedUsers = (List<UserEntity>) userRepo.findAllByDeleted(1);
 		List<GetUserDTO> deletedUsersDTO = new ArrayList<>();
 		for (UserEntity userEntity : deletedUsers) {
 			deletedUsersDTO.add(userService.foundUserDTOtranslation(userEntity));
@@ -704,8 +764,8 @@ public class UserController {
 
 		// translate to DTO useng a service
 		List<GetUserDTO> activeUsersDTO = new ArrayList<>();
-		List<UserEntity> activeUsersWithRole = (List<UserEntity>) userRepo
-				.findAllByDeletedFalseAndRole(roleRepo.findByName(ERole.valueOf(role)).get());
+		List<UserEntity> activeUsersWithRole = (List<UserEntity>) userRepo.findAllByDeletedAndRole(0,
+				roleRepo.findByName(ERole.valueOf(role)).get());
 		for (UserEntity userEntity : activeUsersWithRole) {
 			activeUsersDTO.add(userService.foundUserDTOtranslation(userEntity));
 		}
@@ -730,7 +790,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/user/{username}")
 	public ResponseEntity<?> findActiveUser(@PathVariable String username) {
 
-		Optional<UserEntity> activeUser = userRepo.findByDeletedFalseAndUsername(username);
+		Optional<UserEntity> activeUser = userRepo.findByDeletedAndUsername(0, username);
 		if (activeUser.isEmpty()) {
 			return new ResponseEntity<RESTError>(new RESTError(1090, "No active user in database."),
 					HttpStatus.NOT_FOUND);
@@ -754,8 +814,8 @@ public class UserController {
 	public ResponseEntity<?> findActiveStudentsFromParent(@PathVariable String usernameParent) {
 
 		// initial check for active parent existance in db
-		Optional<UserEntity> ogParent = userRepo
-				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
+		Optional<UserEntity> ogParent = userRepo.findByDeletedAndRoleAndUsername(0,
+				roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
 		if (ogParent.isEmpty()) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1100, "Parent not found in database, please provide a valid username."),
@@ -794,8 +854,8 @@ public class UserController {
 	public ResponseEntity<?> findActiveParentsFromStudent(@PathVariable String usernameStudent) {
 
 		// initial check for active student existance in db
-		Optional<UserEntity> ogStudent = userRepo
-				.findByDeletedFalseAndRoleAndUsername(roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameStudent);
+		Optional<UserEntity> ogStudent = userRepo.findByDeletedAndRoleAndUsername(0,
+				roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameStudent);
 		if (ogStudent.isEmpty()) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1120, "Student not found in database, please provide a valid username."),

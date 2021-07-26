@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -56,6 +58,8 @@ public class UserServiceImp implements UserService {
 
 	@Value("${spring.securty.token-duration}")
 	private Integer tokenDuration;
+
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 
@@ -223,8 +227,9 @@ public class UserServiceImp implements UserService {
 	@Override
 	public TeacherEntity createTeacherDTOtranslation(CreateTeacherDTO teacher) {
 
+		logger.info("**POST NEW TEACHER** Entered service for DTO translation to entity.");
 		TeacherEntity newTeacher = new TeacherEntity();
-
+		logger.info("**POST NEW TEACHER** Translating started.");
 		newTeacher.setName(teacher.getName());
 		newTeacher.setSurname(teacher.getSurname());
 		newTeacher.setEmail(teacher.getEmail());
@@ -246,6 +251,7 @@ public class UserServiceImp implements UserService {
 		newTeacher.setIsHeadmaster(0);
 		newTeacher.setDeleted(0);
 
+		logger.info("**POST NEW TEACHER** Translation complete, exiting service and returning to endpoint.");
 		return newTeacher;
 	}
 
@@ -258,8 +264,10 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<?> createdTeacherDTOtranslation(TeacherEntity teacher) {
 
+		logger.info("**POST NEW TEACHER** Entered service for DTO translation to entity.");
 		CreatedTeacherDTO newTeacherDTO = new CreatedTeacherDTO();
 
+		logger.info("**POST NEW TEACHER** Translating started.");
 		newTeacherDTO.setName(teacher.getName());
 		newTeacherDTO.setSurname(teacher.getSurname());
 		newTeacherDTO.setDateOfBirth(teacher.getDateOfBirth());
@@ -270,6 +278,9 @@ public class UserServiceImp implements UserService {
 		newTeacherDTO.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
 		newTeacherDTO.setStartOfEmployment(teacher.getStartOfEmployment());
 
+		logger.info(
+				"**POST NEW TEACHER** Translation complete, exiting service and returning to endpoint. All actions complete, teacher created.\n"
+						+ newTeacherDTO.toString());
 		return new ResponseEntity<CreatedTeacherDTO>(newTeacherDTO, HttpStatus.OK);
 	}
 

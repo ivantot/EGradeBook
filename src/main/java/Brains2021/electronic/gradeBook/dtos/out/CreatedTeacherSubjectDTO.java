@@ -10,23 +10,23 @@ import Brains2021.electronic.gradeBook.security.Views;
 @JsonPropertyOrder({ "name", "surname", "subject", "yearOfSchooling", "weeklyHoursAlloted" })
 public class CreatedTeacherSubjectDTO {
 
-	@JsonView(Views.Admin.class)
+	@JsonView(Views.Headmaster.class)
 	@JsonProperty(value = "Weekly hours alloted to teacher")
 	private Integer weeklyHoursAlloted;
 
-	@JsonView(Views.Admin.class)
+	@JsonView(Views.Headmaster.class)
 	@JsonProperty(value = "Name")
 	private String name;
 
-	@JsonView(Views.Admin.class)
+	@JsonView(Views.Headmaster.class)
 	@JsonProperty(value = "Surname")
 	private String surname;
 
-	@JsonView(Views.Admin.class)
+	@JsonView(Views.Headmaster.class)
 	@JsonProperty(value = "Subject")
 	private String subject;
 
-	@JsonView(Views.Admin.class)
+	@JsonView(Views.Headmaster.class)
 	@JsonProperty(value = "Grade - year of schooling")
 	private String yearOfSchooling;
 
@@ -72,6 +72,12 @@ public class CreatedTeacherSubjectDTO {
 
 	public void setYearOfSchooling(String yearOfSchooling) {
 		this.yearOfSchooling = yearOfSchooling;
+	}
+
+	@Override
+	public String toString() {
+		return "CreatedTeacherSubjectDTO [weeklyHoursAlloted=" + weeklyHoursAlloted + ", name=" + name + ", surname="
+				+ surname + ", subject=" + subject + ", yearOfSchooling=" + yearOfSchooling + "]";
 	}
 
 }

@@ -128,4 +128,11 @@ public class CreatedTeacherDTO {
 		this.weeklyHourCapacity = weeklyHourCapacity;
 	}
 
+	@Override
+	public String toString() {
+		return "CreatedTeacherDTO [name=" + name + ", surname=" + surname + ", email=" + email + ", username="
+				+ username + ", jmbg=" + jmbg + ", dateOfBirth=" + dateOfBirth + ", startOfEmployment="
+				+ startOfEmployment + ", salary=" + salary + ", weeklyHourCapacity=" + weeklyHourCapacity + "]";
+	}
+
 }

@@ -1,4 +1,4 @@
-package Brains2021.electronic.gradeBook.services;
+package Brains2021.electronic.gradeBook.services.download;
 
 import org.springframework.core.io.Resource;
 

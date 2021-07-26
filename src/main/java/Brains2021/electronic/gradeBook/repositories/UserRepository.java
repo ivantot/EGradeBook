@@ -16,14 +16,13 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, I
 
 	public Optional<UserEntity> findByJmbg(String jmbg);
 
-	public List<UserEntity> findAllByDeletedTrue();
+	public List<UserEntity> findAllByDeleted(Integer deleted);
 
-	public List<UserEntity> findAllByDeletedFalse();
+	public Optional<UserEntity> findByDeletedAndUsername(Integer deleted, String username);
 
-	public Optional<UserEntity> findByDeletedFalseAndUsername(String username);
+	public List<UserEntity> findAllByDeletedAndRole(Integer deleted, RoleEntity role);
 
-	public List<UserEntity> findAllByDeletedFalseAndRole(RoleEntity role);
-
-	public Optional<UserEntity> findByDeletedFalseAndRoleAndUsername(RoleEntity role, String Username);
+	public Optional<UserEntity> findByDeletedAndRoleAndUsername(Integer deleted, RoleEntity role, String Username);
+	
 
 }

@@ -114,6 +114,7 @@ public class AssignmentServiceImp implements AssignmentService {
 		object.setGrade(assignment.getGradeRecieved().toString());
 		object.setGradedSubject(assignment.getTeacherIssuing().getSubject().getName().toString());
 		object.setAssignment(assignment.getType().toString());
+		object.setDescription(assignment.getDescription());
 		try {
 			emailService.sendTemplateMessage(object);
 		} catch (Exception e) {

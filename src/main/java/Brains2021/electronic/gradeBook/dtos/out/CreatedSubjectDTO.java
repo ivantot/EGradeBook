@@ -62,4 +62,10 @@ public class CreatedSubjectDTO {
 		this.weeklyHoursRequired = weeklyHoursRequired;
 	}
 
+	@Override
+	public String toString() {
+		return "CreatedSubjectDTO [name=" + name + ", description=" + description + ", yerofSchooling=" + yerofSchooling
+				+ ", weeklyHoursRequired=" + weeklyHoursRequired + "]";
+	}
+
 }

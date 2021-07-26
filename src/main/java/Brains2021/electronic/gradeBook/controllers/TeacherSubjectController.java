@@ -1,10 +1,15 @@
 package Brains2021.electronic.gradeBook.controllers;
 
+import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +23,8 @@ import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
 import Brains2021.electronic.gradeBook.entites.SubjectEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.StudentGroupRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentGroupTakingASubjectRepository;
@@ -56,6 +63,8 @@ public class TeacherSubjectController {
 	@Autowired
 	private StudentGroupTakingASubjectRepository studentGroupTakingASubjectRepo;
 
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+
 	/***************************************************************************************
 	 * POST endpoint for administrator looking to assign subject to teacher.
 	 * -- postman code adm007 / hdm100 --
@@ -79,8 +88,8 @@ public class TeacherSubjectController {
 				ESubjectName.valueOf(teacherSubject.getSubject()), teacherSubject.getYearOfSchooling());
 
 		if (ogSubject.isEmpty()) {
-			return new ResponseEntity<RESTError>(
-					new RESTError(5030, "Subject not found in database, please provide a valid subject."),
+			return new ResponseEntity<RESTError>(new RESTError(5030,
+					"Subject not found in database, please provide a valid subject. Check if subject and schooling year combination is correct"),
 					HttpStatus.NOT_FOUND);
 		}
 
@@ -113,10 +122,33 @@ public class TeacherSubjectController {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1060, "Not a teaching user, unable to assign a subject."), HttpStatus.BAD_REQUEST);
 		}
+		TeacherEntity ogTeacher = (TeacherEntity) ogUser.get();
 
+		// check if teacher can handle new subject with hours he can take
+		if (ogTeacher.getWeeklyHourCapacity() < teacherSubject.getWeeklyHoursAlloted()
+				&& ogTeacher.getWeeklyHourCapacity() - teacherSubject.getWeeklyHoursAlloted() < 0) {
+			return new ResponseEntity<RESTError>(new RESTError(1039,
+					"Teacher not able to handle needed hours, look for other teachers or decrease alloted hours."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		TeacherSubjectEntity newTeacherSubject = teacherSubjectService
+				.createTeacherSubjectDTOtranslation(teacherSubject);
+
+		if (teacherSubjectRepo.findByTeacherAndSubject(ogTeacher, ogSubject.get()).isPresent()) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(1539, "Combination teacher - subject already existing in database."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		// reduce hours capacity for the teacher and update db
+		ogTeacher.setWeeklyHourCapacity(ogTeacher.getWeeklyHourCapacity() - teacherSubject.getWeeklyHoursAlloted());
+		userRepo.save(ogTeacher);
+
+		teacherSubjectRepo.save(newTeacherSubject);
 		// do magic and use service to translate to and fro DTO
-		return teacherSubjectService.createdTeacherSubjectDTOtranslation(
-				teacherSubjectService.createTeacherSubjectDTOtranslation(teacherSubject));
+
+		return teacherSubjectService.createdTeacherSubjectDTOtranslation(newTeacherSubject);
 	}
 
 	/*******************************************************************************************
@@ -163,6 +195,104 @@ public class TeacherSubjectController {
 		return new ResponseEntity<String>("Subject " + teacherSubject.get().getSubject().getName().toString()
 				+ " taught by " + teacherSubject.get().getTeacher().getName() + " asigned to student group "
 				+ studentGroup.get().getYear() + "-" + studentGroup.get().getYearIndex() + ".", HttpStatus.OK);
+	}
+
+	/*********************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete a teacher subject combination.
+	 * -- postman code adm039 --
+	 * 
+	 * @param teacherSubject id
+	 * @return if ok set deleted to 1
+	 *********************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteTeacherSubject/{teacherSubjectID}")
+	public ResponseEntity<?> deleteTeacherSubject(@PathVariable Long teacherSubjectID) {
+
+		logger.info("**DELETE TEACHER SUBJECT COMBINATION** Access to the endpoint successful.");
+
+		logger.info("**DELETE TEACHER SUBJECT COMBINATION** Attempt to find an active teacher subject combination in database.");
+		// initial check for existance in db
+		Optional<TeacherSubjectEntity> ogTeacherSubject = teacherSubjectRepo.findById(teacherSubjectID);
+		if (ogTeacherSubject.isEmpty() || ogTeacherSubject.get().getDeleted() == 1) {
+			logger.warn("**DELETE TEACHER SUBJECT COMBINATION** Teacher subject combination not in database or deleted.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7530,
+							"Teacher subject combination not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**DELETE TEACHER SUBJECT COMBINATION** Attempt successful.");
+
+		logger.info("**DELETE TEACHER SUBJECT COMBINATION** Attempt to unlink students from student group, if any.");
+		// do not allow if there are active assignemnts linked to this combinaton
+		// unlink student groups and teacher subject
+		List<StudentEntity> students = studentRepo.findByBelongsToStudentGroup(ogStudentGroup.get());
+
+		if (!students.isEmpty()) {
+			for (StudentEntity studentEntity : students) {
+				studentEntity.setBelongsToStudentGroup(null);
+			}
+			studentRepo.saveAll(students);
+			logger.info("**DELETE STUDENT GROUP** Attempt successful, students unlinked and saved to db.");
+		}
+
+		logger.info("**DELETE STUDENT GROUP** Attempt to unlink homeroom teacher from student group, if any.");
+		// unlink homeroomTeacher
+		Optional<TeacherEntity> homeroomTeacher = teacherRepo.findByInChargeOf(ogStudentGroup.get());
+
+		if (homeroomTeacher.isPresent()) {
+			homeroomTeacher.get().setInChargeOf(null);
+			homeroomTeacher.get().setIsHomeroomTeacher(0);
+			homeroomTeacher.get().setSalaryHomeroomBonus(0.00);
+			teacherRepo.save(homeroomTeacher.get());
+			logger.info("**DELETE STUDENT GROUP** Attempt successful, homeroom teacher unlinked and saved to db.");
+		}
+
+		// set to deleted and save
+		logger.info("**DELETE STUDENT GROUP** Attempt on editing deleted field and saving to db.");
+		ogStudentGroup.get().setDeleted(1);
+		studentGroupRepo.save(ogStudentGroup.get());
+		logger.info("**DELETE STUDENT GROUP** Attempt successful.");
+
+		return new ResponseEntity<String>(
+				"Student group with id " + studentGroupID + " deleted, students and homeroom teacher unlinked.",
+				HttpStatus.OK);
+
+	}
+
+	/***************************************************************************************
+	 * PUT endpoint for administrator looking to restore a deleted student group.
+	 * -- postman code adm040 --
+	 * 
+	 * @param studentGroup id
+	 * @return if ok set deleted to 0
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreStudentGroup/{studentGroupID}")
+	public ResponseEntity<?> restoreStudentGroup(@PathVariable Long studentGroupID) {
+
+		logger.info("**RESTORE STUDENT GROUP** Access to the endpoint successful.");
+
+		logger.info("**RESTORE STUDENT GROUP** Attempt to find a deleted student group in database.");
+		// initial check for existance in db
+		Optional<StudentGroupEntity> ogStudentGroup = studentGroupRepo.findById(studentGroupID);
+		if (ogStudentGroup.isEmpty() || ogStudentGroup.get().getDeleted() == 0) {
+			logger.warn("**RESTORE STUDENT GROUP** Student group not in database or active.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7531,
+							"Student group not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**RESTORE STUDENT GROUP** Attempt successful.");
+
+		// set to active and save
+		logger.info("**RESTORE STUDENT GROUP** Attempt on editing deleted field and saving to db.");
+		ogStudentGroup.get().setDeleted(0);
+		studentGroupRepo.save(ogStudentGroup.get());
+		logger.info("**RESTORE STUDENT GROUP** Attempt successful.");
+
+		return new ResponseEntity<String>("Assignment with id " + studentGroupID + " restored.", HttpStatus.OK);
 	}
 
 }

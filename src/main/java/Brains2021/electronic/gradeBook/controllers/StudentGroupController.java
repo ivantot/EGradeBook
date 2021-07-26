@@ -1,13 +1,17 @@
 package Brains2021.electronic.gradeBook.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +26,8 @@ import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.StudentGroupRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentRepository;
+import Brains2021.electronic.gradeBook.repositories.TeacherRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.utils.RESTError;
@@ -36,6 +42,14 @@ public class StudentGroupController {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private StudentRepository studentRepo;
+
+	@Autowired
+	private TeacherRepository teacherRepo;
+
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/***************************************************************************************
 	 * POST endpoint for administrator looking to create new subject group
@@ -173,6 +187,103 @@ public class StudentGroupController {
 
 		return new ResponseEntity<String>("Teacher " + username + " asigned to student group " + year + "-" + yearIndex
 				+ " as a homeroom teacher.", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete a student group.
+	 * -- postman code adm038 --
+	 * 
+	 * @param studentGroup id
+	 * @return if ok set deleted to 1
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteStudentGroup/{studentGroupID}")
+	public ResponseEntity<?> deleteStudentGroup(@PathVariable Long studentGroupID) {
+
+		logger.info("**DELETE STUDENT GROUP** Access to the endpoint successful.");
+
+		logger.info("**DELETE STUDENT GROUP** Attempt to find an active student group in database.");
+		// initial check for existance in db
+		Optional<StudentGroupEntity> ogStudentGroup = studentGroupRepo.findById(studentGroupID);
+		if (ogStudentGroup.isEmpty() || ogStudentGroup.get().getDeleted() == 1) {
+			logger.warn("**DELETE STUDENT GROUP** Student group not in database or deleted.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7530,
+							"Student group not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**DELETE STUDENT GROUP** Attempt successful.");
+
+		logger.info("**DELETE STUDENT GROUP** Attempt to unlink students from student group, if any.");
+		// unlink students and save
+		List<StudentEntity> students = studentRepo.findByBelongsToStudentGroup(ogStudentGroup.get());
+
+		if (!students.isEmpty()) {
+			for (StudentEntity studentEntity : students) {
+				studentEntity.setBelongsToStudentGroup(null);
+			}
+			studentRepo.saveAll(students);
+			logger.info("**DELETE STUDENT GROUP** Attempt successful, students unlinked and saved to db.");
+		}
+
+		logger.info("**DELETE STUDENT GROUP** Attempt to unlink homeroom teacher from student group, if any.");
+		// unlink homeroomTeacher
+		Optional<TeacherEntity> homeroomTeacher = teacherRepo.findByInChargeOf(ogStudentGroup.get());
+
+		if (homeroomTeacher.isPresent()) {
+			homeroomTeacher.get().setInChargeOf(null);
+			homeroomTeacher.get().setIsHomeroomTeacher(0);
+			homeroomTeacher.get().setSalaryHomeroomBonus(0.00);
+			teacherRepo.save(homeroomTeacher.get());
+			logger.info("**DELETE STUDENT GROUP** Attempt successful, homeroom teacher unlinked and saved to db.");
+		}
+
+		// set to deleted and save
+		logger.info("**DELETE STUDENT GROUP** Attempt on editing deleted field and saving to db.");
+		ogStudentGroup.get().setDeleted(1);
+		studentGroupRepo.save(ogStudentGroup.get());
+		logger.info("**DELETE STUDENT GROUP** Attempt successful.");
+
+		return new ResponseEntity<String>(
+				"Student group with id " + studentGroupID + " deleted, students and homeroom teacher unlinked.",
+				HttpStatus.OK);
+
+	}
+
+	/***************************************************************************************
+	 * PUT endpoint for administrator looking to restore a deleted student group.
+	 * -- postman code adm039 --
+	 * 
+	 * @param studentGroup id
+	 * @return if ok set deleted to 0
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreStudentGroup/{studentGroupID}")
+	public ResponseEntity<?> restoreStudentGroup(@PathVariable Long studentGroupID) {
+
+		logger.info("**RESTORE STUDENT GROUP** Access to the endpoint successful.");
+
+		logger.info("**RESTORE STUDENT GROUP** Attempt to find a deleted student group in database.");
+		// initial check for existance in db
+		Optional<StudentGroupEntity> ogStudentGroup = studentGroupRepo.findById(studentGroupID);
+		if (ogStudentGroup.isEmpty() || ogStudentGroup.get().getDeleted() == 0) {
+			logger.warn("**RESTORE STUDENT GROUP** Student group not in database or active.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7531,
+							"Student group not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**RESTORE STUDENT GROUP** Attempt successful.");
+
+		// set to active and save
+		logger.info("**RESTORE STUDENT GROUP** Attempt on editing deleted field and saving to db.");
+		ogStudentGroup.get().setDeleted(0);
+		studentGroupRepo.save(ogStudentGroup.get());
+		logger.info("**RESTORE STUDENT GROUP** Attempt successful.");
+
+		return new ResponseEntity<String>("Assignment with id " + studentGroupID + " restored.", HttpStatus.OK);
 	}
 
 }

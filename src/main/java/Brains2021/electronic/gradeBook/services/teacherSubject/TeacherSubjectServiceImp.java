@@ -10,15 +10,11 @@ import Brains2021.electronic.gradeBook.dtos.out.CreatedTeacherSubjectDTO;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
-import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 @Service
 public class TeacherSubjectServiceImp implements TeacherSubjectService {
-
-	@Autowired
-	private TeacherSubjectRepository teacherSubjectRepo;
 
 	@Autowired
 	private SubjectRepository subjectRepo;
@@ -44,7 +40,7 @@ public class TeacherSubjectServiceImp implements TeacherSubjectService {
 		newTeacherSubject.setDeleted(0);
 		newTeacherSubject.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
 
-		return teacherSubjectRepo.save(newTeacherSubject);
+		return newTeacherSubject;
 	}
 
 	/**
