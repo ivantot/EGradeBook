@@ -41,6 +41,7 @@ import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UpdatedRoleDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UserTokenDTO;
 import Brains2021.electronic.gradeBook.entites.RoleEntity;
+import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
@@ -49,6 +50,7 @@ import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentParentRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentRepository;
+import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.services.download.DownloadServiceImp;
@@ -78,6 +80,9 @@ public class UserController {
 
 	@Autowired
 	private StudentParentRepository studentParentRepo;
+
+	@Autowired
+	TeacherSubjectRepository teacherSubjectRepo;
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
@@ -628,7 +633,6 @@ public class UserController {
 
 	/***************************************************************************************
 	 * PUT/DELETE endpoint for administrator looking to soft delete a user.
-	 * on further updates think about chain deleting parents if all children get deleted
 	 * -- postman code adm030 --
 	 * 
 	 * @param username
@@ -639,24 +643,70 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteUser/{username}")
 	public ResponseEntity<?> deleteUser(@PathVariable String username) {
 
+		logger.info("**DELETE USER** Access to the endpoint successful.");
+
+		logger.info("**DELETE USER** Attempt to find an active user in database.");
 		// initial check for existance in db
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
-		if (ogUser.isEmpty()) {
+		if (ogUser.isEmpty() || ogUser.get().getDeleted() == 1) {
+			logger.warn("**DELETE USER** User not in database or deleted.");
 			return new ResponseEntity<RESTError>(
-					new RESTError(1030, "Username not found in database, please provide a valid username."),
+					new RESTError(1030,
+							"Username not found in database or user is deleted, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**DELETE USER** Attempt successful.");
 
-		// check if user existing, but already deleted
-		if (ogUser.get().getDeleted().equals(1)) {
-			return new ResponseEntity<RESTError>(
-					new RESTError(1070,
-							"User previously deleted and not accesible. Use different endpoint to restore the user."),
-					HttpStatus.BAD_REQUEST);
+		logger.info(
+				"**DELETE USER** Attempt to find if there are active assignments linked to this teacher-subject combination.");
+
+		logger.info(
+				"**DELETE USER** Attempt to find is user is a student, if so delete link with student group and delete relationship with parent.");
+		// see if user is a student and belongs to a student group, also delete from student parent
+		if (ogUser.get() instanceof StudentEntity) {
+			logger.info("**DELETE USER** User is a student.");
+			StudentEntity ogStudent = (StudentEntity) ogUser.get();
+			ogStudent.setBelongsToStudentGroup(null);
+			List<StudentParentEntity> ogStudentParent = studentParentRepo.findByStudent(ogStudent);
+			for (StudentParentEntity studentParentEntity : ogStudentParent) {
+				studentParentEntity.setDeleted(1);
+			}
+			studentParentRepo.saveAll(ogStudentParent);
+			logger.info("**DELETE USER** Attempt successful, unlinking complete.");
 		}
+
+		logger.info("**DELETE USER** Attempt to find is user is a parent, if so delete relationship with student.");
+		// see if user is a parent, delete student parent
+		if (ogUser.get() instanceof ParentEntity) {
+			logger.info("**DELETE USER** User is a parent.");
+			ParentEntity ogParent = (ParentEntity) ogUser.get();
+			List<StudentParentEntity> ogStudentParent = studentParentRepo.findByParent(ogParent);
+			for (StudentParentEntity studentParentEntity : ogStudentParent) {
+				studentParentEntity.setDeleted(1);
+			}
+			studentParentRepo.saveAll(ogStudentParent);
+			logger.info("**DELETE USER** Attempt successful, relationships deleted.");
+		}
+
+		logger.info(
+				"**DELETE USER** Attempt to find is user is a teacher, if so delete relationship with teacher-subject combination.");
+		// see if user is a teacher, delete teacher subject
+		if (ogUser.get() instanceof TeacherEntity) {
+			logger.info("**DELETE USER** User is a teacher.");
+			TeacherEntity ogTeacher = (TeacherEntity) ogUser.get();
+			List<TeacherSubjectEntity> ogTeacherSubject = teacherSubjectRepo.findAllByTeacher(ogTeacher);
+			for (TeacherSubjectEntity teacherSubjectEntity : ogTeacherSubject) {
+				teacherSubjectEntity.setDeleted(1);
+			}
+			teacherSubjectRepo.saveAll(ogTeacherSubject);
+			logger.info("**DELETE USER** Attempt successful, relationships deleted.");
+		}
+
+		logger.info("**DELETE USER** Attempt on editing deleted field and saving to db.");
 		// set to deleted and save
 		ogUser.get().setDeleted(1);
 		userRepo.save(ogUser.get());
+		logger.info("**DELETE USER** Attempt successful.");
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
 
@@ -672,24 +722,25 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreUser/{username}")
 	public ResponseEntity<?> restoreUser(@PathVariable String username) {
 
+		logger.info("**RESTORE USER** Access to the endpoint successful.");
+
+		logger.info("**RESTORE USER** Attempt to find a deleted user in database.");
 		// initial check for existance in db
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
-		if (ogUser.isEmpty()) {
+		if (ogUser.isEmpty() || ogUser.get().getDeleted() == 0) {
+			logger.warn("**RESTORE USER** User not in database or active.");
 			return new ResponseEntity<RESTError>(
-					new RESTError(1030, "Username not found in database, please provide a valid username."),
+					new RESTError(1030,
+							"Username not found in database or is active, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**RESTORE USER** Attempt successful.");
 
-		// check if user existing, and set to deleted
-		if (ogUser.get().getDeleted().equals(0)) {
-			return new ResponseEntity<RESTError>(
-					new RESTError(1080, "User is active. Use different endpoint to delete the user."),
-					HttpStatus.BAD_REQUEST);
-		}
-
-		// restore user and save
+		// set to active and save
+		logger.info("**RESTORE USER** Attempt on editing deleted field and saving to db.");
 		ogUser.get().setDeleted(0);
 		userRepo.save(ogUser.get());
+		logger.info("**DELETE USER** Attempt successful.");
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
 

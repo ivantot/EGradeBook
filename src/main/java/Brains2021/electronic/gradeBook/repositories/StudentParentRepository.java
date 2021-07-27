@@ -13,6 +13,8 @@ public interface StudentParentRepository extends CrudRepository<StudentParentEnt
 
 	List<StudentParentEntity> findByStudent(StudentEntity student);
 
+	List<StudentParentEntity> findByParent(ParentEntity parent);
+
 	Optional<StudentParentEntity> findByStudentAndParentAndDeleted(StudentEntity student, ParentEntity parent,
 			Integer deleted);
 

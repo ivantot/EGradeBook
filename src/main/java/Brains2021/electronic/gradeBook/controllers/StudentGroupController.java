@@ -271,8 +271,7 @@ public class StudentGroupController {
 		if (ogStudentGroup.isEmpty() || ogStudentGroup.get().getDeleted() == 0) {
 			logger.warn("**RESTORE STUDENT GROUP** Student group not in database or active.");
 			return new ResponseEntity<RESTError>(
-					new RESTError(7531,
-							"Student group not found in database or is deleted, please provide a valid id."),
+					new RESTError(7531, "Student group not found in database or is active, please provide a valid id."),
 					HttpStatus.NOT_FOUND);
 		}
 		logger.info("**RESTORE STUDENT GROUP** Attempt successful.");
