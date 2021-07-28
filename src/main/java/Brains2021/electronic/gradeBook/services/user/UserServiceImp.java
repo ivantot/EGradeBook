@@ -32,12 +32,14 @@ import Brains2021.electronic.gradeBook.dtos.out.GetChildrenDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetParentsDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UpdatedUserDTO;
+import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.RoleRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentParentRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.utils.Encryption;
 import Brains2021.electronic.gradeBook.utils.enums.ERole;
@@ -52,6 +54,9 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private RoleRepository roleRepo;
+	
+	@Autowired
+	private StudentParentRepository studentParentRepo;
 
 	@Value("${spring.security.secret-key}")
 	private String securityKey;
@@ -77,6 +82,59 @@ public class UserServiceImp implements UserService {
 				.setExpiration(new Date(System.currentTimeMillis() + this.tokenDuration))
 				.signWith(SignatureAlgorithm.HS512, this.securityKey).compact();
 		return token;
+	}
+
+	/**
+	 * 
+	 * service for checkinf if user is with admin role
+	 * 
+	 */
+	@Override
+	public Boolean amIAdmin() {
+		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean amITeacher() {
+		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_TEACHER)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean amIStudent() {
+		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_STUDENT)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean amIParent() {
+		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_PARENT)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean amIHeadmaster() {
+		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_HEADMASTER)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean amIHomeroom() {
+		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_HOMEROOM)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -351,6 +409,7 @@ public class UserServiceImp implements UserService {
 		deletedUser.setRole(user.getRole().getName().toString());
 		deletedUser.setUsername(user.getUsername());
 
+		logger.info(deletedUser.toString());
 		return new ResponseEntity<DeletedUserDTO>(deletedUser, HttpStatus.OK);
 	}
 
@@ -454,6 +513,8 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public GetParentsDTO foundParentsDTOtranslation(StudentParentEntity parent) {
+		
+		List<StudentParentEntity> ogChildren = studentParentRepo.findByParent(parent.getParent());
 
 		GetParentsDTO getParent = new GetParentsDTO();
 		getParent.setName(parent.getParent().getName());
@@ -462,7 +523,7 @@ public class UserServiceImp implements UserService {
 		getParent.setUsername(parent.getParent().getUsername());
 		getParent.setPhoneNumber(parent.getParent().getPhoneNumber());
 		Set<String> children = new HashSet<String>();
-		for (StudentParentEntity child : parent.getParent().getChildren()) {
+		for (StudentParentEntity child : ogChildren) {
 			children.add(child.getStudent().getName() + " " + child.getStudent().getSurname());
 		}
 		getParent.setChildren(children);

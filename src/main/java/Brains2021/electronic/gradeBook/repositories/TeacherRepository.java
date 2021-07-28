@@ -11,4 +11,6 @@ public interface TeacherRepository extends PagingAndSortingRepository<TeacherEnt
 
 	Optional<TeacherEntity> findByInChargeOf(StudentGroupEntity studentGroup);
 
+	Optional<TeacherEntity> findByUsername(String username);
+
 }

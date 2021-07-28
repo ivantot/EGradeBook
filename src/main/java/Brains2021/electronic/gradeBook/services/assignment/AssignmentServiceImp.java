@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,26 +41,32 @@ public class AssignmentServiceImp implements AssignmentService {
 	@Autowired
 	private StudentParentRepository studentParentRepo;
 
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+
 	@Override
 	public AssignmentEntity createAssignmentDTOtranslation(CreateAssignmentDTO assignment) {
 
 		// check to find if teacher teaches a subject, this allows only for a logged teacher to post assignments for subject he/she teaches
+		logger.info("##ASIGNMENT SERVICE## Accessed service for DTO to Entity translation.");
 
-		Optional<TeacherSubjectEntity> teachingTeacher = teacherSubjectRepo
+		Optional<TeacherSubjectEntity> teacherSubject = teacherSubjectRepo
 				.findBySubjectAndTeacher(ESubjectName.valueOf(assignment.getSubject()), userService.whoAmI());
-
-		if (teachingTeacher.isEmpty()) {
-			return null;
-		}
 
 		AssignmentEntity newAssignment = new AssignmentEntity();
 
+		logger.info("##ASIGNMENT SERVICE## Translation started.");
 		newAssignment.setDateCreated(LocalDate.now());
 		newAssignment.setType(EAssignmentType.valueOf(assignment.getType()));
 		newAssignment.setDeleted(0);
 		newAssignment.setDescription(assignment.getDescription());
 		newAssignment.setSemester(assignment.getSemester());
-		newAssignment.setTeacherIssuing(teachingTeacher.get());
+		if (teacherSubject.isEmpty()) {
+			newAssignment.setTeacherIssuing(null);
+		} else {
+			newAssignment.setTeacherIssuing(teacherSubject.get());
+		}
+
+		logger.info("##ASIGNMENT SERVICE## Translation complete, return to controller.");
 
 		return newAssignment;
 	}
@@ -66,14 +74,18 @@ public class AssignmentServiceImp implements AssignmentService {
 	@Override
 	public ResponseEntity<?> createdAssignmentDTOtranslation(AssignmentEntity assignment) {
 
+		logger.info("##ASIGNMENT SERVICE## Accessed service for Entity to DTO translation.");
 		CreatedAssignmentDTO newAssignmentDTO = new CreatedAssignmentDTO();
 
+		logger.info("##ASIGNMENT SERVICE## Translation started.");
 		newAssignmentDTO.setDateCreated(assignment.getDateCreated());
 		newAssignmentDTO.setDescription(assignment.getDescription());
 		newAssignmentDTO.setSemester(assignment.getSemester());
 		newAssignmentDTO.setSubject(assignment.getTeacherIssuing().getSubject().getName().toString());
 		newAssignmentDTO.setTeacher(assignment.getTeacherIssuing().getTeacher().getUsername());
+
 		newAssignmentDTO.setType(assignment.getType().toString());
+		logger.info("##ASIGNMENT SERVICE## Translation complete, return to controller. " + newAssignmentDTO.toString());
 
 		return new ResponseEntity<CreatedAssignmentDTO>(newAssignmentDTO, HttpStatus.OK);
 	}
@@ -84,6 +96,7 @@ public class AssignmentServiceImp implements AssignmentService {
 		// Send email		
 		EmailObjectDTO object = new EmailObjectDTO();
 
+		logger.info("##ASIGNMENT SERVICE## Email service accessed, preparing list of parents.");
 		List<StudentParentEntity> parents = studentParentRepo.findByStudent(assignment.getAssignedTo());
 		List<String> parentEmails = new ArrayList<>();
 
@@ -115,6 +128,10 @@ public class AssignmentServiceImp implements AssignmentService {
 		object.setGradedSubject(assignment.getTeacherIssuing().getSubject().getName().toString());
 		object.setAssignment(assignment.getType().toString());
 		object.setDescription(assignment.getDescription());
+		if (assignment.getOverridenGrade() != null) {
+			object.setOverridenGrade(assignment.getOverridenGrade().toString());
+		}
+		logger.info("##ASIGNMENT SERVICE## Trying to send out emails.");
 		try {
 			emailService.sendTemplateMessage(object);
 		} catch (Exception e) {

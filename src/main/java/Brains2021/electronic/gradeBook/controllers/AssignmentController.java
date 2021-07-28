@@ -23,9 +23,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateAssignmentDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
+import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.AssignmentRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentGroupTakingASubjectRepository;
+import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
+import Brains2021.electronic.gradeBook.repositories.TeacherRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
@@ -34,6 +38,7 @@ import Brains2021.electronic.gradeBook.services.subject.SubjectService;
 import Brains2021.electronic.gradeBook.services.user.UserService;
 import Brains2021.electronic.gradeBook.utils.RESTError;
 import Brains2021.electronic.gradeBook.utils.enums.ERole;
+import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 @RestController
 @RequestMapping(path = "/api/v1/assignments")
@@ -57,6 +62,15 @@ public class AssignmentController {
 	@Autowired
 	private TeacherSubjectRepository teacherSubjectRepo;
 
+	@Autowired
+	private StudentGroupTakingASubjectRepository studentGroupTakingASubjectRepo;
+
+	@Autowired
+	private TeacherRepository teacherRepo;
+
+	@Autowired
+	SubjectRepository subjectRepo;
+
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/***************************************************************************************
@@ -69,26 +83,53 @@ public class AssignmentController {
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.POST, path = "/newAssignment")
-	public ResponseEntity<?> postNewAssignemnt(@Valid @RequestBody CreateAssignmentDTO assignment) {
+	public ResponseEntity<?> postNewAssignment(@Valid @RequestBody CreateAssignmentDTO assignment) {
 
+		logger.info("**POST ASSIGNMENT** Access to the endpoint successful.");
+
+		// check to see if subject name is valid
+		logger.info("**POST ASSIGNMENT** Attempt to find if subject name is allowed.");
 		if (!subjectService.isSubjectInEnum(assignment.getSubject())) {
+			logger.warn("**POST ASSIGNMENT** Subject name is allowed, must be a value from ESubjectName.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(2000, "Subject name not allowed, check ESubjectName for details."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**POST ASSIGNMENT** Subject name is allowed.");
 
-		// invoke a service to verify that the teacher with credentials used to log in teaches the subject from the assignment
-		if (assignmentService.createAssignmentDTOtranslation(assignment) == null
+		// check if teacher is valid or admin posting 
+		logger.info("**POST ASSIGNMENT** Attempting to find if teacher is teaching the subject.");
+		Optional<TeacherSubjectEntity> teacherSubject = teacherSubjectRepo
+				.findBySubjectAndTeacher(ESubjectName.valueOf(assignment.getSubject()), userService.whoAmI());
+		if (teacherSubject.isEmpty()
 				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
-			return new ResponseEntity<RESTError>(new RESTError(5001,
-					"Logged teacher not teaching the subject posted in the assignment, please verify the subject."),
+			logger.warn("**POST ASSIGNMENT** Teacher not teaching the subject and is not with admin role.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2050, "Teacher not teaching the subject and logged user not with admin role."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**POST ASSIGNMENT** User is a teacher teaching the subject or admin.");
 
 		AssignmentEntity newAssignment = assignmentService.createAssignmentDTOtranslation(assignment);
+
+		logger.info(
+				"**POST ASSIGNMENT** Check if user is admin. If so, make new dummy teacher subject entity and assign properties");
+		if (userService.amIAdmin() && teacherSubject.isEmpty()) {
+			logger.info("**POST ASSIGNMENT** User is admin.");
+			TeacherSubjectEntity adminTeacherSubject = new TeacherSubjectEntity(
+					teacherRepo.findByUsername(userService.whoAmI()).get(),
+					subjectRepo.findByName(ESubjectName.valueOf(assignment.getSubject())).get());
+			newAssignment.setTeacherIssuing(adminTeacherSubject);
+			teacherSubjectRepo.save(adminTeacherSubject);
+			logger.info("**POST ASSIGNMENT** Admin teacher subject added and assigned to assignemnt.");
+		}
+
+		logger.info("**POST ASSIGNMENT** Attempting to save the changed assignment to database.");
 		assignmentRepo.save(newAssignment);
 
+		logger.info("**POST ASSIGNMENT** Assignment saved, invoking service for translation to output DTO.");
 		return assignmentService.createdAssignmentDTOtranslation(newAssignment);
+
 	}
 
 	/***************************************************************************************
@@ -99,6 +140,7 @@ public class AssignmentController {
 	 * @param student
 	 * @return if ok, assignment linked to student
 	 ***************************************************************************************/
+
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/giveAssignmentToStudent")
@@ -144,9 +186,7 @@ public class AssignmentController {
 		StudentEntity student = (StudentEntity) user.get();
 
 		// check if student belongs to a group taking the subject taught by the teacher ---- FIX THIS ! -----
-		if (!student.getBelongsToStudentGroup().getSubjectsTaken()
-				.contains(teacherSubjectRepo.findBySubjectAndTeacher(
-						assignment.get().getTeacherIssuing().getSubject().getName(), userService.whoAmI()))
+		if (studentGroupTakingASubjectRepo.findAllByTeacherSubject(assignment.get().getTeacherIssuing()).isEmpty()
 				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(5004, "Logged teacher not teaching the student group the student belongs to."),
@@ -178,52 +218,124 @@ public class AssignmentController {
 	}
 
 	/***************************************************************************************
+	 * PUT endpoint for teaching staff looking to edit an assignment
+	 * -- postman code adm021 --
+	 * 
+	 * @param assignmentID
+	 * @param createAssignmentDTO
+	 * @return if ok, edited assignment
+	 ***************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
+	@JsonView(Views.Teacher.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/changeAssignment/{assignmentID}")
+	public ResponseEntity<?> changeAssignement(@Valid @RequestBody CreateAssignmentDTO assignment,
+			@PathVariable Long assignmentID) {
+
+		logger.info("**CHANGE ASSIGNMENT** Access to the endpoint successful.");
+
+		logger.info("**CHANGE ASSIGNMENT** Attempt to change an active assignment.");
+		// initial check for existance in db
+		Optional<AssignmentEntity> ogAssignment = assignmentRepo.findById(assignmentID);
+		if (ogAssignment.isEmpty() || ogAssignment.get().getDeleted() == 1) {
+			logger.warn("**CHANGE ASSIGNMENT** Assignment not in database or deleted.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7533, "Assignment not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**CHANGE ASSIGNMENT** Assignment accessed successfuly.");
+
+		// check to see if subject name is valid
+		logger.info("**CHANGE ASSIGNMENT** Attempt to find if subject name is allowed.");
+		if (!subjectService.isSubjectInEnum(assignment.getSubject())) {
+			logger.warn("**CHANGE ASSIGNMENT** Subject name is allowed, must be a value from ESubjectName.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2300, "Subject name not allowed, check ESubjectName for details."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**CHANGE ASSIGNMENT** Subject name is allowed.");
+
+		// check to see if logged teacher is the one who issued the assignment
+		logger.info("**CHANGE ASSIGNMENT** Attempt to find if assignment was created by logged teacher or admin.");
+		if (!ogAssignment.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
+				&& !userService.amIAdmin()) {
+			logger.warn("**CHANGE ASSIGNMENT** Loogged user or admin not the one who issued the assignment.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2360, "Loogged user not the one who issued the assignment, nor is an admin."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**CHANGE ASSIGNMENT** Logged teacher issued the assignment, or is an admin.");
+
+		logger.info("**CHANGE ASSIGNMENT** Attempting to save the changed assignment to database.");
+		AssignmentEntity newAssignment = assignmentService.createAssignmentDTOtranslation(assignment);
+		assignmentRepo.save(newAssignment);
+		logger.info("**CHANGE ASSIGNMENT** Assignment saved, invoking service for translation to output DTO.");
+
+		return assignmentService.createdAssignmentDTOtranslation(newAssignment);
+	}
+
+	/***************************************************************************************
 	 * PUT endpoint for teaching staff looking to grade an assignment
 	 * -- postman code adm020 --
 	 * 
-	 * @param assignmentID
-	 * @return if ok, give grade to assignment
+	 * @param assignmentID, grade
+	 * @return if ok, give grade
 	 ***************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/gradeAssignment")
 	public ResponseEntity<?> gradeAssignment(@RequestParam Long assignmentID, @RequestParam Integer grade) {
 
+		logger.info("**GRADE ASSIGNMENT** Access to the endpoint successful.");
 		// validate grade
+		logger.info("**GRADE ASSIGNMENT** Perform validation on grade entry");
 		if (grade != 1 && grade != 2 && grade != 3 && grade != 4 && grade != 5) {
+			logger.warn("**GRADE ASSIGNMENT** Faulty grade entered.");
 			return new ResponseEntity<RESTError>(new RESTError(5007, "Provide a valid grade between 1 and 5."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**GRADE ASSIGNMENT** Grade passed validation.");
 
 		Optional<AssignmentEntity> assignmentForGrading = assignmentRepo.findById(assignmentID);
 
+		logger.info("**GRADE ASSIGNMENT** Check if id is active and in database.");
 		// check if id is valid and active
-		if (assignmentForGrading.isEmpty()) {
+		if (assignmentForGrading.isEmpty() || assignmentForGrading.get().getDeleted() == 1) {
+			logger.warn("**GRADE ASSIGNMENT** Assignment not valid or deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(5002, "Not a valid assignment id, check and retry."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**GRADE ASSIGNMENT** Assignment present and active.");
 
+		logger.info("**GRADE ASSIGNMENT** Check if logged user is teacher that issued the assignment or admin.");
 		if (!assignmentForGrading.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
 				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+			logger.warn("**GRADE ASSIGNMENT** User not qualified to post the grade.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(5002,
 							"Looged teacher not responsible for this assignment. Please check assignment ID"),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**GRADE ASSIGNMENT** Permission are ok, continuing.");
 
+		logger.info("**GRADE ASSIGNMENT** Check if assignment is given out.");
 		if (assignmentForGrading.get().getAssignedTo() == null) {
+			logger.warn("**GRADE ASSIGNMENT** Assignment not yet given out.");
 			return new ResponseEntity<RESTError>(new RESTError(5009, "Assignment not yet given out."),
 					HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**GRADE ASSIGNMENT** Check if assignment is already graded.");
 		if (assignmentForGrading.get().getGradeRecieved() != null) {
+			logger.warn("**GRADE ASSIGNMENT** Assignment already graded.");
 			return new ResponseEntity<RESTError>(new RESTError(5010, "Assignment already graded."),
 					HttpStatus.BAD_REQUEST);
 		}
+		logger.info("**GRADE ASSIGNMENT** All checks completed.");
 
 		assignmentForGrading.get().setGradeRecieved(grade);
 		assignmentForGrading.get().setDateCompleted(LocalDate.now());
 
+		logger.info("**GRADE ASSIGNMENT** Saving assignment and sending out email to parents.");
 		assignmentRepo.save(assignmentForGrading.get());
 
 		assignmentService.sendEmailForGradedAssignemnt(assignmentForGrading.get());
@@ -237,7 +349,91 @@ public class AssignmentController {
 				+ assignmentForGrading.get().getDateAssigned() + " with due date "
 				+ assignmentForGrading.get().getDueDate() + " has just been graded and recieved "
 				+ assignmentForGrading.get().getGradeRecieved()
-				+ ". An email has been sent to the parent(s) as a notification.", HttpStatus.OK);
+				+ ".\nAn email has been sent to the parent(s) as a notification.", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * PUT endpoint for headmaster, teacher issuing or admin looking to override a grade
+	 * -- postman code adm022 --
+	 * 
+	 * @param assignmentID
+	 * @return if ok, override grade
+	 ***************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
+	@JsonView(Views.Teacher.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/overrideGrade")
+	public ResponseEntity<?> overrideGrade(@RequestParam Long assignmentID, @RequestParam Integer overridenGrade) {
+
+		// validate grade
+		logger.info("**OVERRIDE GRADE** Access to the endpoint successful.");
+
+		logger.info("**OVERRIDE GRADE** Perform validation on grade entry");
+		if (overridenGrade != 1 && overridenGrade != 2 && overridenGrade != 3 && overridenGrade != 4
+				&& overridenGrade != 5) {
+			logger.warn("**OVERRIDE GRADE** Faulty grade entered.");
+			return new ResponseEntity<RESTError>(new RESTError(5007, "Provide a valid grade between 1 and 5."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**OVERRIDE GRADE** Grade passed validation.");
+
+		Optional<AssignmentEntity> assignmentForGrading = assignmentRepo.findById(assignmentID);
+
+		// check if id is valid and active
+		logger.info("**OVERRIDE GRADE** Check if id is active and in database.");
+		if (assignmentForGrading.isEmpty() || assignmentForGrading.get().getDeleted() == 1) {
+			logger.warn("**OVERRIDE GRADE** Assignment not valid or deleted.");
+			return new ResponseEntity<RESTError>(new RESTError(5002, "Not a valid assignment id, check and retry."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**OVERRIDE GRADE** Assignment present and active.");
+
+		logger.info(
+				"**OVERRIDE GRADE** Check if logged user is teacher that issued the assignment, headmaster or admin.");
+		if (!assignmentForGrading.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
+				&& !userService.amIAdmin() && !userService.amIHeadmaster()) {
+			logger.warn("**OVERRIDE GRADE** User not qualified to override the grade.");
+			return new ResponseEntity<RESTError>(new RESTError(5002,
+					"Looged teacher doesn't have permissions to override the grade. Please check assignment ID"),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**OVERRIDE GRADE** Permission are ok, continuing.");
+
+		logger.info("**OVERRIDE GRADE** Check if assignment is given out.");
+		if (assignmentForGrading.get().getAssignedTo() == null) {
+			logger.warn("**OVERRIDE GRADE** Assignment not yet given out.");
+			return new ResponseEntity<RESTError>(new RESTError(5009, "Assignment not yet given out."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**OVERRIDE GRADE** Assignment given out.");
+
+		logger.info("**OVERRIDE GRADE** Check if assignment is completed.");
+		if (assignmentForGrading.get().getDateCompleted() == null) {
+			logger.warn("**OVERRIDE GRADE** Assignment not completed, impossible to override.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(5009, "Assignment still active, not possible to override."), HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**OVERRIDE GRADE** All checks completed.");
+
+		assignmentForGrading.get().setOverridenGrade(overridenGrade);
+
+		logger.info("**OVERRIDE GRADE** Saving assignment and sending out email to parents.");
+		assignmentRepo.save(assignmentForGrading.get());
+
+		assignmentService.sendEmailForGradedAssignemnt(assignmentForGrading.get());
+
+		return new ResponseEntity<String>(
+				"Previously graded assignment " + assignmentForGrading.get().getType() + " in subject "
+						+ assignmentForGrading.get().getTeacherIssuing().getSubject().getName() + " given by "
+						+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getName() + " "
+						+ assignmentForGrading.get().getTeacherIssuing().getTeacher().getSurname()
+						+ " asigned to student " + assignmentForGrading.get().getAssignedTo().getName() + " "
+						+ assignmentForGrading.get().getAssignedTo().getSurname() + " on "
+						+ assignmentForGrading.get().getDateAssigned() + ", originaly graded on "
+						+ assignmentForGrading.get().getDateCompleted() + " with grade "
+						+ assignmentForGrading.get().getGradeRecieved() + " recieved an overriden grade "
+						+ assignmentForGrading.get().getGradeRecieved() + ".\nUser responsible for overriding: "
+						+ userService.whoAmI() + ". \nAn email has been sent to the parent(s) as a notification.",
+				HttpStatus.OK);
 	}
 
 	/***************************************************************************************

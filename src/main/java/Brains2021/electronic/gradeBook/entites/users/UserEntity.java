@@ -31,44 +31,44 @@ public class UserEntity {
 
 	@Id
 	@GeneratedValue
-	private Long id;
+	protected Long id;
 
 	@Column(nullable = false)
-	private String name;
+	protected String name;
 
 	@Column(nullable = false)
-	private String surname;
+	protected String surname;
 
 	@JsonView(Views.Admin.class)
-	private String email;
+	protected String email;
 
 	@Column(nullable = false)
-	private String username;
+	protected String username;
 
 	@Column(nullable = false)
-	private String password;
+	protected String password;
 
 	@Transient
 	@Column(nullable = false)
-	private String repeatedPassword;
+	protected String repeatedPassword;
 
 	@Column(nullable = false)
-	private String jmbg;
+	protected String jmbg;
 
 	@Column(nullable = false)
-	private LocalDate dateOfBirth;
+	protected LocalDate dateOfBirth;
 
 	@Column(nullable = false)
-	private Integer deleted;
+	protected Integer deleted;
 
 	@Version
-	private Integer version;
+	protected Integer version;
 
 	@JsonBackReference(value = "ref1")
 	@JsonView(Views.Admin.class)
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "role")
-	private RoleEntity role;
+	protected RoleEntity role;
 
 	public UserEntity() {
 		super();

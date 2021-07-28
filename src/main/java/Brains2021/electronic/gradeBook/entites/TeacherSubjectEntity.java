@@ -54,6 +54,12 @@ public class TeacherSubjectEntity {
 		super();
 	}
 
+	public TeacherSubjectEntity(TeacherEntity teacher, SubjectEntity subject) {
+		super();
+		this.teacher = teacher;
+		this.subject = subject;
+	}
+
 	public Long getId() {
 		return id;
 	}

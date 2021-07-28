@@ -63,4 +63,10 @@ public class DeletedUserDTO {
 		this.role = role;
 	}
 
+	@Override
+	public String toString() {
+		return "DeletedUserDTO [name=" + name + ", surname=" + surname + ", username=" + username + ", role=" + role
+				+ "]";
+	}
+
 }

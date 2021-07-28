@@ -4,6 +4,8 @@ import java.time.format.DateTimeFormatter;
 
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,15 +19,26 @@ public class EmailServiceImp implements EmailService {
 	@Autowired
 	private JavaMailSender mailSender;
 
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+
 	@Override
 	public void sendTemplateMessage(EmailObjectDTO object) throws Exception {
+
+		logger.info("##EMAIL SERVICE## Accessed service for sending out parent emails.");
 
 		MimeMessage mail = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mail, true);
 
+		logger.info("##EMAIL SERVICE## Attempting to populatie template.");
+		logger.info("##EMAIL SERVICE## Determining if email will be sent to more than one parent.");
+
 		helper.setTo(object.getTo());
 		helper.setSubject(object.getSubject());
-		helper.setCc(object.getCc());
+		if (object.getCc() != null) {
+			helper.setCc(object.getCc());
+			logger.info("##EMAIL SERVICE## Two parents should recieve emails.");
+		}
+		logger.info("##EMAIL SERVICE## One parent will recieve an email.");
 
 		String text = "<table style='border:2px dotted black;'> <tbody> <tr>\r\n"
 				+ "				<td style='border-style: hidden; padding-right: 15px; padding-left: 10px;font-family:Helvetica, sans-serif; color:Gray; font-size: 12px;' colspan='2'><strong>Student</strong></td>\r\n"
@@ -51,7 +64,20 @@ public class EmailServiceImp implements EmailService {
 
 		String text4 = "Dear Parent, your kid just got graded.<br/><br/>";
 
-		helper.setText(text4 + text + text3 + text1 + text2, true);
+		String text5 = "Grade has been overriden by higher authority. New grade assigned is <strong>"
+				+ object.getOverridenGrade() + "</strong>."
+				+ "<br/>Original grade available below. If in doubt contact the school.<br/><br/>";
+
+		logger.info("##EMAIL SERVICE## Determining if grade is new or overriden.");
+		if (!(object.getOverridenGrade() == null)) {
+			logger.info("##EMAIL SERVICE## Overriden grade.");
+			helper.setText(text5 + text + text3 + text1 + text2, true);
+		} else {
+			helper.setText(text4 + text + text3 + text1 + text2, true);
+			logger.info("##EMAIL SERVICE## New grade.");
+		}
+		logger.info("##EMAIL SERVICE## Exiting service.");
+
 		mailSender.send(mail);
 	}
 

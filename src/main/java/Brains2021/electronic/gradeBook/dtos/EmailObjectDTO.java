@@ -16,6 +16,7 @@ public class EmailObjectDTO {
 	private LocalDate date;
 	private String assignment;
 	private String description;
+	private String overridenGrade;
 
 	public String getAssignment() {
 		return assignment;
@@ -114,6 +115,29 @@ public class EmailObjectDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getOverridenGrade() {
+		return overridenGrade;
+	}
+
+	public void setOverridenGrade(String overridenGrade) {
+		this.overridenGrade = overridenGrade;
+	}
+
+	@Override
+	public String toString() {
+		return "EmailObjectDTO [to=" + to + ", cc=" + cc + ", subject=" + subject + ", studentName=" + studentName
+				+ ", studentLastName=" + studentLastName + ", teacherName=" + teacherName + ", teacherLastName="
+				+ teacherLastName + ", gradedSubject=" + gradedSubject + ", grade=" + grade + ", date=" + date
+				+ ", assignment=" + assignment + ", description=" + description + ", overridenGrade=" + overridenGrade
+				+ ", getAssignment()=" + getAssignment() + ", getTo()=" + getTo() + ", getCc()=" + getCc()
+				+ ", getSubject()=" + getSubject() + ", getStudentName()=" + getStudentName()
+				+ ", getStudentLastName()=" + getStudentLastName() + ", getTeacherName()=" + getTeacherName()
+				+ ", getTeacherLastName()=" + getTeacherLastName() + ", getGradedSubject()=" + getGradedSubject()
+				+ ", getGrade()=" + getGrade() + ", getDate()=" + getDate() + ", getDescription()=" + getDescription()
+				+ ", getOverridenGrade()=" + getOverridenGrade() + ", getClass()=" + getClass() + ", hashCode()="
+				+ hashCode() + ", toString()=" + super.toString() + "]";
 	}
 
 }

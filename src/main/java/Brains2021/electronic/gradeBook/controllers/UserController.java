@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -706,7 +705,7 @@ public class UserController {
 		// set to deleted and save
 		ogUser.get().setDeleted(1);
 		userRepo.save(ogUser.get());
-		logger.info("**DELETE USER** Attempt successful.");
+		logger.info("**DELETE USER** Attempt successful, using service to get pretty output.");
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
 
@@ -740,7 +739,7 @@ public class UserController {
 		logger.info("**RESTORE USER** Attempt on editing deleted field and saving to db.");
 		ogUser.get().setDeleted(0);
 		userRepo.save(ogUser.get());
-		logger.info("**DELETE USER** Attempt successful.");
+		logger.info("**DELETE USER** Attempt successful, using service to get pretty output.");
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
 
@@ -834,7 +833,7 @@ public class UserController {
 	 * GET endpoint for administrator looking to fetch a specific active user.
 	 * postman code adm043
 	 * 
-	 * @return specifoc user
+	 * @return specific user
 	 **************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
@@ -876,7 +875,8 @@ public class UserController {
 		// prepare a list for output and get children list from parent, check if list is empty
 		List<GetChildrenDTO> activeChildrenDTOs = new ArrayList<>();
 		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
-		Set<StudentParentEntity> children = (Set<StudentParentEntity>) ogParentCast.getChildren();
+
+		List<StudentParentEntity> children = studentParentRepo.findByParent(ogParentCast);
 
 		if (children.isEmpty()) {
 			return new ResponseEntity<RESTError>(
@@ -916,7 +916,7 @@ public class UserController {
 		// prepare a list for output and get parents list from children, check if list is empty
 		List<GetParentsDTO> activeParentsDTOs = new ArrayList<>();
 		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
-		Set<StudentParentEntity> parents = (Set<StudentParentEntity>) ogStudentCast.getParents();
+		List<StudentParentEntity> parents = studentParentRepo.findByStudent(ogStudentCast);
 
 		if (parents.isEmpty()) {
 			return new ResponseEntity<RESTError>(

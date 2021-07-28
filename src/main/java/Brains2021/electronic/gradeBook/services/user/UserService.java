@@ -21,6 +21,18 @@ public interface UserService {
 
 	public String whoAmI();
 
+	public Boolean amIAdmin();
+
+	public Boolean amITeacher();
+
+	public Boolean amIStudent();
+
+	public Boolean amIHeadmaster();
+
+	public Boolean amIHomeroom();
+
+	public Boolean amIParent();
+
 	public Boolean isRoleInEnum(String role);
 
 	public String encodePassword(String passwordToEncode);

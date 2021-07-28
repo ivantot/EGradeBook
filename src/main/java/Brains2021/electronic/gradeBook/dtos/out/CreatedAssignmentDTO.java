@@ -90,4 +90,10 @@ public class CreatedAssignmentDTO {
 		this.subject = subject;
 	}
 
+	@Override
+	public String toString() {
+		return "CreatedAssignmentDTO [type=" + type + ", description=" + description + ", semester=" + semester
+				+ ", dateCreated=" + dateCreated + ", teacher=" + teacher + ", subject=" + subject + "]";
+	}
+
 }
