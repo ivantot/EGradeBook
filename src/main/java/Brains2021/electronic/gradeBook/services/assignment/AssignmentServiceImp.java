@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import Brains2021.electronic.gradeBook.dtos.EmailObjectDTO;
 import Brains2021.electronic.gradeBook.dtos.in.CreateAssignmentDTO;
 import Brains2021.electronic.gradeBook.dtos.out.CreatedAssignmentDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GETAssignmentDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
+import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
 import Brains2021.electronic.gradeBook.repositories.StudentParentRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
@@ -139,6 +141,128 @@ public class AssignmentServiceImp implements AssignmentService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<GETAssignmentDTO> getAssignmentsDTOTranslation(List<AssignmentEntity> assignments) {
+
+		logger.info("##ASIGNMENT SERVICE## Accessed service for DTO to Entity translation.");
+
+		List<GETAssignmentDTO> assignmentsDTO = new ArrayList<>();
+
+		for (AssignmentEntity assignmentEntity : assignments) {
+			logger.info("##ASIGNMENT SERVICE## Entering a loop for transleting each assignment to DTO.");
+
+			GETAssignmentDTO assignmentDTO = new GETAssignmentDTO();
+
+			if (assignmentEntity.getAssignedTo() instanceof StudentEntity) {
+				assignmentDTO.setAssignedTo(assignmentEntity.getAssignedTo().getName() + " "
+						+ assignmentEntity.getAssignedTo().getSurname());
+				assignmentDTO.setStudentGroup(assignmentEntity.getAssignedTo().getBelongsToStudentGroup().getYear()
+						+ "-" + assignmentEntity.getAssignedTo().getBelongsToStudentGroup().getYearIndex());
+			}
+			if (assignmentEntity.getDateAssigned() != null) {
+				assignmentDTO.setDateAssigned(assignmentEntity.getDateAssigned());
+			}
+			if (assignmentEntity.getDateCompleted() != null) {
+				assignmentDTO.setDateCompleted(assignmentEntity.getDateCompleted());
+			}
+			if (assignmentEntity.getDateCreated() != null) {
+				assignmentDTO.setDateCreated(assignmentEntity.getDateCreated());
+			}
+			if (assignmentEntity.getDeleted() != null) {
+				assignmentDTO.setDeleted(assignmentEntity.getDeleted());
+			}
+			if (assignmentEntity.getDescription() != null) {
+				assignmentDTO.setDescription(assignmentEntity.getDescription());
+			}
+			if (assignmentEntity.getDueDate() != null) {
+				assignmentDTO.setDueDate(assignmentEntity.getDueDate());
+			}
+			if (assignmentEntity.getGradeRecieved() != null) {
+				assignmentDTO.setGradeRecieved(assignmentEntity.getGradeRecieved());
+			}
+			if (assignmentEntity.getId() != null) {
+				assignmentDTO.setId(assignmentEntity.getId());
+			}
+			if (assignmentEntity.getOverridenGrade() != null) {
+				assignmentDTO.setOverridenGrade(assignmentEntity.getOverridenGrade());
+			}
+			if (assignmentEntity.getSemester() != null) {
+				assignmentDTO.setSemester(assignmentEntity.getSemester());
+			}
+			if (assignmentEntity.getTeacherIssuing().getSubject().getName() != null
+					&& assignmentEntity.getTeacherIssuing().getTeacher().getName() != null
+					&& assignmentEntity.getTeacherIssuing().getTeacher().getSurname() != null) {
+				assignmentDTO.setSubject(assignmentEntity.getTeacherIssuing().getSubject().getName().toString());
+				assignmentDTO.setTeacher(assignmentEntity.getTeacherIssuing().getTeacher().getName() + " "
+						+ assignmentEntity.getTeacherIssuing().getTeacher().getSurname());
+			}
+			if (assignmentEntity.getType() != null) {
+				assignmentDTO.setType(assignmentEntity.getType().name().toString());
+			}
+			assignmentsDTO.add(assignmentDTO);
+		}
+
+		logger.info("##ASIGNMENT SERVICE## Translation done, DTOs populated, returning to controller.");
+
+		return assignmentsDTO;
+	}
+
+	@Override
+	public GETAssignmentDTO getAssignmentDTOTranslation(AssignmentEntity assignement) {
+		logger.info("##ASIGNMENT SERVICE## Accessed service for DTO to Entity translation.");
+
+		GETAssignmentDTO assignmentDTO = new GETAssignmentDTO();
+
+		if (assignement.getAssignedTo() instanceof StudentEntity) {
+			assignmentDTO.setAssignedTo(
+					assignement.getAssignedTo().getName() + " " + assignement.getAssignedTo().getSurname());
+			assignmentDTO.setStudentGroup(assignement.getAssignedTo().getBelongsToStudentGroup().getYear() + "-"
+					+ assignement.getAssignedTo().getBelongsToStudentGroup().getYearIndex());
+		}
+		if (assignement.getDateAssigned() != null) {
+			assignmentDTO.setDateAssigned(assignement.getDateAssigned());
+		}
+		if (assignement.getDateCompleted() != null) {
+			assignmentDTO.setDateCompleted(assignement.getDateCompleted());
+		}
+		if (assignement.getDateCreated() != null) {
+			assignmentDTO.setDateCreated(assignement.getDateCreated());
+		}
+		if (assignement.getDeleted() != null) {
+			assignmentDTO.setDeleted(assignement.getDeleted());
+		}
+		if (assignement.getDescription() != null) {
+			assignmentDTO.setDescription(assignement.getDescription());
+		}
+		if (assignement.getDueDate() != null) {
+			assignmentDTO.setDueDate(assignement.getDueDate());
+		}
+		if (assignement.getGradeRecieved() != null) {
+			assignmentDTO.setGradeRecieved(assignement.getGradeRecieved());
+		}
+		if (assignement.getId() != null) {
+			assignmentDTO.setId(assignement.getId());
+		}
+		if (assignement.getOverridenGrade() != null) {
+			assignmentDTO.setOverridenGrade(assignement.getOverridenGrade());
+		}
+		if (assignement.getSemester() != null) {
+			assignmentDTO.setSemester(assignement.getSemester());
+		}
+		if (assignement.getTeacherIssuing().getSubject().getName() != null
+				&& assignement.getTeacherIssuing().getTeacher().getName() != null
+				&& assignement.getTeacherIssuing().getTeacher().getSurname() != null) {
+			assignmentDTO.setSubject(assignement.getTeacherIssuing().getSubject().getName().toString());
+			assignmentDTO.setTeacher(assignement.getTeacherIssuing().getTeacher().getName() + " "
+					+ assignement.getTeacherIssuing().getTeacher().getSurname());
+		}
+		if (assignement.getType() != null) {
+			assignmentDTO.setType(assignement.getType().name().toString());
+		}
+		logger.info("##ASIGNMENT SERVICE## Translation done, DTOs populated, returning to controller.");
+		return assignmentDTO;
 	}
 
 }

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.security.Views;
 
-//@JsonRootName(value = "New Teacher")
+//@JsonRootName(value = "New Assignment")
 @JsonPropertyOrder({ "type", "description", "teacher", "subject", "studyYear", "semester", "dateCreated" })
 public class CreatedAssignmentDTO {
 

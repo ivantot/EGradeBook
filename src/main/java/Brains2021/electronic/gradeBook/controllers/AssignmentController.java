@@ -1,6 +1,7 @@
 package Brains2021.electronic.gradeBook.controllers;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -22,12 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateAssignmentDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GETAssignmentDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
+import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.AssignmentRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentGroupTakingASubjectRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
@@ -70,6 +74,9 @@ public class AssignmentController {
 
 	@Autowired
 	SubjectRepository subjectRepo;
+
+	@Autowired
+	StudentRepository studentRepo;
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
@@ -140,7 +147,6 @@ public class AssignmentController {
 	 * @param student
 	 * @return if ok, assignment linked to student
 	 ***************************************************************************************/
-
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/giveAssignmentToStudent")
@@ -512,5 +518,239 @@ public class AssignmentController {
 		logger.info("**RESTORE ASSIGNMENT** Attempt successful.");
 
 		return new ResponseEntity<String>("Assignment with id " + assignmentID + " restored.", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch all assignments.
+	 * -- postman code adm046 --
+	 * 
+	 * @param 
+	 * @return if ok list of all assignemnts in database
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/")
+	public ResponseEntity<?> getAllAssignments() {
+
+		logger.info("**GET ALL ASSIGNMENTS** Access to the endpoint successful.");
+
+		logger.info("**GET ALL ASSIGNMENTS** Attempt to find assignments in database.");
+		// initial check to see if there are any assignements at all
+		if (assignmentRepo.findAll() == null) {
+			logger.warn("**GET ALL ASSIGNMENTS** No assignments in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6532, "No assignments found in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ALL ASSIGNMENTS** Attempt successful, assignemnts are present.");
+
+		// fetch assignments and present to admin/headmaster
+		logger.info("**GET ALL ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+		List<GETAssignmentDTO> ogAssignementsDTO = assignmentService
+				.getAssignmentsDTOTranslation((List<AssignmentEntity>) assignmentRepo.findAll());
+		logger.info("**GET ALL ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch an assignment by ID.
+	 * -- postman code adm047 --
+	 * 
+	 * @param assignment id
+	 * @return if ok assignemnts with given id
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/{assignmentID}")
+	public ResponseEntity<?> getAssignmentByID(@PathVariable Long assignmentID) {
+
+		logger.info("**GET ASSIGNMENT BY ID** Access to the endpoint successful.");
+
+		logger.info("**GET ASSIGNMENT BY ID** Attempt to find a assignment in database.");
+		Optional<AssignmentEntity> ogAssignment = assignmentRepo.findById(assignmentID);
+		if (ogAssignment.isEmpty()) {
+			logger.warn("**GET ASSIGNMENT BY ID** No assignment with given id in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6535, "No assignment with given id in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ASSIGNMENT BY ID** Assignment found.");
+
+		logger.info("**GET ASSIGNMENT BY ID** All done, output to DTO.");
+		return new ResponseEntity<GETAssignmentDTO>(assignmentService.getAssignmentDTOTranslation(ogAssignment.get()),
+				HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch all assignments by student.
+	 * -- postman code adm048 --
+	 * 
+	 * @param student id
+	 * @return if ok list of assignments given to a student
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/student/{studentID}")
+	public ResponseEntity<?> getAssignmentsByStudent(@PathVariable Long studentID) {
+
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Access to the endpoint successful.");
+
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Attempt to find the student in database.");
+		Optional<StudentEntity> ogStudent = studentRepo.findById(studentID);
+		if (ogStudent.isEmpty()) {
+			logger.warn("**GET ASSIGNMENTS BY STUDENT** No student with given id in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6541, "No student with given id in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Student found.");
+
+		List<AssignmentEntity> ogAssignments = assignmentRepo.findByAssignedTo(ogStudent.get());
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Attempt to find if student has any assignments.");
+		if (ogAssignments.isEmpty()) {
+			logger.warn("**GET ASSIGNMENTS BY STUDENT** Student associated with no assignemnets.");
+			return new ResponseEntity<RESTError>(new RESTError(6511, "Student associated with no assignmnets."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Assignments found.");
+
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Attempt to invoke service to translate assignemnts to DTOSs.");
+		List<GETAssignmentDTO> ogAssignementsDTO = assignmentService.getAssignmentsDTOTranslation(ogAssignments);
+		logger.info("**GET ASSIGNMENTS BY STUDENT** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************************
+	 * GET endpoint for administrator looking to fetch all assignments issued by a teacher on a subject.
+	 * -- postman code adm049 --
+	 * 
+	 * @param teacher id
+	 * @return if ok list of assignments issued by a teacher
+	 ***************************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_TEACHER", "ROLE_HOMEROOM" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/teacherSubject/{subjectTeacherID}")
+	public ResponseEntity<?> getAssignmentsByTeacher(@PathVariable Long subjectTeacherID) {
+
+		logger.info("**GET ASSIGNMENTS BY TEACHER-SUBJECT** Access to the endpoint successful.");
+
+		logger.info(
+				"**GET ASSIGNMENTS BY TEACHER-SUBJECT** Attempt to find the teacher-subject combination in database.");
+		Optional<TeacherSubjectEntity> ogTeacherSubject = teacherSubjectRepo.findById(subjectTeacherID);
+		if (ogTeacherSubject.isEmpty()) {
+			logger.warn(
+					"**GET ASSIGNMENTS BY TEACHER-SUBJECT** No teacher-subject combination with given id in database.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(6541, "No teacher-subject combination with given id in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ASSIGNMENTS BY TEACHER-SUBJECT** Teacher-subject found.");
+
+		logger.info(
+				"**GET ASSIGNMENTS BY TEACHER-SUBJECT** Attempt to check roles and allow only teacher who teach the subject, admin and headmaster.");
+		if (!ogTeacherSubject.get().getTeacher().getUsername().equals(userService.whoAmI()) && !userService.amIAdmin()
+				&& !userService.amIHeadmaster()) {
+			logger.warn(
+					"**GET ASSIGNMENTS BY TEACHER-SUBJECT** Role not adequate or teacher not from the teacher-subject combination.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(6841, "Role not adequate or teacher not from the teacher-subject combination."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**GET ASSIGNMENTS BY TEACHER-SUBJECT** Role cleared.");
+
+		List<AssignmentEntity> ogAssignments = assignmentRepo.findByTeacherIssuing(ogTeacherSubject.get());
+		logger.info(
+				"**GET ASSIGNMENTS BY TEACHER-SUBJECT** Attempt to find if teacher-subject has given out any assignments.");
+		if (ogAssignments.isEmpty()) {
+			logger.warn("**GET ASSIGNMENTS BY TEACHER-SUBJECT** Teacher-subject associated with no assignemnets.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(6511, "Teacher teaching a subject associated with no assignmnets."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ASSIGNMENTS BY TEACHER-SUBJECT** Assignments found.");
+
+		logger.info(
+				"**GET ASSIGNMENTS BY TEACHER-SUBJECT** Attempt to invoke service to translate assignemnts to DTOSs.");
+		List<GETAssignmentDTO> ogAssignementsDTO = assignmentService.getAssignmentsDTOTranslation(ogAssignments);
+		logger.info("**GET ASSIGNMENTS BY TEACHER-SUBJECT** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for student looking to fetch all associated assignments.
+	 * -- postman code adm050 --
+	 * 
+	 * @param student id
+	 * @return if ok list of assignments given to a student
+	 **************************************************************************************/
+	@Secured("ROLE_STUDENT")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/student")
+	public ResponseEntity<?> getMyAssignments() {
+
+		logger.info("**GET MY(STUDENT) ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogStudent = userRepo.findByUsername(userService.whoAmI());
+
+		List<AssignmentEntity> ogAssignments = assignmentRepo.findByAssignedTo((StudentEntity) ogStudent.get());
+		logger.info("**GET MY(STUDENT) ASSIGNMENTS** Attempt to find if student has any assignments.");
+		if (ogAssignments.isEmpty()) {
+			logger.warn("**GET MY(STUDENT) ASSIGNMENTS** Student associated with no assignemnets.");
+			return new ResponseEntity<RESTError>(new RESTError(6511, "Student associated with no assignmnets."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET MY(STUDENT) ASSIGNMENTS** Assignments found.");
+
+		logger.info("**GET MY(STUDENT) ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+		List<GETAssignmentDTO> ogAssignementsDTO = assignmentService.getAssignmentsDTOTranslation(ogAssignments);
+		logger.info("**GET MY(STUDENT) ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for student looking to fetch all associated assignments.
+	 * -- postman code adm051 --
+	 * 
+	 * @param student id
+	 * @return if ok list of assignments given to a student
+	 **************************************************************************************/
+	@Secured("ROLE_PARENT")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/parent/{student}")
+	public ResponseEntity<?> getMyChildrensAssignments(@PathVariable String student) {
+
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogParent = userRepo.findByUsername(userService.whoAmI());
+
+		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
+
+		Optional<UserEntity> ogStudent = userRepo.findByUsername(student);
+
+		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
+
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Attempt to find if student and logged parent are related.");
+		if (!userService.areWeRelated(ogParentCast, ogStudentCast)) {
+			logger.warn("**GET MY(CHILDRENS) ASSIGNMENTS** No relation between users.");
+			return new ResponseEntity<RESTError>(new RESTError(6511, "Student and logged user not related."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Users related.");
+
+		List<AssignmentEntity> ogAssignments = assignmentRepo.findByAssignedTo((StudentEntity) ogStudent.get());
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Attempt to find if student has any assignments.");
+		if (ogAssignments.isEmpty()) {
+			logger.warn("**GET MY(CHILDRENS) ASSIGNMENTS** Student associated with no assignemnets.");
+			return new ResponseEntity<RESTError>(new RESTError(6511, "Student associated with no assignmnets."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Assignments found.");
+
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+		List<GETAssignmentDTO> ogAssignementsDTO = assignmentService.getAssignmentsDTOTranslation(ogAssignments);
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
 	}
 }

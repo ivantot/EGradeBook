@@ -33,6 +33,8 @@ public interface UserService {
 
 	public Boolean amIParent();
 
+	public Boolean areWeRelated(ParentEntity parent, StudentEntity student);
+
 	public Boolean isRoleInEnum(String role);
 
 	public String encodePassword(String passwordToEncode);

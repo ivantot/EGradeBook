@@ -32,7 +32,6 @@ import Brains2021.electronic.gradeBook.dtos.out.GetChildrenDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetParentsDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GetUserDTO;
 import Brains2021.electronic.gradeBook.dtos.out.UpdatedUserDTO;
-import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
@@ -132,6 +131,19 @@ public class UserServiceImp implements UserService {
 	@Override
 	public Boolean amIHomeroom() {
 		if (userRepo.findByUsername(whoAmI()).get().getRole().getName().equals(ERole.ROLE_HOMEROOM)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * check for relation between users 
+	 * 
+	 */
+	@Override
+	public Boolean areWeRelated(ParentEntity parent, StudentEntity student) {
+		if (studentParentRepo.findByStudentAndParentAndDeleted(student, parent, 0).isPresent()) {
 			return true;
 		}
 		return false;
