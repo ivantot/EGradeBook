@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 import Brains2021.electronic.gradeBook.security.Views;
 
 //@JsonRootName(value = "Student")
@@ -34,7 +33,7 @@ public class GetChildrenDTO {
 
 	@JsonView(Views.Admin.class)
 	@JsonProperty(value = "Student group")
-	private StudentGroupEntity belongsToStudentGroup;
+	private String StudentGroup;
 
 	public GetChildrenDTO() {
 		super();
@@ -80,12 +79,18 @@ public class GetChildrenDTO {
 		this.parents = parents;
 	}
 
-	public StudentGroupEntity getBelongsToStudentGroup() {
-		return belongsToStudentGroup;
+	public String getStudentGroup() {
+		return StudentGroup;
 	}
 
-	public void setBelongsToStudentGroup(StudentGroupEntity belongsToStudentGroup) {
-		this.belongsToStudentGroup = belongsToStudentGroup;
+	public void setStudentGroup(String studentGroup) {
+		StudentGroup = studentGroup;
+	}
+
+	@Override
+	public String toString() {
+		return "GetChildrenDTO [name=" + name + ", surname=" + surname + ", username=" + username + ", role=" + role
+				+ ", parents=" + parents + ", StudentGroup=" + StudentGroup + "]";
 	}
 
 }

@@ -54,7 +54,7 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private RoleRepository roleRepo;
-	
+
 	@Autowired
 	private StudentParentRepository studentParentRepo;
 
@@ -285,9 +285,9 @@ public class UserServiceImp implements UserService {
 	@Override
 	public TeacherEntity createTeacherDTOtranslation(CreateTeacherDTO teacher) {
 
-		logger.info("**POST NEW TEACHER** Entered service for DTO translation to entity.");
+		logger.info("##POST NEW TEACHER## Entered service for DTO translation to entity.");
 		TeacherEntity newTeacher = new TeacherEntity();
-		logger.info("**POST NEW TEACHER** Translating started.");
+		logger.info("##POST NEW TEACHER## Translating started.");
 		newTeacher.setName(teacher.getName());
 		newTeacher.setSurname(teacher.getSurname());
 		newTeacher.setEmail(teacher.getEmail());
@@ -309,7 +309,7 @@ public class UserServiceImp implements UserService {
 		newTeacher.setIsHeadmaster(0);
 		newTeacher.setDeleted(0);
 
-		logger.info("**POST NEW TEACHER** Translation complete, exiting service and returning to endpoint.");
+		logger.info("##POST NEW TEACHER## Translation complete, exiting service and returning to endpoint.");
 		return newTeacher;
 	}
 
@@ -322,10 +322,10 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<?> createdTeacherDTOtranslation(TeacherEntity teacher) {
 
-		logger.info("**POST NEW TEACHER** Entered service for DTO translation to entity.");
+		logger.info("##POST NEW TEACHER## Entered service for DTO translation to entity.");
 		CreatedTeacherDTO newTeacherDTO = new CreatedTeacherDTO();
 
-		logger.info("**POST NEW TEACHER** Translating started.");
+		logger.info("##POST NEW TEACHER## Translating started.");
 		newTeacherDTO.setName(teacher.getName());
 		newTeacherDTO.setSurname(teacher.getSurname());
 		newTeacherDTO.setDateOfBirth(teacher.getDateOfBirth());
@@ -337,7 +337,7 @@ public class UserServiceImp implements UserService {
 		newTeacherDTO.setStartOfEmployment(teacher.getStartOfEmployment());
 
 		logger.info(
-				"**POST NEW TEACHER** Translation complete, exiting service and returning to endpoint. All actions complete, teacher created.\n"
+				"##POST NEW TEACHER## Translation complete, exiting service and returning to endpoint. All actions complete, teacher created.\n"
 						+ newTeacherDTO.toString());
 		return new ResponseEntity<CreatedTeacherDTO>(newTeacherDTO, HttpStatus.OK);
 	}
@@ -490,18 +490,26 @@ public class UserServiceImp implements UserService {
 	@Override
 	public GetChildrenDTO foundChildrenDTOtranslation(StudentParentEntity student) {
 
+		logger.info("##GET CHILDREN## Entered service for DTO translation to entity.");
+		List<StudentParentEntity> ogParents = studentParentRepo.findByStudent(student.getStudent());
+
+		logger.info("##GET CHILDREN## Setting all fields in Entity.");
 		GetChildrenDTO getStudent = new GetChildrenDTO();
 		getStudent.setName(student.getStudent().getName());
 		getStudent.setSurname(student.getStudent().getSurname());
 		getStudent.setRole(student.getStudent().getRole().getName().toString());
 		getStudent.setUsername(student.getStudent().getUsername());
-		getStudent.setBelongsToStudentGroup(student.getStudent().getBelongsToStudentGroup());
+		if (student.getStudent().getBelongsToStudentGroup() != null) {
+			getStudent.setStudentGroup(student.getStudent().getBelongsToStudentGroup().getYear() + "-"
+					+ student.getStudent().getBelongsToStudentGroup().getYearIndex());
+		}
 		Map<String, String> parents = new HashMap<String, String>();
-		for (StudentParentEntity parent : student.getStudent().getParents()) {
-			parents.put(parent.getParent().getName(), parent.getParent().getPhoneNumber());
+		for (StudentParentEntity parent : ogParents) {
+			parents.put(parent.getParent().getName() + " " + parent.getParent().getSurname(),
+					parent.getParent().getPhoneNumber());
 		}
 		getStudent.setParents(parents);
-
+		logger.info("##GET CHILDREN## Exiting service for DTO translation to entity.");
 		return getStudent;
 	}
 
@@ -513,9 +521,11 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public GetParentsDTO foundParentsDTOtranslation(StudentParentEntity parent) {
-		
+
+		logger.info("##GET PARENTS## Entered service for DTO translation to entity.");
 		List<StudentParentEntity> ogChildren = studentParentRepo.findByParent(parent.getParent());
 
+		logger.info("##GET PARENTS## Setting all fields in Entity.");
 		GetParentsDTO getParent = new GetParentsDTO();
 		getParent.setName(parent.getParent().getName());
 		getParent.setSurname(parent.getParent().getSurname());
@@ -527,7 +537,7 @@ public class UserServiceImp implements UserService {
 			children.add(child.getStudent().getName() + " " + child.getStudent().getSurname());
 		}
 		getParent.setChildren(children);
-
+		logger.info("##GET PARENTS## Exiting service for DTO translation to entity.");
 		return getParent;
 	}
 

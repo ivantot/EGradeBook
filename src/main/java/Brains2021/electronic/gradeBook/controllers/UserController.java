@@ -863,15 +863,21 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/students/{usernameParent}")
 	public ResponseEntity<?> findActiveStudentsFromParent(@PathVariable String usernameParent) {
 
+		logger.info("**GET CHILDREN** Access to the endpoint successful.");
+
+		logger.info("**GET CHILDREN** Attempt to find active parent in database.");
 		// initial check for active parent existance in db
 		Optional<UserEntity> ogParent = userRepo.findByDeletedAndRoleAndUsername(0,
 				roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
 		if (ogParent.isEmpty()) {
+			logger.warn("**GET CHILDREN** Not an active parent.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1100, "Parent not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**GET CHILDREN** Active parent found.");
 
+		logger.info("**GET CHILDREN** Attempt to make a list of children belonging to a parent.");
 		// prepare a list for output and get children list from parent, check if list is empty
 		List<GetChildrenDTO> activeChildrenDTOs = new ArrayList<>();
 		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
@@ -879,15 +885,19 @@ public class UserController {
 		List<StudentParentEntity> children = studentParentRepo.findByParent(ogParentCast);
 
 		if (children.isEmpty()) {
+			logger.warn(
+					"**GET CHILDREN** Parent without childre. This should not happen, schedule for user maintenance.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1110, "No students assigned to this user. Schedule for db maintenance."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**GET CHILDREN** List prepared, attempting to access service for translation to DTO.");
 
 		// translate to DTO using a service
 		for (StudentParentEntity studentEntity : children) {
 			activeChildrenDTOs.add(userService.foundChildrenDTOtranslation(studentEntity));
 		}
+		logger.info("**GET CHILDREN** All done, outputing a list of children.");
 
 		return new ResponseEntity<List<GetChildrenDTO>>(activeChildrenDTOs, HttpStatus.OK);
 
@@ -904,30 +914,40 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/parents/{usernameStudent}")
 	public ResponseEntity<?> findActiveParentsFromStudent(@PathVariable String usernameStudent) {
 
+		logger.info("**GET PARENTS** Access to the endpoint successful.");
+
+		logger.info("**GET PARENTS** Attempt to find active parent in database.");
 		// initial check for active student existance in db
 		Optional<UserEntity> ogStudent = userRepo.findByDeletedAndRoleAndUsername(0,
 				roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameStudent);
 		if (ogStudent.isEmpty()) {
+			logger.warn("**GET PARENTS** Not an active parent.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1120, "Student not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**GET PARENTS** Active parent found.");
 
+		logger.info("**GET PARENTS** Attempt to make a list of children belonging to a parent.");
 		// prepare a list for output and get parents list from children, check if list is empty
 		List<GetParentsDTO> activeParentsDTOs = new ArrayList<>();
 		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
 		List<StudentParentEntity> parents = studentParentRepo.findByStudent(ogStudentCast);
 
 		if (parents.isEmpty()) {
+			logger.warn(
+					"**GET PARENTS** Parent without childre. This should not happen, schedule for user maintenance.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1130, "No parents assigned to this user. Schedule for db maintenance."),
 					HttpStatus.NOT_FOUND);
 		}
+		logger.info("**GET PARENTS** List prepared, attempting to access service for translation to DTO.");
 
 		// translate to DTO using a service
 		for (StudentParentEntity parentEntity : parents) {
 			activeParentsDTOs.add(userService.foundParentsDTOtranslation(parentEntity));
 		}
+		logger.info("**GET PARENTS** All done, outputing a list of children.");
 
 		return new ResponseEntity<List<GetParentsDTO>>(activeParentsDTOs, HttpStatus.OK);
 
