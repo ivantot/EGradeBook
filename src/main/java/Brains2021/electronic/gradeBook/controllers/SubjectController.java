@@ -175,4 +175,32 @@ public class SubjectController {
 		return new ResponseEntity<String>("Subject " + subject.get().getName().toString() + " reinstated in db.",
 				HttpStatus.OK);
 	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch all subjects.
+	 * -- postman code adm052 --
+	 * 
+	 * @param 
+	 * @return if ok list of all assignemnts in database
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/")
+	public ResponseEntity<?> getAllSubjects() {
+
+		logger.info("**GET ALL SUBJECTS** Access to the endpoint successful.");
+
+		logger.info("**GET ALL SUBJECTS** Attempt to find subjects in database.");
+		// initial check to see if there are any assignements at all
+		if (subjectRepo.findAll() == null) {
+			logger.warn("**GET ALL SUBJECTS** No subjects in database.");
+			return new ResponseEntity<RESTError>(new RESTError(1530, "No subjects found in database."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		logger.info("**GET ALL ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<SubjectEntity>>((List<SubjectEntity>) subjectRepo.findAll(), HttpStatus.OK);
+	}
+
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateTeacherSubjectDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GETTeacherSubjectDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
@@ -309,6 +310,68 @@ public class TeacherSubjectController {
 
 		return new ResponseEntity<String>("Teacher - subject relationship with id " + teacherSubjectID + " restored.",
 				HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch all teacher-subject combinations.
+	 * -- postman code adm053 --
+	 * 
+	 * @param 
+	 * @return if ok list of all teacehr-subject combinations in database
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/")
+	public ResponseEntity<?> getAllTeacherSubjects() {
+
+		logger.info("**GET ALL TEACHER-SUBJECT COMBINATIONS** Access to the endpoint successful.");
+
+		logger.info("**GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt to find teacher-subject combinations.");
+		if (teacherSubjectRepo.findAll() == null) {
+			logger.warn("**GET ALL TEACHER-SUBJECT COMBINATIONS** No assignments in database.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(6532, "No teacher-subject combinations found in database."), HttpStatus.NOT_FOUND);
+		}
+		logger.info(
+				"**GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt successful, teacher-subject combinations are present.");
+
+		// fetch teacher-subject combinations and present to admin/headmaster
+		logger.info(
+				"**GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt to invoke service to translate teacher-subject combinations to DTOSs.");
+		List<GETTeacherSubjectDTO> ogTeacherSubjectsDTO = teacherSubjectService
+				.GETTeacherSubjectsDTOtranslation((List<TeacherSubjectEntity>) teacherSubjectRepo.findAll());
+		logger.info("**GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETTeacherSubjectDTO>>(ogTeacherSubjectsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch a teacher-subject combination by ID.
+	 * -- postman code adm054 --
+	 * 
+	 * @param teacherSubject id
+	 * @return if ok teacher-subject with given id
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/{teacherSubjectID}")
+	public ResponseEntity<?> getTeacherSubjectByID(@PathVariable Long teacherSubjectID) {
+
+		logger.info("**GET TEACHER-SUBJECT BY ID** Access to the endpoint successful.");
+
+		logger.info("**GET TEACHER-SUBJECT BY ID** Attempt to find a teacher-subject combination in database.");
+		Optional<TeacherSubjectEntity> ogTeacherSubject = teacherSubjectRepo.findById(teacherSubjectID);
+		if (ogTeacherSubject.isEmpty()) {
+			logger.warn("**GET TEACHER-SUBJECT BY ID** No teacher-subject combination with given id in database.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(6535, "No teacher-subject combination with given id in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET TEACHER-SUBJECT BY ID** teacher-subject combination found.");
+
+		logger.info("**GET TEACHER-SUBJECT BY ID** All done, output to DTO.");
+		return new ResponseEntity<GETTeacherSubjectDTO>(
+				teacherSubjectService.GETTeacherSubjectDTOtranslation(ogTeacherSubject.get()), HttpStatus.OK);
 	}
 
 }

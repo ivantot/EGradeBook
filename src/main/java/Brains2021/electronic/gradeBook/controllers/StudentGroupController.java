@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateStudentGroupDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GETStudentGroupsDTO;
 import Brains2021.electronic.gradeBook.entites.StudentGroupEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
@@ -30,6 +31,8 @@ import Brains2021.electronic.gradeBook.repositories.StudentRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherRepository;
 import Brains2021.electronic.gradeBook.repositories.UserRepository;
 import Brains2021.electronic.gradeBook.security.Views;
+import Brains2021.electronic.gradeBook.services.studentGroup.StudentGroupService;
+import Brains2021.electronic.gradeBook.services.user.UserService;
 import Brains2021.electronic.gradeBook.utils.RESTError;
 import Brains2021.electronic.gradeBook.utils.enums.ERole;
 
@@ -48,6 +51,12 @@ public class StudentGroupController {
 
 	@Autowired
 	private TeacherRepository teacherRepo;
+
+	@Autowired
+	private StudentGroupService studentGroupService;
+
+	@Autowired
+	private UserService userService;
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
@@ -283,6 +292,76 @@ public class StudentGroupController {
 		logger.info("**RESTORE STUDENT GROUP** Attempt successful.");
 
 		return new ResponseEntity<String>("Assignment with id " + studentGroupID + " restored.", HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch all student groups.
+	 * -- postman code adm055 --
+	 * 
+	 * @param 
+	 * @return if ok list of all student groups in database
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/")
+	public ResponseEntity<?> getAllStudentGroups() {
+
+		logger.info("**GET ALL STUDENT GROUPS** Access to the endpoint successful.");
+
+		logger.info("**GET ALL STUDENT GROUPS** Attempt to find student groups.");
+		if (studentGroupRepo.findAll() == null) {
+			logger.warn("**GET ALL STUDENT GROUPS** No student groups in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6532, "No student groups found in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET ALL STUDENT GROUPS** Attempt successful, student groups are present.");
+
+		// fetch student groups and present to admin/headmaster
+		logger.info("**GET ALL STUDENT GROUPSS** Attempt to invoke service to translate student groups to DTOSs.");
+		List<GETStudentGroupsDTO> ogstudentGroupsDTO = studentGroupService
+				.GETStudentGroupsDTOtranslation((List<StudentGroupEntity>) studentGroupRepo.findAll());
+		logger.info("**GET ALL STUDENT GROUPS** Attempt successful, list retrieved. Exiting controller");
+
+		return new ResponseEntity<List<GETStudentGroupsDTO>>(ogstudentGroupsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch a student group by ID.
+	 * -- postman code adm056 --
+	 * 
+	 * @param studentGroup id
+	 * @return if ok student grooup with given id
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/{studentGroupID}")
+	public ResponseEntity<?> getStudentGroupByID(@PathVariable Long studentGroupID) {
+
+		logger.info("**GET STUDENT GROUP BY ID** Access to the endpoint successful.");
+
+		logger.info(
+				"**GET STUDENT GROUP BY ID** Attempt to see if logged user is student groups homeroom teacher, admin or headmaster.");
+		if (!userService.amIHeadmaster() && !userService.amIAdmin() && !userRepo.findByUsername(userService.whoAmI())
+				.equals(studentGroupRepo.findById(studentGroupID).get().getHomeroomTeacher().getUsername())) {
+			logger.warn(
+					"**GET STUDENT GROUP BY ID** Looged user not student groups homeroom teacher, admin or headmaster.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(6595, "ooged user not student groups homeroom teacher, admin or headmaster."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		logger.info("**GET STUDENT GROUP BY ID** Attempt to find a student group in database.");
+		Optional<StudentGroupEntity> ogStudentGroup = studentGroupRepo.findById(studentGroupID);
+		if (ogStudentGroup.isEmpty()) {
+			logger.warn("**GET STUDENT GROUP BY ID** No student group with given id in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6535, "No student group with given id in database."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET STUDENT GROUP BY ID** Student group found.");
+
+		logger.info("**GET STUDENT GROUP BY ID** All done, output to DTO.");
+		return new ResponseEntity<GETStudentGroupsDTO>(
+				studentGroupService.GETStudentGroupDTOtranslation(ogStudentGroup.get()), HttpStatus.OK);
 	}
 
 }

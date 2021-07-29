@@ -709,7 +709,7 @@ public class AssignmentController {
 	}
 
 	/***************************************************************************************
-	 * GET endpoint for student looking to fetch all associated assignments.
+	 * GET endpoint for parent looking to fetch all student associated assignments.
 	 * -- postman code adm051 --
 	 * 
 	 * @param student id

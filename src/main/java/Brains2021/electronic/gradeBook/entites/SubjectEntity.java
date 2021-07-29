@@ -16,7 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
+import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.utils.enums.ESubjectName;
 
 @Entity
@@ -26,15 +28,19 @@ public class SubjectEntity {
 
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Admin.class)
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
+	@JsonView(Views.Admin.class)
 	private ESubjectName name;
 
 	@Column(nullable = false)
+	@JsonView(Views.Admin.class)
 	private String yearOfSchooling;
 
+	@JsonView(Views.Admin.class)
 	private String description;
 
 	@Column(nullable = false)

@@ -1,5 +1,12 @@
 package Brains2021.electronic.gradeBook.services.teacherSubject;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import Brains2021.electronic.gradeBook.dtos.in.CreateTeacherSubjectDTO;
 import Brains2021.electronic.gradeBook.dtos.out.CreatedTeacherSubjectDTO;
+import Brains2021.electronic.gradeBook.dtos.out.GETTeacherSubjectDTO;
+import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.repositories.SubjectRepository;
@@ -21,6 +30,8 @@ public class TeacherSubjectServiceImp implements TeacherSubjectService {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 
@@ -62,6 +73,90 @@ public class TeacherSubjectServiceImp implements TeacherSubjectService {
 		newTeacherSubjectDTO.setYearOfSchooling(teacherSubject.getSubject().getYearOfSchooling());
 
 		return new ResponseEntity<CreatedTeacherSubjectDTO>(newTeacherSubjectDTO, HttpStatus.OK);
+	}
+
+	/**
+	 * 
+	 * service that takes an entity and translates to DTO for pretty output
+	 * used for getting Teacher - Subject combos
+	 * 
+	 */
+	@Override
+	public List<GETTeacherSubjectDTO> GETTeacherSubjectsDTOtranslation(List<TeacherSubjectEntity> teacherSubjects) {
+		// translate entity to DTO 
+
+		logger.info("##TEACHER - SUBJECT SERVICE## Service for translation to DTO.");
+		List<GETTeacherSubjectDTO> newTeacherSubjectDTOs = new ArrayList<>();
+
+		for (TeacherSubjectEntity teacherSubject : teacherSubjects) {
+			GETTeacherSubjectDTO teacherSubjectDTO = new GETTeacherSubjectDTO();
+
+			if (teacherSubject.getId() != null) {
+				teacherSubjectDTO.setId(teacherSubject.getId());
+			}
+			if (teacherSubject.getDeleted() != null) {
+				teacherSubjectDTO.setDeleted(teacherSubject.getDeleted());
+			}
+			if (teacherSubject.getStudentGroupsTakingASubject() != null) {
+				Set<String> studentGroups = new HashSet<>();
+				for (StudentGroupTakingASubjectEntity studentGroupTakingASubject : teacherSubject
+						.getStudentGroupsTakingASubject()) {
+					studentGroups.add(studentGroupTakingASubject.getStudentGroup().getYear() + "-"
+							+ studentGroupTakingASubject.getStudentGroup().getYearIndex());
+				}
+				teacherSubjectDTO.setStudentGroupsTakingASubject(studentGroups);
+			}
+			if (teacherSubject.getSubject() != null) {
+				teacherSubjectDTO.setSubject(teacherSubject.getSubject().getName().toString());
+			}
+			if (teacherSubject.getTeacher() != null) {
+				teacherSubjectDTO.setTeacher(
+						teacherSubject.getTeacher().getName() + " " + teacherSubject.getTeacher().getSurname());
+			}
+			if (teacherSubject.getWeeklyHoursAlloted() != null) {
+				teacherSubjectDTO.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
+			}
+			newTeacherSubjectDTOs.add(teacherSubjectDTO);
+		}
+		logger.info("##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.");
+
+		return newTeacherSubjectDTOs;
+	}
+
+	@Override
+	public GETTeacherSubjectDTO GETTeacherSubjectDTOtranslation(TeacherSubjectEntity teacherSubject) {
+
+		logger.info("##TEACHER - SUBJECT SERVICE## Service for translation to DTO.");
+		GETTeacherSubjectDTO teacherSubjectDTO = new GETTeacherSubjectDTO();
+
+		if (teacherSubject.getId() != null) {
+			teacherSubjectDTO.setId(teacherSubject.getId());
+		}
+		if (teacherSubject.getDeleted() != null) {
+			teacherSubjectDTO.setDeleted(teacherSubject.getDeleted());
+		}
+		if (teacherSubject.getStudentGroupsTakingASubject() != null) {
+			Set<String> studentGroups = new HashSet<>();
+			for (StudentGroupTakingASubjectEntity studentGroupTakingASubject : teacherSubject
+					.getStudentGroupsTakingASubject()) {
+				studentGroups.add(studentGroupTakingASubject.getStudentGroup().getYear() + "-"
+						+ studentGroupTakingASubject.getStudentGroup().getYearIndex());
+			}
+			teacherSubjectDTO.setStudentGroupsTakingASubject(studentGroups);
+		}
+		if (teacherSubject.getSubject() != null) {
+			teacherSubjectDTO.setSubject(teacherSubject.getSubject().getName().toString());
+		}
+		if (teacherSubject.getTeacher() != null) {
+			teacherSubjectDTO
+					.setTeacher(teacherSubject.getTeacher().getName() + " " + teacherSubject.getTeacher().getSurname());
+		}
+		if (teacherSubject.getWeeklyHoursAlloted() != null) {
+			teacherSubjectDTO.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
+		}
+		logger.info("##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.");
+
+		return teacherSubjectDTO;
 	}
 
 }
