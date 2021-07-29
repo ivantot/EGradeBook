@@ -8,6 +8,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,7 +24,11 @@ import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentParentEntity;
+import Brains2021.electronic.gradeBook.repositories.AssignmentRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentGroupRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentParentRepository;
+import Brains2021.electronic.gradeBook.repositories.StudentRepository;
+import Brains2021.electronic.gradeBook.repositories.TeacherRepository;
 import Brains2021.electronic.gradeBook.repositories.TeacherSubjectRepository;
 import Brains2021.electronic.gradeBook.services.email.EmailService;
 import Brains2021.electronic.gradeBook.services.user.UserService;
@@ -41,7 +49,19 @@ public class AssignmentServiceImp implements AssignmentService {
 	private EmailService emailService;
 
 	@Autowired
+	private StudentRepository studentRepo;
+
+	@Autowired
 	private StudentParentRepository studentParentRepo;
+
+	@Autowired
+	private AssignmentRepository assignmentRepo;
+
+	@Autowired
+	private TeacherRepository teacherRepo;
+
+	@Autowired
+	private StudentGroupRepository studentGroupRepo;
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
@@ -263,6 +283,111 @@ public class AssignmentServiceImp implements AssignmentService {
 		}
 		logger.info("##ASIGNMENT SERVICE## Translation done, DTOs populated, returning to controller.");
 		return assignmentDTO;
+	}
+
+	@Override
+	public ResponseEntity<?> getAssignmentsPaginated(Integer pageNo, Integer pageSize, String sortBy,
+			String sortOrder) {
+
+		logger.info("##ASIGNMENT SERVICE## Accessed service admin and headmaster assignments pagination.");
+
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+		if (sortOrder.matches("^a.*$")) {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+
+		} else {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+		}
+
+		Page<AssignmentEntity> pagedResult = assignmentRepo.findAll(paging);
+
+		Page<GETAssignmentDTO> pagedDTOs = pagedResult.map(this::getAssignmentDTOTranslation);
+
+		logger.info("##ASIGNMENT SERVICE## All done, returning to controller.");
+
+		if (pagedDTOs.hasContent()) {
+			return new ResponseEntity<List<GETAssignmentDTO>>(pagedDTOs.getContent(), HttpStatus.OK);
+		}
+		return new ResponseEntity<RESTError>(new RESTError(10000, "No more pages."), HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
+	public ResponseEntity<?> getAssignmentsPaginatedForStudent(Long id, Integer pageNo, Integer pageSize, String sortBy,
+			String sortOrder) {
+
+		logger.info("##ASIGNMENT SERVICE## Accessed service student assignments pagination.");
+
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+		if (sortOrder.matches("^a.*$")) {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+
+		} else {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+		}
+
+		Page<AssignmentEntity> pagedResult = assignmentRepo.findAllByAssignedTo(studentRepo.findById(id).get(), paging);
+		Page<GETAssignmentDTO> pagedDTOs = pagedResult.map(this::getAssignmentDTOTranslation);
+
+		logger.info("##ASIGNMENT SERVICE## All done, returning to controller.");
+
+		if (pagedDTOs.hasContent()) {
+			return new ResponseEntity<List<GETAssignmentDTO>>(pagedDTOs.getContent(), HttpStatus.OK);
+		}
+		return new ResponseEntity<RESTError>(new RESTError(10000, "No more pages."), HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
+	public ResponseEntity<?> getAssignmentsPaginatedForHomeroom(Long id, Integer pageNo, Integer pageSize,
+			String sortBy, String sortOrder) {
+		logger.info("##ASIGNMENT SERVICE## Accessed service homeroom assignments pagination.");
+
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+		if (sortOrder.matches("^a.*$")) {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+
+		} else {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+		}
+
+		Page<AssignmentEntity> pagedResult = assignmentRepo.findAllByStudentGroup(studentGroupRepo.findById(id).get(),
+				paging);
+		Page<GETAssignmentDTO> pagedDTOs = pagedResult.map(this::getAssignmentDTOTranslation);
+
+		logger.info("##ASIGNMENT SERVICE## All done, returning to controller.");
+
+		if (pagedDTOs.hasContent()) {
+			return new ResponseEntity<List<GETAssignmentDTO>>(pagedDTOs.getContent(), HttpStatus.OK);
+		}
+		return new ResponseEntity<RESTError>(new RESTError(10000, "No more pages."), HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
+	public ResponseEntity<?> getAssignmentsPaginatedForTeacher(Long id, Integer pageNo, Integer pageSize, String sortBy,
+			String sortOrder) {
+		logger.info("##ASIGNMENT SERVICE## Accessed service teacher assignments pagination.");
+
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+		if (sortOrder.matches("^a.*$")) {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+
+		} else {
+			paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+		}
+
+		Page<AssignmentEntity> pagedResult = assignmentRepo.findAllByTeacherIssuing(teacherRepo.findById(id).get(),
+				paging);
+		Page<GETAssignmentDTO> pagedDTOs = pagedResult.map(this::getAssignmentDTOTranslation);
+
+		logger.info("##ASIGNMENT SERVICE## All done, returning to controller.");
+
+		if (pagedDTOs.hasContent()) {
+			return new ResponseEntity<List<GETAssignmentDTO>>(pagedDTOs.getContent(), HttpStatus.OK);
+		}
+		return new ResponseEntity<RESTError>(new RESTError(10000, "No more pages."), HttpStatus.BAD_REQUEST);
 	}
 
 }

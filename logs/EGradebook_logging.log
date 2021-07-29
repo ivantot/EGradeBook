@@ -1,311 +1,61 @@
-29 Jul 2021 - 04:51:49.654 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 2288 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 04:51:49.659 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 04:51:50.510 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 04:51:50.636 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 113 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 04:51:50.954 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@380e1909' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 04:51:50.959 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 04:51:51.227 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 04:51:51.240 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 04:51:51.241 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 04:51:51.369 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 04:51:51.369 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1672 ms
-29 Jul 2021 - 04:51:52.125 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 04:51:52.473 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 04:51:53.523 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 04:51:53.561 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 04:51:54.342 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 95f67e5f-59ac-4644-8030-be1bbb57c730
-
-29 Jul 2021 - 04:51:54.456 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@793248d, org.springframework.security.web.context.SecurityContextPersistenceFilter@64dfa1a3, org.springframework.security.web.header.HeaderWriterFilter@207f7baa, org.springframework.security.web.authentication.logout.LogoutFilter@22b4ad0c, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@6731b6bd, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7866ffa, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@213bd66a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@768f2398, org.springframework.security.web.session.SessionManagementFilter@4138af7, org.springframework.security.web.access.ExceptionTranslationFilter@4687fee7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@51eeae0a]
-29 Jul 2021 - 04:51:54.859 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 04:51:54.867 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 5.591 seconds (JVM running for 6.582)
-29 Jul 2021 - 04:52:18.846 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 04:52:18.898 [http-nio-8090-exec-1] INFO  B.e.g.controllers.UserController - **LOGIN** User rwing1y attempting to log into the system.
-29 Jul 2021 - 04:52:19.053 [http-nio-8090-exec-1] INFO  B.e.g.controllers.UserController - **LOGIN** Both attempt to find user rwing1y in the database and password validation turned out to be successful.
-29 Jul 2021 - 04:52:19.053 [http-nio-8090-exec-1] INFO  B.e.g.controllers.UserController - **LOGIN** Attempting to create a token.
-29 Jul 2021 - 04:52:19.140 [http-nio-8090-exec-1] INFO  B.e.g.controllers.UserController - **LOGIN** Assigning the token to a DTO.
-29 Jul 2021 - 04:52:19.140 [http-nio-8090-exec-1] INFO  B.e.g.controllers.UserController - **LOGIN** User rwing1y has successfuly logged in the system.
-29 Jul 2021 - 04:52:30.147 [http-nio-8090-exec-3] INFO  B.e.g.controllers.UserController - **LOGIN** User admin attempting to log into the system.
-29 Jul 2021 - 04:52:30.242 [http-nio-8090-exec-3] INFO  B.e.g.controllers.UserController - **LOGIN** Both attempt to find user admin in the database and password validation turned out to be successful.
-29 Jul 2021 - 04:52:30.242 [http-nio-8090-exec-3] INFO  B.e.g.controllers.UserController - **LOGIN** Attempting to create a token.
-29 Jul 2021 - 04:52:30.243 [http-nio-8090-exec-3] INFO  B.e.g.controllers.UserController - **LOGIN** Assigning the token to a DTO.
-29 Jul 2021 - 04:52:30.244 [http-nio-8090-exec-3] INFO  B.e.g.controllers.UserController - **LOGIN** User admin has successfuly logged in the system.
-29 Jul 2021 - 04:54:13.396 [http-nio-8090-exec-6] INFO  B.e.g.controllers.SubjectController - **GET ALL SUBJECTS** Access to the endpoint successful.
-29 Jul 2021 - 04:54:13.396 [http-nio-8090-exec-6] INFO  B.e.g.controllers.SubjectController - **GET ALL SUBJECTS** Attempt to find subjects in database.
-29 Jul 2021 - 04:54:13.419 [http-nio-8090-exec-6] INFO  B.e.g.controllers.SubjectController - **GET ALL ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller
-29 Jul 2021 - 04:56:23.939 [RMI TCP Connection(8)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 04:56:23.988 [RMI TCP Connection(8)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 04:56:23.990 [RMI TCP Connection(8)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 04:56:23.999 [RMI TCP Connection(8)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 04:56:30.539 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 15868 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 04:56:30.541 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 04:56:31.139 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 04:56:31.223 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 73 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 04:56:31.474 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@661d88a' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 04:56:31.478 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 04:56:31.657 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 04:56:31.665 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 04:56:31.665 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 04:56:31.756 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 04:56:31.756 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1179 ms
-29 Jul 2021 - 04:56:32.119 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 04:56:32.397 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 04:56:33.269 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 04:56:33.302 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 04:56:33.880 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: dc7193c2-7395-476a-866d-b5efb204d065
-
-29 Jul 2021 - 04:56:33.947 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@8bb5c2a, org.springframework.security.web.context.SecurityContextPersistenceFilter@30a79476, org.springframework.security.web.header.HeaderWriterFilter@1a1c308b, org.springframework.security.web.authentication.logout.LogoutFilter@1188e08b, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@6a9d572, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@37f0fb02, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@69ee0861, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@a5df98c, org.springframework.security.web.session.SessionManagementFilter@7b9f7087, org.springframework.security.web.access.ExceptionTranslationFilter@1f2d0ca2, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7916568d]
-29 Jul 2021 - 04:56:34.266 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 04:56:34.274 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.077 seconds (JVM running for 4.791)
-29 Jul 2021 - 04:56:35.932 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 04:56:36.039 [http-nio-8090-exec-2] INFO  B.e.g.controllers.SubjectController - **GET ALL SUBJECTS** Access to the endpoint successful.
-29 Jul 2021 - 04:56:36.040 [http-nio-8090-exec-2] INFO  B.e.g.controllers.SubjectController - **GET ALL SUBJECTS** Attempt to find subjects in database.
-29 Jul 2021 - 04:56:36.089 [http-nio-8090-exec-2] INFO  B.e.g.controllers.SubjectController - **GET ALL ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller
-29 Jul 2021 - 05:32:20.125 [RMI TCP Connection(40)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 05:32:20.149 [RMI TCP Connection(40)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 05:32:20.151 [RMI TCP Connection(40)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 05:32:20.154 [RMI TCP Connection(40)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 05:32:32.273 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 13096 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 05:32:32.276 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 05:32:32.850 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 05:32:32.930 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 05:32:33.186 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@50f097b5' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 05:32:33.190 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 05:32:33.374 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 05:32:33.383 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 05:32:33.384 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 05:32:33.512 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 05:32:33.512 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1202 ms
-29 Jul 2021 - 05:32:33.878 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 05:32:34.165 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 05:32:35.055 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 05:32:35.088 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 05:32:35.817 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 2afaea0a-0732-42b3-b831-857a5d6ffa46
-
-29 Jul 2021 - 05:32:35.886 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@55589ef5, org.springframework.security.web.context.SecurityContextPersistenceFilter@64dfa1a3, org.springframework.security.web.header.HeaderWriterFilter@207f7baa, org.springframework.security.web.authentication.logout.LogoutFilter@22b4ad0c, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@23a9400c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7866ffa, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@213bd66a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@793248d, org.springframework.security.web.session.SessionManagementFilter@4138af7, org.springframework.security.web.access.ExceptionTranslationFilter@4687fee7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1d77d9c6]
-29 Jul 2021 - 05:32:36.199 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 05:32:36.206 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.278 seconds (JVM running for 4.976)
-29 Jul 2021 - 05:33:15.569 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 05:33:15.677 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Access to the endpoint successful.
-29 Jul 2021 - 05:33:15.677 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt to find teacher-subject combinations.
-29 Jul 2021 - 05:33:15.743 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt successful, teacher-subject combinations are present.
-29 Jul 2021 - 05:33:15.743 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt to invoke service to translate assignemnts to DTOSs.
-29 Jul 2021 - 05:33:15.746 [http-nio-8090-exec-2] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Service for translation to DTO.
-29 Jul 2021 - 05:33:15.870 [http-nio-8090-exec-2] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 05:33:15.870 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt successful, list retrieved. Exiting controller
-29 Jul 2021 - 05:34:34.683 [RMI TCP Connection(4)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 05:34:34.710 [RMI TCP Connection(4)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 05:34:34.711 [RMI TCP Connection(4)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 05:34:34.716 [RMI TCP Connection(4)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 05:35:07.087 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 368 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 05:35:07.089 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 05:35:07.661 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 05:35:07.746 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 79 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 05:35:08.013 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@6b6b3572' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 05:35:08.017 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 05:35:08.194 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 05:35:08.202 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 05:35:08.203 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 05:35:08.298 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 05:35:08.299 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1176 ms
-29 Jul 2021 - 05:35:08.652 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 05:35:08.930 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 05:35:09.790 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 05:35:09.823 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 05:35:10.414 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 1d792f04-a4e9-4eca-a495-c22b356b1ef1
-
-29 Jul 2021 - 05:35:10.482 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@538d2308, org.springframework.security.web.context.SecurityContextPersistenceFilter@25d87313, org.springframework.security.web.header.HeaderWriterFilter@5de6c7d7, org.springframework.security.web.authentication.logout.LogoutFilter@43778d6d, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@3d0697da, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@73502d5e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5bbb0a25, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4b99f2ed, org.springframework.security.web.session.SessionManagementFilter@1f5a1ad4, org.springframework.security.web.access.ExceptionTranslationFilter@1067bc4c, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@23a9400c]
-29 Jul 2021 - 05:35:10.784 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 05:35:10.791 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.015 seconds (JVM running for 4.625)
-29 Jul 2021 - 05:35:19.250 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 05:35:19.365 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Access to the endpoint successful.
-29 Jul 2021 - 05:35:19.366 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt to find teacher-subject combinations.
-29 Jul 2021 - 05:35:19.430 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt successful, teacher-subject combinations are present.
-29 Jul 2021 - 05:35:19.430 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt to invoke service to translate assignemnts to DTOSs.
-29 Jul 2021 - 05:35:19.434 [http-nio-8090-exec-2] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Service for translation to DTO.
-29 Jul 2021 - 05:35:19.555 [http-nio-8090-exec-2] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 05:35:19.555 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET ALL TEACHER-SUBJECT COMBINATIONS** Attempt successful, list retrieved. Exiting controller
-29 Jul 2021 - 05:42:24.633 [RMI TCP Connection(11)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 05:42:24.657 [RMI TCP Connection(11)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 05:42:24.659 [RMI TCP Connection(11)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 05:42:24.663 [RMI TCP Connection(11)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 05:42:29.212 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 4680 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 05:42:29.214 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 05:42:29.802 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 05:42:29.888 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 79 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 05:42:30.143 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@69d45cca' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 05:42:30.148 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 05:42:30.322 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 05:42:30.329 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 05:42:30.330 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 05:42:30.436 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 05:42:30.436 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1189 ms
-29 Jul 2021 - 05:42:30.807 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 05:42:31.094 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 05:42:31.972 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 05:42:32.004 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 05:42:32.593 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 02de4a57-0000-4343-b8d1-01b793058af2
-
-29 Jul 2021 - 05:42:32.658 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@285ac29, org.springframework.security.web.context.SecurityContextPersistenceFilter@7151dd9d, org.springframework.security.web.header.HeaderWriterFilter@41d8ac75, org.springframework.security.web.authentication.logout.LogoutFilter@4767be27, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@1ced1d14, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6bf34912, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@34a482d0, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@237b54bc, org.springframework.security.web.session.SessionManagementFilter@64b20d9c, org.springframework.security.web.access.ExceptionTranslationFilter@2b569858, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@21e15093]
-29 Jul 2021 - 05:42:32.969 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 05:42:32.976 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.08 seconds (JVM running for 4.753)
-29 Jul 2021 - 05:43:30.884 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 05:43:31.004 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Access to the endpoint successful.
-29 Jul 2021 - 05:43:31.004 [http-nio-8090-exec-2] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Attempt to find a teacher-subject combination in database.
-29 Jul 2021 - 05:43:31.035 [http-nio-8090-exec-2] WARN  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** No teacher-subject combination with given id in database.
-29 Jul 2021 - 05:43:35.366 [http-nio-8090-exec-3] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Access to the endpoint successful.
-29 Jul 2021 - 05:43:35.367 [http-nio-8090-exec-3] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Attempt to find a teacher-subject combination in database.
-29 Jul 2021 - 05:43:35.393 [http-nio-8090-exec-3] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** teacher-subject combination found.
-29 Jul 2021 - 05:43:35.393 [http-nio-8090-exec-3] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** All done, output to DTO.
-29 Jul 2021 - 05:43:35.393 [http-nio-8090-exec-3] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Service for translation to DTO.
-29 Jul 2021 - 05:43:35.404 [http-nio-8090-exec-3] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 05:43:43.992 [http-nio-8090-exec-4] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Access to the endpoint successful.
-29 Jul 2021 - 05:43:43.992 [http-nio-8090-exec-4] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Attempt to find a teacher-subject combination in database.
-29 Jul 2021 - 05:43:43.995 [http-nio-8090-exec-4] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** teacher-subject combination found.
-29 Jul 2021 - 05:43:43.996 [http-nio-8090-exec-4] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** All done, output to DTO.
-29 Jul 2021 - 05:43:43.996 [http-nio-8090-exec-4] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Service for translation to DTO.
-29 Jul 2021 - 05:43:44.006 [http-nio-8090-exec-4] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 05:43:46.277 [http-nio-8090-exec-5] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Access to the endpoint successful.
-29 Jul 2021 - 05:43:46.277 [http-nio-8090-exec-5] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Attempt to find a teacher-subject combination in database.
-29 Jul 2021 - 05:43:46.283 [http-nio-8090-exec-5] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** teacher-subject combination found.
-29 Jul 2021 - 05:43:46.283 [http-nio-8090-exec-5] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** All done, output to DTO.
-29 Jul 2021 - 05:43:46.283 [http-nio-8090-exec-5] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Service for translation to DTO.
-29 Jul 2021 - 05:43:46.291 [http-nio-8090-exec-5] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 05:43:53.615 [http-nio-8090-exec-6] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Access to the endpoint successful.
-29 Jul 2021 - 05:43:53.616 [http-nio-8090-exec-6] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** Attempt to find a teacher-subject combination in database.
-29 Jul 2021 - 05:43:53.620 [http-nio-8090-exec-6] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** teacher-subject combination found.
-29 Jul 2021 - 05:43:53.620 [http-nio-8090-exec-6] INFO  B.e.g.c.TeacherSubjectController - **GET TEACHER-SUBJECT BY ID** All done, output to DTO.
-29 Jul 2021 - 05:43:53.620 [http-nio-8090-exec-6] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Service for translation to DTO.
-29 Jul 2021 - 05:43:53.627 [http-nio-8090-exec-6] INFO  B.e.g.s.t.TeacherSubjectServiceImp - ##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 06:23:37.034 [RMI TCP Connection(43)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 06:23:37.078 [RMI TCP Connection(43)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 06:23:37.079 [RMI TCP Connection(43)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 06:23:37.083 [RMI TCP Connection(43)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 06:23:53.873 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 20076 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 06:23:53.875 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 06:23:54.491 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 06:23:54.570 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 73 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 06:23:54.820 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@5cc9d3d0' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 06:23:54.824 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 06:23:55.000 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 06:23:55.008 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 06:23:55.008 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 06:23:55.105 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 06:23:55.106 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1196 ms
-29 Jul 2021 - 06:23:55.472 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 06:23:55.752 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 06:23:56.659 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 06:23:56.692 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 06:23:57.323 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 541c4da9-c859-4ae6-b733-8aad311453a9
-
-29 Jul 2021 - 06:23:57.390 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@711fbcef, org.springframework.security.web.context.SecurityContextPersistenceFilter@51ac72f7, org.springframework.security.web.header.HeaderWriterFilter@452a32f2, org.springframework.security.web.authentication.logout.LogoutFilter@77a1df4d, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@43d2c8e3, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7b9f7087, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4687fee7, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@8bb5c2a, org.springframework.security.web.session.SessionManagementFilter@4fb42efa, org.springframework.security.web.access.ExceptionTranslationFilter@796a7c9, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@2f70d78c]
-29 Jul 2021 - 06:23:57.704 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 06:23:57.711 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.178 seconds (JVM running for 4.8)
-29 Jul 2021 - 06:24:54.987 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 06:24:55.101 [http-nio-8090-exec-2] INFO  B.e.g.c.StudentGroupController - **GET ALL STUDENT GROUPS** Access to the endpoint successful.
-29 Jul 2021 - 06:24:55.101 [http-nio-8090-exec-2] INFO  B.e.g.c.StudentGroupController - **GET ALL STUDENT GROUPS** Attempt to find student groups.
-29 Jul 2021 - 06:24:55.187 [http-nio-8090-exec-2] INFO  B.e.g.c.StudentGroupController - **GET ALL STUDENT GROUPS** Attempt successful, student groups are present.
-29 Jul 2021 - 06:24:55.187 [http-nio-8090-exec-2] INFO  B.e.g.c.StudentGroupController - **GET ALL STUDENT GROUPSS** Attempt to invoke service to translate student groups to DTOSs.
-29 Jul 2021 - 06:24:55.191 [http-nio-8090-exec-2] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Service for translation to DTO.
-29 Jul 2021 - 06:24:55.306 [http-nio-8090-exec-2] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 06:24:55.306 [http-nio-8090-exec-2] INFO  B.e.g.c.StudentGroupController - **GET ALL STUDENT GROUPS** Attempt successful, list retrieved. Exiting controller
-29 Jul 2021 - 06:26:01.698 [RMI TCP Connection(5)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 06:26:01.733 [RMI TCP Connection(5)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 06:26:01.733 [RMI TCP Connection(5)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 06:26:01.738 [RMI TCP Connection(5)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 06:26:06.169 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 2620 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 06:26:06.171 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 06:26:06.759 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 06:26:06.841 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 75 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 06:26:07.090 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@444f44c5' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 06:26:07.095 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 06:26:07.282 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 06:26:07.290 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 06:26:07.290 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 06:26:07.389 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 06:26:07.389 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1184 ms
-29 Jul 2021 - 06:26:07.755 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 06:26:08.031 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 06:26:08.936 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 06:26:08.968 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 06:26:09.546 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: e91d6faa-d40b-455a-a8bd-d38cc18c6c07
-
-29 Jul 2021 - 06:26:09.613 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@23a9400c, org.springframework.security.web.context.SecurityContextPersistenceFilter@5bbf3869, org.springframework.security.web.header.HeaderWriterFilter@4a0fc665, org.springframework.security.web.authentication.logout.LogoutFilter@4cd7128, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@793248d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1f5a1ad4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@471d6571, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6731b6bd, org.springframework.security.web.session.SessionManagementFilter@40f77135, org.springframework.security.web.access.ExceptionTranslationFilter@37f0fb02, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@2c5b4b91]
-29 Jul 2021 - 06:26:09.926 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 06:26:09.933 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.089 seconds (JVM running for 4.722)
-29 Jul 2021 - 06:28:12.300 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 06:28:12.429 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Access to the endpoint successful.
-29 Jul 2021 - 06:28:12.429 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to see if logged user is student groups homeroom teacher, admin or headmaster.
-29 Jul 2021 - 06:28:12.508 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to find a student group in database.
-29 Jul 2021 - 06:28:12.524 [http-nio-8090-exec-1] WARN  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** No student group with given id in database.
-29 Jul 2021 - 06:28:18.937 [http-nio-8090-exec-3] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Access to the endpoint successful.
-29 Jul 2021 - 06:28:18.937 [http-nio-8090-exec-3] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to see if logged user is student groups homeroom teacher, admin or headmaster.
-29 Jul 2021 - 06:28:18.944 [http-nio-8090-exec-3] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to find a student group in database.
-29 Jul 2021 - 06:28:18.954 [http-nio-8090-exec-3] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Student group found.
-29 Jul 2021 - 06:28:18.954 [http-nio-8090-exec-3] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** All done, output to DTO.
-29 Jul 2021 - 06:28:18.954 [http-nio-8090-exec-3] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Service for translation to DTO.
-29 Jul 2021 - 06:28:18.959 [http-nio-8090-exec-3] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 06:28:25.882 [http-nio-8090-exec-4] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Access to the endpoint successful.
-29 Jul 2021 - 06:28:25.883 [http-nio-8090-exec-4] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to see if logged user is student groups homeroom teacher, admin or headmaster.
-29 Jul 2021 - 06:28:25.889 [http-nio-8090-exec-4] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to find a student group in database.
-29 Jul 2021 - 06:28:25.895 [http-nio-8090-exec-4] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Student group found.
-29 Jul 2021 - 06:28:25.895 [http-nio-8090-exec-4] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** All done, output to DTO.
-29 Jul 2021 - 06:28:25.895 [http-nio-8090-exec-4] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Service for translation to DTO.
-29 Jul 2021 - 06:28:25.916 [http-nio-8090-exec-4] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 06:29:12.909 [RMI TCP Connection(5)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
-29 Jul 2021 - 06:29:12.938 [RMI TCP Connection(5)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 06:29:12.940 [RMI TCP Connection(5)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-29 Jul 2021 - 06:29:12.945 [RMI TCP Connection(5)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-29 Jul 2021 - 06:29:17.254 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 3656 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
-29 Jul 2021 - 06:29:17.256 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
-29 Jul 2021 - 06:29:17.854 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-29 Jul 2021 - 06:29:17.934 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74 ms. Found 11 JPA repository interfaces.
-29 Jul 2021 - 06:29:18.188 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@444f44c5' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 06:29:18.193 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-29 Jul 2021 - 06:29:18.372 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
-29 Jul 2021 - 06:29:18.380 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-29 Jul 2021 - 06:29:18.381 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
-29 Jul 2021 - 06:29:18.477 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-29 Jul 2021 - 06:29:18.477 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1182 ms
-29 Jul 2021 - 06:29:18.835 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-29 Jul 2021 - 06:29:19.115 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-29 Jul 2021 - 06:29:20.210 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-29 Jul 2021 - 06:29:20.264 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-29 Jul 2021 - 06:29:20.891 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 96431fdb-afbd-4e94-8bff-bf9912c884b6
-
-29 Jul 2021 - 06:29:20.961 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@793248d, org.springframework.security.web.context.SecurityContextPersistenceFilter@64dfa1a3, org.springframework.security.web.header.HeaderWriterFilter@207f7baa, org.springframework.security.web.authentication.logout.LogoutFilter@22b4ad0c, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@6731b6bd, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7866ffa, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@213bd66a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@768f2398, org.springframework.security.web.session.SessionManagementFilter@4138af7, org.springframework.security.web.access.ExceptionTranslationFilter@4687fee7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@51eeae0a]
-29 Jul 2021 - 06:29:21.284 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
-29 Jul 2021 - 06:29:21.291 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.356 seconds (JVM running for 4.98)
-29 Jul 2021 - 06:29:24.666 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-29 Jul 2021 - 06:29:24.790 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Access to the endpoint successful.
-29 Jul 2021 - 06:29:24.790 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to see if logged user is student groups homeroom teacher, admin or headmaster.
-29 Jul 2021 - 06:29:24.855 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Attempt to find a student group in database.
-29 Jul 2021 - 06:29:24.872 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** Student group found.
-29 Jul 2021 - 06:29:24.872 [http-nio-8090-exec-1] INFO  B.e.g.c.StudentGroupController - **GET STUDENT GROUP BY ID** All done, output to DTO.
-29 Jul 2021 - 06:29:24.877 [http-nio-8090-exec-1] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Service for translation to DTO.
-29 Jul 2021 - 06:29:24.897 [http-nio-8090-exec-1] INFO  B.e.g.s.s.StudentGroupServiceImp - ##STUDENT GROUP SERVICE## Translation done, returning to controller.
-29 Jul 2021 - 06:41:29.604 [http-nio-8090-exec-5] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
-io.jsonwebtoken.ExpiredJwtException: JWT expired at 2021-07-28T10:44:14Z. Current time: 2021-07-29T06:41:29Z, a difference of 71835594 milliseconds.  Allowed clock skew: 0 milliseconds.
-	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:385)
-	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:481)
-	at io.jsonwebtoken.impl.DefaultJwtParser.parseClaimsJws(DefaultJwtParser.java:541)
-	at Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter.validateToken(JWTAuthorizationFilter.java:64)
-	at Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter.doFilterInternal(JWTAuthorizationFilter.java:35)
+30 Jul 2021 - 00:00:01.804 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+30 Jul 2021 - 00:00:11.666 [http-nio-8090-exec-3] INFO  B.e.g.c.AssignmentController - **GET TEACHER PAGINATED ASSIGNMENTS** Access to the endpoint successful.
+30 Jul 2021 - 00:00:11.724 [http-nio-8090-exec-3] INFO  B.e.g.c.AssignmentController - **GET TEACHER PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.
+30 Jul 2021 - 00:00:11.725 [http-nio-8090-exec-3] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Accessed service teacher assignments pagination.
+30 Jul 2021 - 00:00:11.754 [http-nio-8090-exec-3] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.util.NoSuchElementException: No value present] with root cause
+java.util.NoSuchElementException: No value present
+	at java.base/java.util.Optional.get(Optional.java:141)
+	at Brains2021.electronic.gradeBook.services.assignment.AssignmentServiceImp.getAssignmentsPaginatedForTeacher(AssignmentServiceImp.java:381)
+	at Brains2021.electronic.gradeBook.controllers.AssignmentController.getMyTeacherAssignments(AssignmentController.java:892)
+	at Brains2021.electronic.gradeBook.controllers.AssignmentController$$FastClassBySpringCGLIB$$6740d70c.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750)
+	at org.springframework.security.access.intercept.aopalliance.MethodSecurityInterceptor.invoke(MethodSecurityInterceptor.java:61)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692)
+	at Brains2021.electronic.gradeBook.controllers.AssignmentController$$EnhancerBySpringCGLIB$$b314edb.getMyTeacherAssignments(<generated>)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:197)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:141)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:106)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:894)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1063)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:655)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:228)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:163)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:190)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:163)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:327)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:115)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:121)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:115)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:126)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:149)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
+	at Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter.doFilterInternal(JWTAuthorizationFilter.java:50)
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:336)
 	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:103)
@@ -355,3 +105,49 @@ io.jsonwebtoken.ExpiredJwtException: JWT expired at 2021-07-28T10:44:14Z. Curren
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:832)
+30 Jul 2021 - 00:04:39.558 [RMI TCP Connection(14)-127.0.0.1] INFO  o.s.b.a.SpringApplicationAdminMXBeanRegistrar$SpringApplicationAdmin - Application shutdown requested.
+30 Jul 2021 - 00:04:39.597 [RMI TCP Connection(14)-127.0.0.1] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+30 Jul 2021 - 00:04:39.599 [RMI TCP Connection(14)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+30 Jul 2021 - 00:04:39.606 [RMI TCP Connection(14)-127.0.0.1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+30 Jul 2021 - 00:04:44.099 [main] INFO  B.e.gradeBook.EGradeBookApplication - Starting EGradeBookApplication using Java 15.0.2 on DESKTOP-GAE95KF with PID 3580 (C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook\target\classes started by admin in C:\Users\admin\Desktop\BRAINS2021\Spring\EGradeBook)
+30 Jul 2021 - 00:04:44.102 [main] INFO  B.e.gradeBook.EGradeBookApplication - No active profile set, falling back to default profiles: default
+30 Jul 2021 - 00:04:44.711 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+30 Jul 2021 - 00:04:44.791 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74 ms. Found 11 JPA repository interfaces.
+30 Jul 2021 - 00:04:45.044 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@24d61e4' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+30 Jul 2021 - 00:04:45.048 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+30 Jul 2021 - 00:04:45.228 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8090 (http)
+30 Jul 2021 - 00:04:45.236 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+30 Jul 2021 - 00:04:45.236 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.48]
+30 Jul 2021 - 00:04:45.334 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+30 Jul 2021 - 00:04:45.335 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1199 ms
+30 Jul 2021 - 00:04:45.698 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+30 Jul 2021 - 00:04:45.980 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+30 Jul 2021 - 00:04:46.909 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+30 Jul 2021 - 00:04:46.943 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+30 Jul 2021 - 00:04:47.562 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 257b111a-d048-4e3b-8f90-e390565b8d30
+
+30 Jul 2021 - 00:04:47.630 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@723081a2, org.springframework.security.web.context.SecurityContextPersistenceFilter@3857c5d5, org.springframework.security.web.header.HeaderWriterFilter@25d87313, org.springframework.security.web.authentication.logout.LogoutFilter@7916568d, Brains2021.electronic.gradeBook.config.JWTAuthorizationFilter@481f698f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@52a8f789, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5b11d0d8, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@41ae9f11, org.springframework.security.web.session.SessionManagementFilter@5694f6a0, org.springframework.security.web.access.ExceptionTranslationFilter@1f5a1ad4, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@fc6cac6]
+30 Jul 2021 - 00:04:47.949 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8090 (http) with context path ''
+30 Jul 2021 - 00:04:47.956 [main] INFO  B.e.gradeBook.EGradeBookApplication - Started EGradeBookApplication in 4.178 seconds (JVM running for 4.796)
+30 Jul 2021 - 00:04:50.730 [http-nio-8090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+30 Jul 2021 - 00:04:50.855 [http-nio-8090-exec-2] INFO  B.e.g.c.AssignmentController - **GET TEACHER PAGINATED ASSIGNMENTS** Access to the endpoint successful.
+30 Jul 2021 - 00:04:50.905 [http-nio-8090-exec-2] INFO  B.e.g.c.AssignmentController - **GET TEACHER PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.
+30 Jul 2021 - 00:04:50.906 [http-nio-8090-exec-2] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Accessed service teacher assignments pagination.
+30 Jul 2021 - 00:04:50.937 [http-nio-8090-exec-2] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Accessed service for DTO to Entity translation.
+30 Jul 2021 - 00:04:50.943 [http-nio-8090-exec-2] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Translation done, DTOs populated, returning to controller.
+30 Jul 2021 - 00:04:50.943 [http-nio-8090-exec-2] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## All done, returning to controller.
+30 Jul 2021 - 00:06:50.352 [http-nio-8090-exec-5] INFO  B.e.g.controllers.UserController - **LOGIN** User buhab attempting to log into the system.
+30 Jul 2021 - 00:06:50.448 [http-nio-8090-exec-5] INFO  B.e.g.controllers.UserController - **LOGIN** Both attempt to find user buhab in the database and password validation turned out to be successful.
+30 Jul 2021 - 00:06:50.448 [http-nio-8090-exec-5] INFO  B.e.g.controllers.UserController - **LOGIN** Attempting to create a token.
+30 Jul 2021 - 00:06:50.465 [http-nio-8090-exec-5] INFO  B.e.g.controllers.UserController - **LOGIN** Assigning the token to a DTO.
+30 Jul 2021 - 00:06:50.466 [http-nio-8090-exec-5] INFO  B.e.g.controllers.UserController - **LOGIN** User buhab has successfuly logged in the system.
+30 Jul 2021 - 00:07:00.971 [http-nio-8090-exec-6] INFO  B.e.g.c.AssignmentController - **GET TEACHER PAGINATED ASSIGNMENTS** Access to the endpoint successful.
+30 Jul 2021 - 00:07:00.975 [http-nio-8090-exec-6] INFO  B.e.g.c.AssignmentController - **GET TEACHER PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.
+30 Jul 2021 - 00:07:00.975 [http-nio-8090-exec-6] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Accessed service teacher assignments pagination.
+30 Jul 2021 - 00:07:00.979 [http-nio-8090-exec-6] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Accessed service for DTO to Entity translation.
+30 Jul 2021 - 00:07:00.992 [http-nio-8090-exec-6] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Translation done, DTOs populated, returning to controller.
+30 Jul 2021 - 00:07:00.993 [http-nio-8090-exec-6] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Accessed service for DTO to Entity translation.
+30 Jul 2021 - 00:07:00.993 [http-nio-8090-exec-6] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## Translation done, DTOs populated, returning to controller.
+30 Jul 2021 - 00:07:00.993 [http-nio-8090-exec-6] INFO  B.e.g.s.a.AssignmentServiceImp - ##ASIGNMENT SERVICE## All done, returning to controller.

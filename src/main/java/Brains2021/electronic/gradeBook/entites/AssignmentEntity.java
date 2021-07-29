@@ -17,8 +17,10 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.security.Views;
 import Brains2021.electronic.gradeBook.utils.enums.EAssignmentType;
 
 @Entity
@@ -28,42 +30,56 @@ public class AssignmentEntity {
 
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Admin.class)
 	private Long id;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@JsonView(Views.Admin.class)
 	private EAssignmentType type;
 
+	@JsonView(Views.Admin.class)
 	private String description;
 
 	@Column(nullable = false)
+	@JsonView(Views.Admin.class)
 	private Integer semester;
 
 	@Column(nullable = false)
+	@JsonView(Views.Admin.class)
 	private LocalDate dateCreated;
 
+	@JsonView(Views.Admin.class)
 	private LocalDate dateAssigned;
 
+	@JsonView(Views.Admin.class)
 	private LocalDate dateCompleted;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@JsonView(Views.Admin.class)
 	private LocalDate dueDate;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacherIssuing")
+	@JsonView(Views.Admin.class)
 	private TeacherSubjectEntity teacherIssuing;
 
+	@JsonView(Views.Admin.class)
 	private Integer gradeRecieved;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "assignedTo")
+	@JsonView(Views.Admin.class)
 	private StudentEntity assignedTo;
 
+	@JsonView(Views.Admin.class)
 	private Integer overridenGrade;
 
+	@JsonView(Views.Admin.class)
 	private Integer deleted;
 
 	@Version
+	@JsonView(Views.Admin.class)
 	private Integer version;
 
 	public AssignmentEntity() {

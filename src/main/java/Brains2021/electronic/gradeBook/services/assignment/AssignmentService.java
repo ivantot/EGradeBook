@@ -20,4 +20,15 @@ public interface AssignmentService {
 
 	public GETAssignmentDTO getAssignmentDTOTranslation(AssignmentEntity assignement);
 
+	public ResponseEntity<?> getAssignmentsPaginated(Integer pageNo, Integer pageSize, String sortBy, String sortOrder);
+
+	public ResponseEntity<?> getAssignmentsPaginatedForStudent(Long id, Integer pageNo, Integer pageSize, String sortBy,
+			String sortOrder);
+
+	public ResponseEntity<?> getAssignmentsPaginatedForHomeroom(Long id, Integer pageNo, Integer pageSize,
+			String sortBy, String sortOrder);
+
+	public ResponseEntity<?> getAssignmentsPaginatedForTeacher(Long id, Integer pageNo, Integer pageSize, String sortBy,
+			String sortOrder);
+
 }

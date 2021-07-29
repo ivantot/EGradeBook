@@ -28,6 +28,7 @@ import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
+import Brains2021.electronic.gradeBook.entites.users.TeacherEntity;
 import Brains2021.electronic.gradeBook.entites.users.UserEntity;
 import Brains2021.electronic.gradeBook.repositories.AssignmentRepository;
 import Brains2021.electronic.gradeBook.repositories.StudentGroupTakingASubjectRepository;
@@ -752,5 +753,143 @@ public class AssignmentController {
 		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller");
 
 		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for admin looking to fetch all assignments with pagination.
+	 * -- postman code adm057 --
+	 * 
+	 * 
+	 * @return if ok list of assignments with options
+	 **************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/search")
+	public ResponseEntity<?> getAllAssignmentsPagable(@RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam String sortOrder) {
+
+		logger.info("**ADMIN PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
+
+		return assignmentService.getAssignmentsPaginated(pageNo, pageSize, sortBy, sortOrder);
+
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for student looking to fetch all associated assignments with pagination.
+	 * -- postman code adm059 --
+	 * 
+	 * @param student id
+	 * @return if ok paginated list of assignments given to a student
+	 **************************************************************************************/
+	@Secured("ROLE_STUDENT")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/search/student")
+	public ResponseEntity<?> getMyPaginatedAssignments(@RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam String sortOrder) {
+
+		logger.info("**GET MY(STUDENT) PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogStudent = userRepo.findByUsername(userService.whoAmI());
+
+		logger.info(
+				"**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+
+		return assignmentService.getAssignmentsPaginatedForStudent(ogStudent.get().getId(), pageNo, pageSize, sortBy,
+				sortOrder);
+	}
+
+	/**********************************************************************************************
+	 * GET endpoint for parent looking to fetch all student associated assignments with pagination.
+	 * -- postman code adm058 --
+	 * 
+	 * @param student id
+	 * @return if ok paginated list of assignments given to a student
+	 **********************************************************************************************/
+	@Secured("ROLE_PARENT")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/search/parent/{student}")
+	public ResponseEntity<?> getMyChildrensAssignments(@PathVariable String student,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam String sortOrder) {
+
+		logger.info("**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogParent = userRepo.findByUsername(userService.whoAmI());
+
+		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
+
+		Optional<UserEntity> ogStudent = userRepo.findByUsername(student);
+
+		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
+
+		logger.info(
+				"**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Attempt to find if student and logged parent are related.");
+		if (!userService.areWeRelated(ogParentCast, ogStudentCast)) {
+			logger.warn("**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** No relation between users.");
+			return new ResponseEntity<RESTError>(new RESTError(6511, "Student and logged user not related."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Users related.");
+		logger.info(
+				"**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+
+		return assignmentService.getAssignmentsPaginatedForStudent(ogStudent.get().getId(), pageNo, pageSize, sortBy,
+				sortOrder);
+	}
+
+	/*******************************************************************************************************
+	 * GET endpoint for homeroom teacher looking to fetch all for student group assignments with pagination.
+	 * -- postman code adm060 --
+	 * 
+	 * @param
+	 * @return if ok paginated list of assignments for students in homerooms student group
+	 *******************************************************************************************************/
+	@Secured("ROLE_HOMEROOM")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/search/homeroom")
+	public ResponseEntity<?> getMyStudentGroupAssignments(@RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam String sortOrder) {
+
+		logger.info("**GET STUDENT GROUP PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogUser = userRepo.findByUsername(userService.whoAmI());
+
+		TeacherEntity ogHomeroomCast = (TeacherEntity) ogUser.get();
+
+		logger.info(
+				"**GET STUDENT GROUP PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+
+		return assignmentService.getAssignmentsPaginatedForHomeroom(ogHomeroomCast.getInChargeOf().getId(), pageNo,
+				pageSize, sortBy, sortOrder);
+	}
+
+	/*******************************************************************************************************
+	 * GET endpoint for teacher looking to fetch all assignments for he issued.
+	 * -- postman code adm061 --
+	 * 
+	 * @param
+	 * @return if ok paginated list of assignments issued by teacher
+	 *******************************************************************************************************/
+	@Secured("ROLE_HOMEROOM")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/search/teacher")
+	public ResponseEntity<?> getMyTeacherAssignments(@RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam String sortOrder) {
+
+		logger.info("**GET TEACHER PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogUser = userRepo.findByUsername(userService.whoAmI());
+
+		TeacherEntity ogTeacherCast = (TeacherEntity) ogUser.get();
+
+		logger.info(
+				"**GET TEACHER PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+
+		return assignmentService.getAssignmentsPaginatedForTeacher(ogTeacherCast.getId(), pageNo, pageSize, sortBy,
+				sortOrder);
 	}
 }

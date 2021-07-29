@@ -909,7 +909,7 @@ public class UserController {
 	 * 
 	 * @return parents list
 	 **************************************************************************************/
-	@Secured("ROLE_ADMIN")
+	@Secured({ "ROLE_ADMIN", "ROLE_HOMEROOM" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/parents/{usernameStudent}")
 	public ResponseEntity<?> findActiveParentsFromStudent(@PathVariable String usernameStudent) {
@@ -928,10 +928,20 @@ public class UserController {
 		}
 		logger.info("**GET PARENTS** Active parent found.");
 
+		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
+
+		logger.info(
+				"**GET PARENTS** Attempt to check roles and allow only homeroom teacher responsible for student or admin to access.");
+		if (!ogStudentCast.getBelongsToStudentGroup().getHomeroomTeacher().getUsername().equals(userService.whoAmI())
+				&& !userService.amIAdmin()) {
+			logger.warn("**GET PARENTS** Role not adequate or homeroom teacher not assigned to student.");
+		}
+
+		logger.info("**GET PARENTS** Role adequate.");
+
 		logger.info("**GET PARENTS** Attempt to make a list of children belonging to a parent.");
 		// prepare a list for output and get parents list from children, check if list is empty
 		List<GetParentsDTO> activeParentsDTOs = new ArrayList<>();
-		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
 		List<StudentParentEntity> parents = studentParentRepo.findByStudent(ogStudentCast);
 
 		if (parents.isEmpty()) {
