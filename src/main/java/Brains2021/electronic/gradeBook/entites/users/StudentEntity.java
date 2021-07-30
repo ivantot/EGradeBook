@@ -38,7 +38,7 @@ public class StudentEntity extends UserEntity {
 
 	@JsonView(Views.Student.class)
 	//@JsonManagedReference(value = "ref3")
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	@OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<StudentParentEntity> parents = new HashSet<>();
 
 	@OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)

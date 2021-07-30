@@ -36,7 +36,7 @@ public class TeacherController {
 	 * @param id
 	 * @return if ok set new hours
 	 *********************************************************************************************************/
-	@Secured("ROLE_ADMIN")
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/changeCapacity/{username}")
 	public ResponseEntity<?> changeTeacherCapacity(@PathVariable String username, @RequestParam Integer newHours) {

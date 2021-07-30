@@ -26,6 +26,7 @@ import Brains2021.electronic.gradeBook.dtos.in.CreateAssignmentDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GETAssignmentDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
 import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
+import Brains2021.electronic.gradeBook.entites.SubjectEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
@@ -105,6 +106,18 @@ public class AssignmentController {
 		}
 		logger.info("**POST ASSIGNMENT** Subject name is allowed.");
 
+		// check if subject is in database
+		logger.info("**POST ASSIGNMENT** Attempt to find if subject name is in database.");
+		Optional<SubjectEntity> ogSubject = subjectRepo.findByName(ESubjectName.valueOf(assignment.getSubject()));
+		if (ogSubject.isEmpty()) {
+			logger.info("**POST ASSIGNMENT** Attempt to find a subject in database.");
+			if (ogSubject.isEmpty()) {
+				logger.warn("**POST ASSIGNMENT** No subject with given id in database.");
+				return new ResponseEntity<RESTError>(new RESTError(1530, "No subject with given id in database."),
+						HttpStatus.NOT_FOUND);
+			}
+		}
+
 		// check if teacher is valid or admin posting 
 		logger.info("**POST ASSIGNMENT** Attempting to find if teacher is teaching the subject.");
 		Optional<TeacherSubjectEntity> teacherSubject = teacherSubjectRepo
@@ -124,11 +137,12 @@ public class AssignmentController {
 				"**POST ASSIGNMENT** Check if user is admin. If so, make new dummy teacher subject entity and assign properties");
 		if (userService.amIAdmin() && teacherSubject.isEmpty()) {
 			logger.info("**POST ASSIGNMENT** User is admin.");
-			TeacherSubjectEntity adminTeacherSubject = new TeacherSubjectEntity(
-					teacherRepo.findByUsername(userService.whoAmI()).get(),
-					subjectRepo.findByName(ESubjectName.valueOf(assignment.getSubject())).get());
-			newAssignment.setTeacherIssuing(adminTeacherSubject);
+			TeacherSubjectEntity adminTeacherSubject = new TeacherSubjectEntity();
+			adminTeacherSubject.setTeacher(teacherRepo.findByUsername(userService.whoAmI()).get());
+			adminTeacherSubject.setSubject(subjectRepo.findByName(ESubjectName.valueOf(assignment.getSubject())).get());
+			logger.info("**POST ASSIGNMENT** Attempting to save new dummy teacher-subject.");
 			teacherSubjectRepo.save(adminTeacherSubject);
+			newAssignment.setTeacherIssuing(adminTeacherSubject);
 			logger.info("**POST ASSIGNMENT** Admin teacher subject added and assigned to assignemnt.");
 		}
 
@@ -203,6 +217,12 @@ public class AssignmentController {
 		}
 
 		StudentEntity student = (StudentEntity) user.get();
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if student has been assigned to a student group.");
+		if (student.getBelongsToStudentGroup() == null) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Student not a part of a student group.");
+			return new ResponseEntity<RESTError>(new RESTError(3005, "Student not a part of a student group."),
+					HttpStatus.BAD_REQUEST);
+		}
 		// check if student belongs to a group taking the subject taught by the teacher
 		logger.info(
 				"**GIVE ASSIGNMENT TO STUDENT** Attempt to find student belongs to a student group taking the subject taught by the teacher who posted the assignment.");
@@ -228,6 +248,13 @@ public class AssignmentController {
 			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Can't assign, check student's and assignment's study year.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(3006, "Can't assign, check student's and assignment's study year."),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if assignment already given.");
+		if (assignment.get().getAssignedTo() != null) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Assignment already given out.");
+			return new ResponseEntity<RESTError>(new RESTError(3005, "Assignment already given out."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -460,7 +487,7 @@ public class AssignmentController {
 						+ assignmentForGrading.get().getDateAssigned() + ", originaly graded on "
 						+ assignmentForGrading.get().getDateCompleted() + " with grade "
 						+ assignmentForGrading.get().getGradeRecieved() + " recieved an overriden grade "
-						+ assignmentForGrading.get().getGradeRecieved() + ".\nUser responsible for overriding: "
+						+ assignmentForGrading.get().getOverridenGrade() + ".\nUser responsible for overriding: "
 						+ userService.whoAmI() + ". \nAn email has been sent to the parent(s) as a notification.",
 				HttpStatus.OK);
 	}
@@ -471,7 +498,7 @@ public class AssignmentController {
 	 * @param assignment id
 	 * @return if ok set deleted to 1
 	 *****************************************************************************************************/
-	@Secured("ROLE_ADMIN")
+	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteAssignment/{assignmentID}")
 	public ResponseEntity<?> deleteAssignment(@PathVariable Long assignmentID) {
@@ -742,6 +769,12 @@ public class AssignmentController {
 		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
 
 		Optional<UserEntity> ogStudent = userRepo.findByUsername(student);
+		logger.info("**GET MY(CHILDRENS) ASSIGNMENTS** Attempt to see if username is in database.");
+		if (ogStudent.isEmpty()) {
+			logger.warn("**GET MY(CHILDRENS) ASSIGNMENTS** No student with given username in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6541, "No student with given username in database."),
+					HttpStatus.NOT_FOUND);
+		}
 
 		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
 
@@ -808,7 +841,12 @@ public class AssignmentController {
 		ParentEntity ogParentCast = (ParentEntity) ogParent.get();
 
 		Optional<UserEntity> ogStudent = userRepo.findByUsername(student);
-
+		logger.info("**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Attempt to see if username is in database.");
+		if (ogStudent.isEmpty()) {
+			logger.warn("**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** No student with given username in database.");
+			return new ResponseEntity<RESTError>(new RESTError(6541, "No student with given username in database."),
+					HttpStatus.NOT_FOUND);
+		}
 		StudentEntity ogStudentCast = (StudentEntity) ogStudent.get();
 
 		logger.info(
@@ -825,7 +863,7 @@ public class AssignmentController {
 		return assignmentService.getAssignmentsPaginatedForStudent(ogStudent.get().getId(), pageNo, pageSize, sortBy,
 				sortOrder);
 	}
-	
+
 	/**************************************************************************************************************
 	 * GET endpoint for student looking to fetch all associated assignments with pagination. -- postman code 069 --
 	 * 
@@ -882,7 +920,7 @@ public class AssignmentController {
 	 * @param
 	 * @return if ok paginated list of assignments issued by teacher
 	 *******************************************************************************************************/
-	@Secured("ROLE_HOMEROOM")
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_TEACHER", "ROLE_HOMEROOM" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/search/teacher")
 	public ResponseEntity<?> getMyTeacherAssignments(@RequestParam(defaultValue = "0") Integer pageNo,

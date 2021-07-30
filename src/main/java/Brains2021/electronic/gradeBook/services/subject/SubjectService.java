@@ -12,4 +12,6 @@ public interface SubjectService {
 	public SubjectEntity createSubjectDTOtranslation(CreateSubjectDTO subject);
 
 	public ResponseEntity<?> createdSubjectDTOtranslation(SubjectEntity subject);
+
+	public SubjectEntity updateSubjectDTOtranslation(CreateSubjectDTO subject, Long ogSubjectID);
 }

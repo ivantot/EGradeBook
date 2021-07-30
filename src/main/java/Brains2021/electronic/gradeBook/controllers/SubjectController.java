@@ -60,8 +60,6 @@ public class SubjectController {
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newSubject")
 	public ResponseEntity<?> postNewSubject(@Valid @RequestBody CreateSubjectDTO subject) {
 
-		// check if subject name allowed
-
 		logger.info("**POST NEW SUBJECT** Endpoint for posting a new subject entered successfuly.");
 
 		logger.info("**POST NEW SUBJECT** Attempt to see if subject name is valid.");
@@ -89,6 +87,63 @@ public class SubjectController {
 		logger.info("**POST NEW TEACHER** Attempting to translate input DTO to Entity.");
 		return subjectService.createdSubjectDTOtranslation(subjectService.createSubjectDTOtranslation(subject));
 
+	}
+
+	/*****************************************************************************************************************************
+	 * PUT endpoint for administrator looking to edit a subject, meant to be accessed by IT specialist -- postman code 042 --
+	 * 
+	 * @param subjectID, subjectDTO
+	 * @return if ok, updated subject
+	 *****************************************************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/admin/putSubject/{subjectID}")
+	public ResponseEntity<?> putSubject(@Valid @RequestBody CreateSubjectDTO subject, @PathVariable Long subjectID) {
+
+		logger.info("**CHANGE SUBJECT** Endpoint for posting a new subject entered successfuly.");
+
+		// check if subject is in database
+		Optional<SubjectEntity> ogSubject = subjectRepo.findById(subjectID);
+		if (ogSubject.isEmpty()) {
+			logger.info("**CHANGE SUBJECT** Attempt to find a subject in database.");
+			// initial check to see if there is a subject with given id
+			if (ogSubject.isEmpty()) {
+				logger.warn("**CHANGE SUBJECT** No subject with given id in database.");
+				return new ResponseEntity<RESTError>(new RESTError(1530, "No subject with given id in database."),
+						HttpStatus.NOT_FOUND);
+			}
+		}
+
+		// validate that subject name is acceptable
+		logger.info("**CHANGE SUBJECT** Attempt to see if subject name is valid.");
+		if (!subjectService.isSubjectInEnum(subject.getName())) {
+			logger.warn("**CHANGE SUBJECT** Subject name invalid, ESubjectName for details.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2000, "Subject name not allowed, check ESubjectName for details."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**CHANGE SUBJECT** Subject name is valid.");
+
+		// check for schooling year - subject combination in database
+
+		SubjectEntity updSubject = subjectService.updateSubjectDTOtranslation(subject, subjectID);
+
+		logger.info("**CHANGE SUBJECT** Attempt to see if subject and schooling year combination exists in db.");
+		// first, see if changed year and new value for year are the same, if so break out, else check for collision with database subjects
+		if (!ogSubject.get().getYearOfSchooling().equals(updSubject.getYearOfSchooling()) && subjectRepo
+				.findByNameAndYearOfSchooling((updSubject.getName()), subject.getYearOfSchooling()).isPresent()) {
+			logger.warn("**CHANGE SUBJECT** Subject and schooling year combination exists in db.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2001, "Subject for a given year of schooling already in the database."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**CHANGE SUBJECT** No subject and schooling year combination present in db.");
+		subjectRepo.save(updSubject);
+
+		// update subject
+
+		logger.info("**CHANGE SUBJECT** Attempting to do all translations.");
+		return subjectService.createdSubjectDTOtranslation(updSubject);
 	}
 
 	/**********************************************************************************************************
@@ -177,7 +232,7 @@ public class SubjectController {
 	 * GET endpoint for administrator looking to fetch all subjects. -- postman code 052 --
 	 * 
 	 * @param 
-	 * @return if ok list of all assignemnts in database
+	 * @return if ok list of all subjects in database
 	 **************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
@@ -187,16 +242,43 @@ public class SubjectController {
 		logger.info("**GET ALL SUBJECTS** Access to the endpoint successful.");
 
 		logger.info("**GET ALL SUBJECTS** Attempt to find subjects in database.");
-		// initial check to see if there are any assignements at all
+		// initial check to see if there are any subjects at all
 		if (subjectRepo.findAll() == null) {
 			logger.warn("**GET ALL SUBJECTS** No subjects in database.");
 			return new ResponseEntity<RESTError>(new RESTError(1530, "No subjects found in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
-		logger.info("**GET ALL ASSIGNMENTS** Attempt successful, list retrieved. Exiting controller");
+		logger.info("**GET ALL SUBJECTS** Attempt successful, list retrieved. Exiting controller");
 
 		return new ResponseEntity<List<SubjectEntity>>((List<SubjectEntity>) subjectRepo.findAll(), HttpStatus.OK);
+	}
+
+	/***************************************************************************************
+	 * GET endpoint for administrator looking to fetch subject by ID. -- postman code 072 --
+	 * 
+	 * @param 
+	 * @return if ok subject by id
+	 **************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/{subjectID}")
+	public ResponseEntity<?> getSubjectByID(@PathVariable Long subjectID) {
+
+		logger.info("**GET SUBJECT BY ID** Access to the endpoint successful.");
+
+		Optional<SubjectEntity> ogSubject = subjectRepo.findById(subjectID);
+		logger.info("**GET SUBJECT BY ID** Attempt to find a subject in database.");
+		// initial check to see if there is a subject with given id
+		if (ogSubject.isEmpty()) {
+			logger.warn("**GET SUBJECT BY ID** No subject with given id in database.");
+			return new ResponseEntity<RESTError>(new RESTError(1530, "No subject with given id in database."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		logger.info("**GET SUBJECT BY ID** Attempt successful, subject retrieved. Exiting controller");
+
+		return new ResponseEntity<SubjectEntity>(ogSubject.get(), HttpStatus.OK);
 	}
 
 }

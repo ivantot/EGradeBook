@@ -46,7 +46,7 @@ public class CreateStudentDTO {
 
 	@NotNull(message = "Unique number must be provided.")
 	@NotBlank(message = "Unique number can't be blank.")
-	@Size(min = 7, max = 7, message = "School ID must be between {min} and {max} characters long.")
+	@Size(min = 7, max = 7, message = "School ID must be exactly {min} characters long.")
 	private String studentUniqueNumber;
 
 	public CreateStudentDTO() {

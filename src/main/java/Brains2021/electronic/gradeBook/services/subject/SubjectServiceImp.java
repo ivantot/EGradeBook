@@ -1,5 +1,7 @@
 package Brains2021.electronic.gradeBook.services.subject;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +53,18 @@ public class SubjectServiceImp implements SubjectService {
 		// translate DTO to entity and save to db
 		logger.info("**POST NEW SUBJECT** Translating started.");
 		SubjectEntity newSubject = new SubjectEntity();
-		newSubject.setName(ESubjectName.valueOf(subject.getName()));
-		newSubject.setDescription(subject.getDescription());
-		newSubject.setYearOfSchooling(subject.getYearOfSchooling());
-		newSubject.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
+		if (subject.getName() != null) {
+			newSubject.setName(ESubjectName.valueOf(subject.getName()));
+		}
+		if (subject.getDescription() != null) {
+			newSubject.setDescription(subject.getDescription());
+		}
+		if (subject.getYearOfSchooling() != null) {
+			newSubject.setYearOfSchooling(subject.getYearOfSchooling());
+		}
+		if (subject.getWeeklyHoursRequired() != null) {
+			newSubject.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
+		}
 		newSubject.setDeleted(0);
 
 		logger.info(
@@ -75,15 +85,54 @@ public class SubjectServiceImp implements SubjectService {
 		// translate entity to DTO
 		logger.info("**POST NEW SUBJECT** Translating started.");
 		CreatedSubjectDTO newSubjectDTO = new CreatedSubjectDTO();
-		newSubjectDTO.setDescription(subject.getDescription());
-		newSubjectDTO.setName(subject.getName().toString());
-		newSubjectDTO.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
-		newSubjectDTO.setYerofSchooling(subject.getYearOfSchooling());
+		if (subject.getDescription() != null) {
+			newSubjectDTO.setDescription(subject.getDescription());
+		}
+		if (subject.getName() != null) {
+			newSubjectDTO.setName(subject.getName().toString());
+		}
+		if (subject.getWeeklyHoursRequired() != null) {
+			newSubjectDTO.setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
+		}
+		if (subject.getYearOfSchooling() != null) {
+			newSubjectDTO.setYerofSchooling(subject.getYearOfSchooling());
+		}
 		logger.info(
 				"**POST NEW SUBJECT** Translation complete, exiting service and returning to endpoint. All actions complete, subject created.\n"
 						+ newSubjectDTO.toString());
 
 		return new ResponseEntity<CreatedSubjectDTO>(newSubjectDTO, HttpStatus.OK);
+	}
+
+	/**
+	 * 
+	 * service that takes an input DTO and translates to entity and populates remaining fields
+	 * used for updating Subjects
+	 * 
+	 */
+	@Override
+	public SubjectEntity updateSubjectDTOtranslation(CreateSubjectDTO subject, Long ogSubjectID) {
+
+		logger.info("**POST NEW SUBJECT** Entered service for DTO translation to entity.");
+		// translate DTO to entity and save to db
+		logger.info("**POST NEW SUBJECT** Translating started.");
+		Optional<SubjectEntity> ogSubject = subjectRepo.findById(ogSubjectID);
+		if (subject.getName() != null) {
+			ogSubject.get().setName(ESubjectName.valueOf(subject.getName()));
+		}
+		if (subject.getDescription() != null) {
+			ogSubject.get().setDescription(subject.getDescription());
+		}
+		if (subject.getYearOfSchooling() != null) {
+			ogSubject.get().setYearOfSchooling(subject.getYearOfSchooling());
+		}
+		if (subject.getWeeklyHoursRequired() != null) {
+			ogSubject.get().setWeeklyHoursRequired(subject.getWeeklyHoursRequired());
+		}
+		ogSubject.get().setDeleted(0);
+
+		logger.info("**POST NEW SUBJECT** Translation complete, returning to controller");
+		return ogSubject.get();
 	}
 
 }

@@ -222,6 +222,14 @@ public class UserController {
 			return new ResponseEntity<RESTError>(
 					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
+
+		if (userRepo.findByJmbg(newParent.getJmbg()).isPresent()) {
+			logger.warn("**POST NEW PARENT** Parent with an existing unique ID number in database.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(1022, "Parent with an existing unique ID number in database."),
+					HttpStatus.BAD_REQUEST);
+		}
+
 		if (userRepo.findByUsername(newParent.getUsername()).isPresent()) {
 			logger.warn("**POST NEW PARENT** Username already in database.");
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
@@ -265,6 +273,14 @@ public class UserController {
 					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
 		logger.info("**POST NEW TEACHER** Passwords matching.");
+
+		logger.info("**POST NEW TEACHER** Attempt to find if matching unique ID number is already in database.");
+		if (userRepo.findByJmbg(newTeacher.getJmbg()).isPresent()) {
+			logger.warn("**POST NEW TEACHER** Teacher with an existing unique ID number in database.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(1022, "Teacher with an existing unique ID number in database."),
+					HttpStatus.BAD_REQUEST);
+		}
 
 		logger.info("**POST NEW TEACHER** Attempt to see if username exists in db.");
 		if (userRepo.findByUsername(newTeacher.getUsername()).isPresent()) {
@@ -344,6 +360,13 @@ public class UserController {
 			logger.warn("**PUT USER** Username taken.");
 			return new ResponseEntity<RESTError>(new RESTError(1032, "Username taken, please choose another."),
 					HttpStatus.BAD_REQUEST);
+		}
+
+		logger.info("**PUT USER** Attempt to find if matching unique ID number is already in database.");
+		if (userRepo.findByJmbg(updatedUser.getJmbg()).isPresent()) {
+			logger.warn("**PUT USER** User with an existing unique ID number in database.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(1022, "User with an existing unique ID number in database."), HttpStatus.BAD_REQUEST);
 		}
 
 		// invoke a service for DTO translation to Entity
@@ -886,6 +909,8 @@ public class UserController {
 	 * 
 	 * @return list of active users with role
 	 *******************************************************************************************************/
+	@Secured("ROLE_ADMIN")
+	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/activeUsers/{role}")
 	public ResponseEntity<?> findAllActiveUsersByRole(@PathVariable String role) {
 

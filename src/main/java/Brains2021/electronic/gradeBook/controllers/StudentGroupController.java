@@ -352,7 +352,7 @@ public class StudentGroupController {
 	 * @return if ok student grooup with given id
 	 ************************************************************************************************/
 	@SuppressWarnings("unlikely-arg-type")
-	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_HEADMASTER" })
+	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_HOMEROOM" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/{studentGroupID}")
 	public ResponseEntity<?> getStudentGroupByID(@PathVariable Long studentGroupID) {
