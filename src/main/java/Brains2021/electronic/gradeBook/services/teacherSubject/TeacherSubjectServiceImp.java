@@ -42,14 +42,23 @@ public class TeacherSubjectServiceImp implements TeacherSubjectService {
 	@Override
 	public TeacherSubjectEntity createTeacherSubjectDTOtranslation(CreateTeacherSubjectDTO teacherSubject) {
 
+		logger.info("##TEACHER - SUBJECT SERVICE## Service for translation from DTO to Entity.");
+
 		// translate DTO to entity and save to db
 		TeacherSubjectEntity newTeacherSubject = new TeacherSubjectEntity();
-		newTeacherSubject
-				.setSubject(subjectRepo.findByNameAndYearOfSchooling(ESubjectName.valueOf(teacherSubject.getSubject()),
-						teacherSubject.getYearOfSchooling()).get());
-		newTeacherSubject.setTeacher((TeacherEntity) userRepo.findByUsername(teacherSubject.getUsername()).get());
+		if (teacherSubject.getSubject() != null) {
+			newTeacherSubject.setSubject(subjectRepo.findByNameAndYearOfSchooling(
+					ESubjectName.valueOf(teacherSubject.getSubject()), teacherSubject.getYearOfSchooling()).get());
+		}
+		if (teacherSubject.getUsername() != null) {
+			newTeacherSubject.setTeacher((TeacherEntity) userRepo.findByUsername(teacherSubject.getUsername()).get());
+		}
 		newTeacherSubject.setDeleted(0);
-		newTeacherSubject.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
+		if (teacherSubject.getWeeklyHoursAlloted() != null) {
+			newTeacherSubject.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
+		}
+
+		logger.info("##TEACHER - SUBJECT SERVICE## Translation done, returning to controller.");
 
 		return newTeacherSubject;
 	}
@@ -64,13 +73,28 @@ public class TeacherSubjectServiceImp implements TeacherSubjectService {
 	public ResponseEntity<?> createdTeacherSubjectDTOtranslation(TeacherSubjectEntity teacherSubject) {
 		// translate entity to DTO 
 
+		logger.info("##TEACHER - SUBJECT SERVICE## Service for translation from Entity to DTO.");
+
 		CreatedTeacherSubjectDTO newTeacherSubjectDTO = new CreatedTeacherSubjectDTO();
 
-		newTeacherSubjectDTO.setSubject(teacherSubject.getSubject().getName().toString());
-		newTeacherSubjectDTO.setName(teacherSubject.getTeacher().getName());
-		newTeacherSubjectDTO.setSurname(teacherSubject.getTeacher().getSurname());
-		newTeacherSubjectDTO.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
-		newTeacherSubjectDTO.setYearOfSchooling(teacherSubject.getSubject().getYearOfSchooling());
+		if (teacherSubject.getSubject().getName() != null) {
+			newTeacherSubjectDTO.setSubject(teacherSubject.getSubject().getName().toString());
+		}
+		if (teacherSubject.getTeacher().getName() != null) {
+			newTeacherSubjectDTO.setName(teacherSubject.getTeacher().getName());
+		}
+		if (teacherSubject.getTeacher().getSurname() != null) {
+			newTeacherSubjectDTO.setSurname(teacherSubject.getTeacher().getSurname());
+		}
+		if (teacherSubject.getWeeklyHoursAlloted() != null) {
+			newTeacherSubjectDTO.setWeeklyHoursAlloted(teacherSubject.getWeeklyHoursAlloted());
+		}
+		if (teacherSubject.getSubject().getYearOfSchooling() != null) {
+			newTeacherSubjectDTO.setYearOfSchooling(teacherSubject.getSubject().getYearOfSchooling());
+		}
+
+		logger.info("##TEACHER - SUBJECT SERVICE## Translation done, returning to controller."
+				+ newTeacherSubjectDTO.toString());
 
 		return new ResponseEntity<CreatedTeacherSubjectDTO>(newTeacherSubjectDTO, HttpStatus.OK);
 	}

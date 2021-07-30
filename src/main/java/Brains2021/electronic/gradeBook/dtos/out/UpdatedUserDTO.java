@@ -90,4 +90,10 @@ public class UpdatedUserDTO {
 		this.dateOfBirth = dateOfBirth;
 	}
 
+	@Override
+	public String toString() {
+		return "UpdatedUserDTO [name=" + name + ", surname=" + surname + ", email=" + email + ", username=" + username
+				+ ", jmbg=" + jmbg + ", dateOfBirth=" + dateOfBirth + "]";
+	}
+
 }

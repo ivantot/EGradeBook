@@ -49,13 +49,12 @@ public class SubjectController {
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
-	/******************************************************************************************************
-	 * POST endpoint for administrator looking to create new subject, meant to be accessed by IT specialist
-	 * -- postman code adm005 --
+	/*****************************************************************************************************************************
+	 * POST endpoint for administrator looking to create new subject, meant to be accessed by IT specialist -- postman code 005 --
 	 * 
 	 * @param subject
 	 * @return if ok, new subject
-	 ******************************************************************************************************/
+	 *****************************************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newSubject")
@@ -93,8 +92,7 @@ public class SubjectController {
 	}
 
 	/**********************************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to soft delete a subject.
-	 * -- postman code adm034 --
+	 * PUT/DELETE endpoint for administrator looking to soft delete a subject. -- postman code 034 --
 	 * 
 	 * @param subjectID
 	 * @return if ok, deleted set to 1
@@ -144,8 +142,7 @@ public class SubjectController {
 	}
 
 	/**********************************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to restore a subject.
-	 * -- postman code adm035 --
+	 * PUT/DELETE endpoint for administrator looking to restore a subject. -- postman code 035 --
 	 * 
 	 * @param subjectID
 	 * @return if ok, deleted set to 0
@@ -177,8 +174,7 @@ public class SubjectController {
 	}
 
 	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all subjects.
-	 * -- postman code adm052 --
+	 * GET endpoint for administrator looking to fetch all subjects. -- postman code 052 --
 	 * 
 	 * @param 
 	 * @return if ok list of all assignemnts in database

@@ -60,27 +60,31 @@ public class StudentGroupController {
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
-	/***************************************************************************************
-	 * POST endpoint for administrator looking to create new subject group
-	 * -- postman code adm006 --
+	/********************************************************************************************
+	 * POST endpoint for administrator looking to create new subject group -- postman code 006 --
 	 * 
 	 * @param student group
 	 * @return if ok, new student group
-	 ***************************************************************************************/
+	 ********************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newStudentGroup")
 	public ResponseEntity<?> postNewStudentGroup(@Valid @RequestBody CreateStudentGroupDTO studentGroup) {
 
+		logger.info("**POST STUDENT GROUP** Access to the endpoint successful.");
+
 		// check db for student group
+		logger.info("**POST STUDENT GROUP** Attempt to find if user group is in the database.");
 		if (studentGroupRepo
 				.findByYearAndYearIndex(studentGroup.getYear(), Integer.parseInt(studentGroup.getYearIndex()))
 				.isPresent()) {
+			logger.warn("**POST STUDENT GROUP** Student Group already in the database.");
 			return new ResponseEntity<RESTError>(new RESTError(3001, "Student Group already in the database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// populate fields and save to db
+		logger.info("**POST STUDENT GROUP** Populate fields and save new student group to database");
 		StudentGroupEntity newStudentGroup = new StudentGroupEntity();
 		newStudentGroup.setDeleted(0);
 		newStudentGroup.setYear(studentGroup.getYear());
@@ -93,50 +97,60 @@ public class StudentGroupController {
 				HttpStatus.OK);
 	}
 
-	/***********************************************************************************************
-	 * PUT endpoint for administrator or headmaster looking to assign a student to a student group
-	 * -- postman code adm017 --
+	/********************************************************************************************************************
+	 * PUT endpoint for administrator or headmaster looking to assign a student to a student group -- postman code 017 --
 	 * 
 	 * @param student group
 	 * @param student
 	 * @return if ok, student linked to a student group
-	 **********************************************************************************************/
+	 ********************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/assignStudentToStudentGroup")
 	public ResponseEntity<?> assignStudentToStudentGroup(@RequestParam String username, @RequestParam String year,
 			@RequestParam Integer yearIndex) {
 
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Access to the endpoint successful.");
+
 		// validate yaer
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Attempt to validate year input.");
 		if (!year.matches("^I|II|III|IV|V|VI|VII|VIII$")) {
+			logger.warn("**ADD STUDENT TO STUDENT GROUP** Year input not valid.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(3005, "Provide a valid year value by using roman numerals between I and VIII."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		Optional<StudentGroupEntity> studentGroup = studentGroupRepo.findByYearAndYearIndex(year, yearIndex);
-
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Attempt to find student group in the database.");
 		// check db for student group
 		if (studentGroup.isEmpty()) {
+			logger.warn("**ADD STUDENT TO STUDENT GROUP** Student group not in the database.");
 			return new ResponseEntity<RESTError>(new RESTError(3002, "Student Group not in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		Optional<UserEntity> user = userRepo.findByUsername(username);
-
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Attempt to find student in the database.");
 		if (user.isEmpty()) {
+			logger.warn("**ADD STUDENT TO STUDENT GROUP** Student not in the database.");
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Student not in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Attempt to find if student is deleted.");
 		if (user.get().getDeleted() == 1) {
+			logger.warn("**ADD STUDENT TO STUDENT GROUP** Student deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Not an active student."), HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Attempt to find if user is a student.");
 		if (!user.get().getRole().getName().equals(ERole.ROLE_STUDENT)) {
+			logger.warn("**ADD STUDENT TO STUDENT GROUP** User is not a student.");
 			return new ResponseEntity<RESTError>(new RESTError(3004, "User is not a student."), HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**ADD STUDENT TO STUDENT GROUP** Put student to student group.");
 		StudentEntity student = (StudentEntity) user.get();
 		student.setBelongsToStudentGroup(studentGroup.get());
 		userRepo.save(student);
@@ -145,22 +159,25 @@ public class StudentGroupController {
 				"Student " + username + " asigned to student group " + year + "-" + yearIndex + ".", HttpStatus.OK);
 	}
 
-	/*******************************************************************************************************
-	 * PUT endpoint for administrator or headmaster looking to assign a homeroom teacher to a student group
-	 * -- postman code adm018 --
+	/*****************************************************************************************************************************
+	 * PUT endpoint for administrator or headmaster looking to assign a homeroom teacher to a student group -- postman code 018 --
 	 * 
 	 * @param student group
 	 * @param student
 	 * @return if ok, student linked to a student group
-	 *******************************************************************************************************/
+	 *****************************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/assignHomeroomToStudentGroup")
 	public ResponseEntity<?> assignHomeroomToStudentGroup(@RequestParam String username, @RequestParam String year,
 			@RequestParam Integer yearIndex) {
 
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Access to the endpoint successful.");
+
 		// validate year
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Attempt to validate year input.");
 		if (!year.matches("^I|II|III|IV|V|VI|VII|VIII$")) {
+			logger.warn("**ASSIGN HOMEROOM TO STUDENT GROUP** Year input not valid.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(3005, "Provide a valid year value, using roman numerals between I and VIII."),
 					HttpStatus.BAD_REQUEST);
@@ -169,27 +186,34 @@ public class StudentGroupController {
 		Optional<StudentGroupEntity> studentGroup = studentGroupRepo.findByYearAndYearIndex(year, yearIndex);
 
 		// check db for student group
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Attempt to find student group in the database.");
 		if (studentGroup.isEmpty()) {
+			logger.warn("**ASSIGN HOMEROOM TO STUDENT GROUP** Student group not in the database.");
 			return new ResponseEntity<RESTError>(new RESTError(3002, "Student Group not in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		Optional<UserEntity> user = userRepo.findByUsername(username);
-
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Attempt to find user in the database.");
 		if (user.isEmpty()) {
-			return new ResponseEntity<RESTError>(new RESTError(3003, "Teacher not in database."),
-					HttpStatus.BAD_REQUEST);
+			logger.warn("**ASSIGN HOMEROOM TO STUDENT GROUP** User not in the database.");
+			return new ResponseEntity<RESTError>(new RESTError(3003, "User not in database."), HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Attempt to find if techer is deleted.");
 		if (user.get().getDeleted() == 1) {
+			logger.warn("**ASSIGN HOMEROOM TO STUDENT GROUP** Teacher deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Not an active teacher."), HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Attempt to find if role corresponds to homeroom teacher.");
 		if (!user.get().getRole().getName().equals(ERole.ROLE_HOMEROOM)) {
+			logger.warn("**ASSIGN HOMEROOM TO STUDENT GROUP** Wrong role.");
 			return new ResponseEntity<RESTError>(new RESTError(3004, "User is not a homeroom teacher."),
 					HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**ASSIGN HOMEROOM TO STUDENT GROUP** Put homeroom teacher to student group.");
 		TeacherEntity homeroomTeacher = (TeacherEntity) user.get();
 		homeroomTeacher.setInChargeOf(studentGroup.get());
 		userRepo.save(homeroomTeacher);
@@ -198,13 +222,12 @@ public class StudentGroupController {
 				+ " as a homeroom teacher.", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to soft delete a student group.
-	 * -- postman code adm038 --
+	/******************************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete a student group. -- postman code 038 --
 	 * 
 	 * @param studentGroup id
 	 * @return if ok set deleted to 1
-	 **************************************************************************************/
+	 ******************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteStudentGroup/{studentGroupID}")
@@ -257,16 +280,14 @@ public class StudentGroupController {
 		return new ResponseEntity<String>(
 				"Student group with id " + studentGroupID + " deleted, students and homeroom teacher unlinked.",
 				HttpStatus.OK);
-
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to restore a deleted student group.
-	 * -- postman code adm039 --
+	/***************************************************************************************************
+	 * PUT endpoint for administrator looking to restore a deleted student group. -- postman code 039 --
 	 * 
 	 * @param studentGroup id
 	 * @return if ok set deleted to 0
-	 **************************************************************************************/
+	 ***************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreStudentGroup/{studentGroupID}")
@@ -294,13 +315,12 @@ public class StudentGroupController {
 		return new ResponseEntity<String>("Assignment with id " + studentGroupID + " restored.", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all student groups.
-	 * -- postman code adm055 --
+	/*********************************************************************************************
+	 * GET endpoint for administrator looking to fetch all student groups. -- postman code 065 --
 	 * 
 	 * @param 
 	 * @return if ok list of all student groups in database
-	 **************************************************************************************/
+	 *********************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/")
@@ -325,13 +345,13 @@ public class StudentGroupController {
 		return new ResponseEntity<List<GETStudentGroupsDTO>>(ogstudentGroupsDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch a student group by ID.
-	 * -- postman code adm056 --
+	/************************************************************************************************
+	 * GET endpoint for administrator looking to fetch a student group by ID. -- postman code 066 --
 	 * 
 	 * @param studentGroup id
 	 * @return if ok student grooup with given id
-	 **************************************************************************************/
+	 ************************************************************************************************/
+	@SuppressWarnings("unlikely-arg-type")
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/{studentGroupID}")
@@ -341,8 +361,9 @@ public class StudentGroupController {
 
 		logger.info(
 				"**GET STUDENT GROUP BY ID** Attempt to see if logged user is student groups homeroom teacher, admin or headmaster.");
+		Optional<StudentGroupEntity> ogStudentGroup = studentGroupRepo.findById(studentGroupID);
 		if (!userService.amIHeadmaster() && !userService.amIAdmin() && !userRepo.findByUsername(userService.whoAmI())
-				.equals(studentGroupRepo.findById(studentGroupID).get().getHomeroomTeacher().getUsername())) {
+				.equals(ogStudentGroup.get().getHomeroomTeacher().getUsername())) {
 			logger.warn(
 					"**GET STUDENT GROUP BY ID** Looged user not student groups homeroom teacher, admin or headmaster.");
 			return new ResponseEntity<RESTError>(
@@ -351,7 +372,6 @@ public class StudentGroupController {
 		}
 
 		logger.info("**GET STUDENT GROUP BY ID** Attempt to find a student group in database.");
-		Optional<StudentGroupEntity> ogStudentGroup = studentGroupRepo.findById(studentGroupID);
 		if (ogStudentGroup.isEmpty()) {
 			logger.warn("**GET STUDENT GROUP BY ID** No student group with given id in database.");
 			return new ResponseEntity<RESTError>(new RESTError(6535, "No student group with given id in database."),

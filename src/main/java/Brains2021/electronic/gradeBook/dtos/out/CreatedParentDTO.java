@@ -102,4 +102,10 @@ public class CreatedParentDTO {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@Override
+	public String toString() {
+		return "CreatedParentDTO [name=" + name + ", surname=" + surname + ", email=" + email + ", username=" + username
+				+ ", jmbg=" + jmbg + ", dateOfBirth=" + dateOfBirth + ", phoneNumber=" + phoneNumber + "]";
+	}
+
 }

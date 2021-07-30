@@ -40,15 +40,14 @@ public class StudentGroupTakingASubjectController {
 	@Autowired
 	private StudentGroupTakingASubjectRepository studentGroupTakingASubjectRepo;
 
-	/*************************************************************************************************
-	 * POST endpoint for posting teacher-subject combination to a particular student group
-	 * -- postman code adm009 --
+	/************************************************************************************************************
+	 * POST endpoint for posting teacher-subject combination to a particular student group -- postman code 009 --
 	 * 
 	 * @param studentGroupID
 	 * @param teacherSubjectID
 	 * @param hoursRequired
 	 * @return if ok, new link between teacher teaching a subject and a student group
-	 *************************************************************************************************/
+	 ************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newStudentGroupTakingASubject")
@@ -121,6 +120,7 @@ public class StudentGroupTakingASubjectController {
 		// assign a link between teacher-subject and student group
 		logger.info(
 				"**ASSIGN STUDENT GROUP TO TEACHER-SUBJECT COMBO** Attempting to assign a new entity linking teacher-subject combination with student group.");
+
 		StudentGroupTakingASubjectEntity studentGroupTakingASubject = new StudentGroupTakingASubjectEntity();
 		studentGroupTakingASubject.setDeleted(0);
 		studentGroupTakingASubject.setStudentGroup(studentGroup.get());
@@ -149,13 +149,12 @@ public class StudentGroupTakingASubjectController {
 				HttpStatus.OK);
 	}
 
-	/**********************************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to soft delete a student group - teacher subject relation.
-	 * -- postman code adm032 --
+	/*********************************************************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete a student group - teacher subject relation. -- postman code 032 --
 	 * 
 	 * @param studentGroupTakingASubjectID
 	 * @return if ok, deleted set to 1
-	 **********************************************************************************************************/
+	 *********************************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteStudentGroupTakingASubject/{studentGroupTakingASubjectID}")
@@ -201,13 +200,12 @@ public class StudentGroupTakingASubjectController {
 				HttpStatus.OK);
 	}
 
-	/**********************************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to restore a student group - teacher subject relation.
-	 * -- postman code adm033 --
+	/*****************************************************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to restore a student group - teacher subject relation. -- postman code 033 --
 	 * 
 	 * @param studentGroupTakingASubjectID
 	 * @return if ok, deleted set to 0
-	 **********************************************************************************************************/
+	 *****************************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreStudentGroupTakingASubject/{studentGroupTakingASubjectID}")

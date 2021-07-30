@@ -30,13 +30,12 @@ public class TeacherController {
 	@Autowired
 	private TeacherRepository teacherRepo;
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to change teachers weekly hours capacity.
-	 * -- postman code adm023 --
+	/*********************************************************************************************************
+	 * PUT endpoint for administrator looking to change teachers weekly hours capacity. -- postman code 023 --
 	 * 
 	 * @param id
 	 * @return if ok set new hours
-	 **************************************************************************************/
+	 *********************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/changeCapacity/{username}")

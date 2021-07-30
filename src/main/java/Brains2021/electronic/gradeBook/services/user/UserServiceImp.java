@@ -184,7 +184,6 @@ public class UserServiceImp implements UserService {
 	 * quickly encode a password
 	 * 
 	 */
-
 	@Override
 	public String encodePassword(String passwordToEncode) {
 		return Encryption.getPasswordEncoded(passwordToEncode);
@@ -198,20 +197,42 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public StudentEntity createStudentDTOtranslation(CreateStudentDTO student) {
+		logger.info("##POST NEW STUDENT## Entered service for DTO translation to entity.");
 
 		StudentEntity newStudent = new StudentEntity();
+		logger.info("##POST NEW STUDENT## Translation started.");
 
-		newStudent.setName(student.getName());
-		newStudent.setSurname(student.getSurname());
-		newStudent.setEmail(student.getEmail());
-		newStudent.setUsername(student.getUsername());
-		newStudent.setPassword(student.getPassword());
-		newStudent.setRepeatedPassword(student.getRepeatedPassword());
-		newStudent.setJmbg(student.getJmbg());
-		newStudent.setStudentUniqueNumber(student.getStudentUniqueNumber());
-		newStudent.setDateOfBirth(student.getDateOfBirth());
+		if (student.getName() != null) {
+			newStudent.setName(student.getName());
+		}
+		if (student.getSurname() != null) {
+			newStudent.setSurname(student.getSurname());
+		}
+		if (student.getEmail() != null) {
+			newStudent.setEmail(student.getEmail());
+		}
+		if (student.getUsername() != null) {
+			newStudent.setUsername(student.getUsername());
+		}
+		if (student.getPassword() != null) {
+			newStudent.setPassword(student.getPassword());
+		}
+		if (student.getRepeatedPassword() != null) {
+			newStudent.setRepeatedPassword(student.getRepeatedPassword());
+		}
+		if (student.getJmbg() != null) {
+			newStudent.setJmbg(student.getJmbg());
+		}
+		if (student.getStudentUniqueNumber() != null) {
+			newStudent.setStudentUniqueNumber(student.getStudentUniqueNumber());
+		}
+		if (student.getDateOfBirth() != null) {
+			newStudent.setDateOfBirth(student.getDateOfBirth());
+		}
 		newStudent.setRole(roleRepo.findByName(ERole.ROLE_STUDENT).get());
 		newStudent.setDeleted(0);
+
+		logger.info("##POST NEW STUDENT## Translation complete, exiting service and returning to endpoint.");
 
 		return newStudent;
 
@@ -226,15 +247,34 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<?> createdStudentDTOtranslation(StudentEntity student) {
 
+		logger.info("##POST NEW STUDENT## Entered service for Entity translation to DTO.");
+
 		CreatedStudentDTO newStudentDTO = new CreatedStudentDTO();
 
-		newStudentDTO.setName(student.getName());
-		newStudentDTO.setSurname(student.getSurname());
-		newStudentDTO.setDateOfBirth(student.getDateOfBirth());
-		newStudentDTO.setEmail(student.getEmail());
-		newStudentDTO.setJmbg(student.getJmbg());
-		newStudentDTO.setStudentUniqueNumber(student.getStudentUniqueNumber());
-		newStudentDTO.setUsername(student.getUsername());
+		if (student.getName() != null) {
+			newStudentDTO.setName(student.getName());
+		}
+		if (student.getSurname() != null) {
+			newStudentDTO.setSurname(student.getSurname());
+		}
+		if (student.getDateOfBirth() != null) {
+			newStudentDTO.setDateOfBirth(student.getDateOfBirth());
+		}
+		if (student.getEmail() != null) {
+			newStudentDTO.setEmail(student.getEmail());
+		}
+		if (student.getJmbg() != null) {
+			newStudentDTO.setJmbg(student.getJmbg());
+		}
+		if (student.getStudentUniqueNumber() != null) {
+			newStudentDTO.setStudentUniqueNumber(student.getStudentUniqueNumber());
+		}
+		if (student.getUsername() != null) {
+			newStudentDTO.setUsername(student.getUsername());
+		}
+
+		logger.info("##POST NEW STUDENT## Translation complete, exiting service and returning to endpoint.\n"
+				+ newStudentDTO.toString());
 
 		return new ResponseEntity<CreatedStudentDTO>(newStudentDTO, HttpStatus.OK);
 	}
@@ -247,20 +287,42 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public ParentEntity createParentDTOtranslation(CreateParentDTO parent) {
+		logger.info("##POST NEW PARENT## Entered service for DTO translation to entity.");
 
 		ParentEntity newParent = new ParentEntity();
+		logger.info("##POST NEW PARENT## Translation started.");
 
-		newParent.setName(parent.getName());
-		newParent.setSurname(parent.getSurname());
-		newParent.setEmail(parent.getEmail());
-		newParent.setUsername(parent.getUsername());
-		newParent.setPassword(parent.getPassword());
-		newParent.setRepeatedPassword(parent.getRepeatedPassword());
-		newParent.setJmbg(parent.getJmbg());
-		newParent.setDateOfBirth(parent.getDateOfBirth());
-		newParent.setPhoneNumber(parent.getPhoneNumber());
+		if (parent.getName() != null) {
+			newParent.setName(parent.getName());
+		}
+		if (parent.getSurname() != null) {
+			newParent.setSurname(parent.getSurname());
+		}
+		if (parent.getEmail() != null) {
+			newParent.setEmail(parent.getEmail());
+		}
+		if (parent.getUsername() != null) {
+			newParent.setUsername(parent.getUsername());
+		}
+		if (parent.getPassword() != null) {
+			newParent.setPassword(parent.getPassword());
+		}
+		if (parent.getRepeatedPassword() != null) {
+			newParent.setRepeatedPassword(parent.getRepeatedPassword());
+		}
+		if (parent.getJmbg() != null) {
+			newParent.setJmbg(parent.getJmbg());
+		}
+		if (parent.getDateOfBirth() != null) {
+			newParent.setDateOfBirth(parent.getDateOfBirth());
+		}
+		if (parent.getPhoneNumber() != null) {
+			newParent.setPhoneNumber(parent.getPhoneNumber());
+		}
 		newParent.setRole(roleRepo.findByName(ERole.ROLE_PARENT).get());
 		newParent.setDeleted(0);
+
+		logger.info("##POST NEW STUDENT## Translation complete, exiting service and returning to endpoint.");
 
 		return newParent;
 	}
@@ -274,15 +336,34 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<?> createdParentDTOtranslation(ParentEntity parent) {
 
+		logger.info("##POST NEW PARENT## Entered service for Entity translation to DTO.");
+
 		CreatedParentDTO newParentDTO = new CreatedParentDTO();
 
-		newParentDTO.setName(parent.getName());
-		newParentDTO.setSurname(parent.getSurname());
-		newParentDTO.setDateOfBirth(parent.getDateOfBirth());
-		newParentDTO.setEmail(parent.getEmail());
-		newParentDTO.setJmbg(parent.getJmbg());
-		newParentDTO.setUsername(parent.getUsername());
-		newParentDTO.setPhoneNumber(parent.getPhoneNumber());
+		if (parent.getName() != null) {
+			newParentDTO.setName(parent.getName());
+		}
+		if (parent.getSurname() != null) {
+			newParentDTO.setSurname(parent.getSurname());
+		}
+		if (parent.getDateOfBirth() != null) {
+			newParentDTO.setDateOfBirth(parent.getDateOfBirth());
+		}
+		if (parent.getEmail() != null) {
+			newParentDTO.setEmail(parent.getEmail());
+		}
+		if (parent.getJmbg() != null) {
+			newParentDTO.setJmbg(parent.getJmbg());
+		}
+		if (parent.getUsername() != null) {
+			newParentDTO.setUsername(parent.getUsername());
+		}
+		if (parent.getPhoneNumber() != null) {
+			newParentDTO.setPhoneNumber(parent.getPhoneNumber());
+		}
+
+		logger.info("##POST NEW PARENT## Translation complete, exiting service and returning to endpoint.\n"
+				+ newParentDTO.toString());
 
 		return new ResponseEntity<CreatedParentDTO>(newParentDTO, HttpStatus.OK);
 
@@ -296,25 +377,45 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public TeacherEntity createTeacherDTOtranslation(CreateTeacherDTO teacher) {
-
 		logger.info("##POST NEW TEACHER## Entered service for DTO translation to entity.");
+
 		TeacherEntity newTeacher = new TeacherEntity();
-		logger.info("##POST NEW TEACHER## Translating started.");
-		newTeacher.setName(teacher.getName());
-		newTeacher.setSurname(teacher.getSurname());
-		newTeacher.setEmail(teacher.getEmail());
-		newTeacher.setUsername(teacher.getUsername());
-		newTeacher.setPassword(teacher.getPassword());
-		newTeacher.setRepeatedPassword(teacher.getRepeatedPassword());
-		newTeacher.setJmbg(teacher.getJmbg());
-		newTeacher.setDateOfBirth(teacher.getDateOfBirth());
-		newTeacher.setStartOfEmployment(teacher.getStartOfEmployment());
+
+		if (teacher.getName() != null) {
+			newTeacher.setName(teacher.getName());
+		}
+		if (teacher.getSurname() != null) {
+			newTeacher.setSurname(teacher.getSurname());
+		}
+		if (teacher.getEmail() != null) {
+			newTeacher.setEmail(teacher.getEmail());
+		}
+		if (teacher.getUsername() != null) {
+			newTeacher.setUsername(teacher.getUsername());
+		}
+		if (teacher.getPassword() != null) {
+			newTeacher.setPassword(teacher.getPassword());
+		}
+		if (teacher.getRepeatedPassword() != null) {
+			newTeacher.setRepeatedPassword(teacher.getRepeatedPassword());
+		}
+		if (teacher.getJmbg() != null) {
+			newTeacher.setJmbg(teacher.getJmbg());
+		}
+		if (teacher.getDateOfBirth() != null) {
+			newTeacher.setDateOfBirth(teacher.getDateOfBirth());
+		}
+		if (teacher.getStartOfEmployment() != null) {
+			newTeacher.setStartOfEmployment(teacher.getStartOfEmployment());
+		}
 		if (teacher.getSalary() != null) {
 			newTeacher.setSalary(teacher.getSalary());
 		} else {
 			newTeacher.setSalary(60000.00);
 		}
-		newTeacher.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
+		if (teacher.getWeeklyHourCapacity() != null) {
+			newTeacher.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
+		}
 		newTeacher.setRole(roleRepo.findByName(ERole.ROLE_TEACHER).get());
 		newTeacher.setIsAdministrator(0);
 		newTeacher.setIsHomeroomTeacher(0);
@@ -333,20 +434,36 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public ResponseEntity<?> createdTeacherDTOtranslation(TeacherEntity teacher) {
-
-		logger.info("##POST NEW TEACHER## Entered service for DTO translation to entity.");
+		logger.info("##POST NEW TEACHER## Entered service for Entity translation to DTO.");
 		CreatedTeacherDTO newTeacherDTO = new CreatedTeacherDTO();
 
-		logger.info("##POST NEW TEACHER## Translating started.");
-		newTeacherDTO.setName(teacher.getName());
-		newTeacherDTO.setSurname(teacher.getSurname());
-		newTeacherDTO.setDateOfBirth(teacher.getDateOfBirth());
-		newTeacherDTO.setEmail(teacher.getEmail());
-		newTeacherDTO.setJmbg(teacher.getJmbg());
-		newTeacherDTO.setUsername(teacher.getUsername());
-		newTeacherDTO.setSalary(teacher.getSalary());
-		newTeacherDTO.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
-		newTeacherDTO.setStartOfEmployment(teacher.getStartOfEmployment());
+		if (teacher.getName() != null) {
+			newTeacherDTO.setName(teacher.getName());
+		}
+		if (teacher.getSurname() != null) {
+			newTeacherDTO.setSurname(teacher.getSurname());
+		}
+		if (teacher.getDateOfBirth() != null) {
+			newTeacherDTO.setDateOfBirth(teacher.getDateOfBirth());
+		}
+		if (teacher.getEmail() != null) {
+			newTeacherDTO.setEmail(teacher.getEmail());
+		}
+		if (teacher.getJmbg() != null) {
+			newTeacherDTO.setJmbg(teacher.getJmbg());
+		}
+		if (teacher.getUsername() != null) {
+			newTeacherDTO.setUsername(teacher.getUsername());
+		}
+		if (teacher.getSalary() != null) {
+			newTeacherDTO.setSalary(teacher.getSalary());
+		}
+		if (teacher.getWeeklyHourCapacity() != null) {
+			newTeacherDTO.setWeeklyHourCapacity(teacher.getWeeklyHourCapacity());
+		}
+		if (teacher.getStartOfEmployment() != null) {
+			newTeacherDTO.setStartOfEmployment(teacher.getStartOfEmployment());
+		}
 
 		logger.info(
 				"##POST NEW TEACHER## Translation complete, exiting service and returning to endpoint. All actions complete, teacher created.\n"
@@ -362,6 +479,8 @@ public class UserServiceImp implements UserService {
 	 */
 	@Override
 	public UserEntity updateUserDTOtranslation(UpdateUserDTO updatedUser, UserEntity ogUser) {
+
+		logger.info("##PUT USER## Entered service for DTO translation to entity.");
 
 		if (updatedUser.getName() != null && !updatedUser.getName().isBlank()) {
 			ogUser.setName(updatedUser.getName());
@@ -382,6 +501,8 @@ public class UserServiceImp implements UserService {
 			ogUser.setDateOfBirth(updatedUser.getDateOfBirth());
 		}
 
+		logger.info("##PUT USER## Translation complete, exiting service and returning to endpoint.");
+
 		return ogUser;
 	}
 
@@ -394,14 +515,32 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<?> updatedUserDTOtranslation(UserEntity ogUser) {
 
+		logger.info("##PUT USER## Entered service for Entity translation to DTO.");
+
 		UpdatedUserDTO updatedUserDTO = new UpdatedUserDTO();
 
-		updatedUserDTO.setName(ogUser.getName());
-		updatedUserDTO.setSurname(ogUser.getSurname());
-		updatedUserDTO.setDateOfBirth(ogUser.getDateOfBirth());
-		updatedUserDTO.setEmail(ogUser.getEmail());
-		updatedUserDTO.setJmbg(ogUser.getJmbg());
-		updatedUserDTO.setUsername(ogUser.getUsername());
+		if (ogUser.getName() != null && !ogUser.getName().isBlank()) {
+			updatedUserDTO.setName(ogUser.getName());
+		}
+		if (ogUser.getSurname() != null && !ogUser.getSurname().isBlank()) {
+			updatedUserDTO.setSurname(ogUser.getSurname());
+		}
+		if (ogUser.getDateOfBirth() != null) {
+			updatedUserDTO.setDateOfBirth(ogUser.getDateOfBirth());
+		}
+		if (ogUser.getEmail() != null && !ogUser.getEmail().isBlank()) {
+			updatedUserDTO.setEmail(ogUser.getEmail());
+		}
+		if (ogUser.getJmbg() != null && !ogUser.getJmbg().isBlank()) {
+			updatedUserDTO.setJmbg(ogUser.getJmbg());
+		}
+		if (ogUser.getUsername() != null && !ogUser.getUsername().isBlank()) {
+			updatedUserDTO.setUsername(ogUser.getUsername());
+		}
+
+		logger.info(
+				"##PUT USER## Translation complete, exiting service and returning to endpoint. All actions complete, user updated.\n"
+						+ updatedUserDTO.toString());
 
 		return new ResponseEntity<UpdatedUserDTO>(updatedUserDTO, HttpStatus.OK);
 	}
@@ -415,13 +554,17 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<?> deletedUserDTOtranslation(UserEntity user) {
 
+		logger.info("##DELETE USER## Entered service for Entity translation to DTO.");
+
 		DeletedUserDTO deletedUser = new DeletedUserDTO();
 		deletedUser.setName(user.getName());
 		deletedUser.setSurname(user.getSurname());
 		deletedUser.setRole(user.getRole().getName().toString());
 		deletedUser.setUsername(user.getUsername());
 
-		logger.info(deletedUser.toString());
+		logger.info(
+				"##DELETE USER## Translation complete, exiting service and returning to endpoint. All actions complete, user deleted.\n"
+						+ deletedUser.toString());
 		return new ResponseEntity<DeletedUserDTO>(deletedUser, HttpStatus.OK);
 	}
 
@@ -434,6 +577,8 @@ public class UserServiceImp implements UserService {
 	@Override
 	public TeacherEntity updateTeacherRole(TeacherEntity teacher, String role, Double bonus) {
 
+		logger.info("##CHANGE TEACHER ROLE## Entered service for handlig salary logic.");
+
 		teacher.setRole(roleRepo.findByName(ERole.valueOf(role)).get());
 
 		// logic for assigning role-specific salary bonuses
@@ -443,7 +588,11 @@ public class UserServiceImp implements UserService {
 			teacher.setIsHeadmaster(0);
 			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
-			teacher.setSalaryAdminBonus(bonus);
+			if (bonus != null) {
+				teacher.setSalaryAdminBonus(bonus);
+			} else {
+				teacher.setSalaryAdminBonus(15000.00);
+			}
 		}
 		if (role.equals(ERole.ROLE_HOMEROOM.toString())) {
 			teacher.setIsAdministrator(0);
@@ -451,8 +600,11 @@ public class UserServiceImp implements UserService {
 			teacher.setIsHeadmaster(0);
 			teacher.setSalaryHeadmasterBonus(0.00);
 			teacher.setSalaryAdminBonus(0.00);
-			teacher.setSalaryHomeroomBonus(bonus);
-
+			if (bonus != null) {
+				teacher.setSalaryHomeroomBonus(bonus);
+			} else {
+				teacher.setSalaryHomeroomBonus(15000.00);
+			}
 		}
 		if (role.equals(ERole.ROLE_HEADMASTER.toString())) {
 			teacher.setIsAdministrator(0);
@@ -460,7 +612,11 @@ public class UserServiceImp implements UserService {
 			teacher.setIsHeadmaster(1);
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
-			teacher.setSalaryHeadmasterBonus(bonus);
+			if (bonus != null) {
+				teacher.setSalaryHeadmasterBonus(bonus);
+			} else {
+				teacher.setSalaryHeadmasterBonus(15000.00);
+			}
 		}
 		if (role.equals(ERole.ROLE_TEACHER.toString())) {
 			teacher.setIsAdministrator(0);
@@ -470,6 +626,8 @@ public class UserServiceImp implements UserService {
 			teacher.setSalaryAdminBonus(0.00);
 			teacher.setSalaryHomeroomBonus(0.00);
 		}
+
+		logger.info("##CHANGE TEACHER ROLE## Returning to controller.");
 
 		return userRepo.save(teacher);
 	}
@@ -483,6 +641,8 @@ public class UserServiceImp implements UserService {
 	@Override
 	public GetUserDTO foundUserDTOtranslation(UserEntity user) {
 
+		logger.info("##GET ALL USERS## Entered service for Entity translation to DTO.");
+
 		GetUserDTO getUser = new GetUserDTO();
 		getUser.setName(user.getName());
 		getUser.setSurname(user.getSurname());
@@ -490,6 +650,7 @@ public class UserServiceImp implements UserService {
 		getUser.setUsername(user.getUsername());
 		getUser.setEmail(user.getEmail());
 
+		logger.info("##GET ALL USERS## Translation complete, exiting service and returning to endpoint.");
 		return getUser;
 	}
 

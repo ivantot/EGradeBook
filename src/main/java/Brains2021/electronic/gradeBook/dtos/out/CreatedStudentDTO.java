@@ -102,4 +102,11 @@ public class CreatedStudentDTO {
 		this.dateOfBirth = dateOfBirth;
 	}
 
+	@Override
+	public String toString() {
+		return "CreatedStudentDTO [name=" + name + ", surname=" + surname + ", email=" + email + ", username="
+				+ username + ", jmbg=" + jmbg + ", dateOfBirth=" + dateOfBirth + ", studentUniqueNumber="
+				+ studentUniqueNumber + "]";
+	}
+
 }

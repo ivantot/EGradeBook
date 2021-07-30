@@ -86,15 +86,15 @@ public class UserController {
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	/***************************************************************************************
-	 * POST login endpoint accessible to all
-	 * -- postman code adm000 --
-	 * 	
+	 * POST login endpoint accessible to all -- postman code 000 --
+	 * 
 	 * @param username
 	 * @param password
 	 * @return if ok, token, else unauthorized status
 	 **************************************************************************************/
 	@RequestMapping(method = RequestMethod.POST, path = "/login")
 	public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
+
 		// find user by username
 		logger.info("**LOGIN** User " + username + " attempting to log into the system.");
 		Optional<UserEntity> user = userRepo.findByUsername(username);
@@ -116,36 +116,40 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	}
 
-	/*************************************************************************************************
-	 * utility POST endpoint for posting user roles to database, meant to be accessed by IT specialist
-	 * -- postman code adm001 --
+	/*******************************************************************************************************************
+	 * POST endpoint for posting user roles to database, meant to be accessed by admin -- postman code 001 --
 	 * 
 	 * @param roleName
 	 * @return if ok, new role
-	 *************************************************************************************************/
+	 *******************************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newRole")
 	public ResponseEntity<?> postNewRole(@RequestParam String role) {
 
+		logger.info("**POST NEW ROLE** Access to endpoint for posting new role.");
 		if (!userService.isRoleInEnum(role)) {
+			logger.warn("**POST NEW ROLE** Role not allowed.");
 			return new ResponseEntity<RESTError>(new RESTError(1000, "Role name not allowed, check ERole for details."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		if (roleRepo.findByName(ERole.valueOf(role)).isPresent()) {
+			logger.warn("**POST NEW ROLE** Role already in datbase.");
 			return new ResponseEntity<RESTError>(new RESTError(1001, "Role already in the database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		RoleEntity newRole = new RoleEntity();
 		newRole.setName(ERole.valueOf(role));
+
+		logger.info("**POST NEW ROLE** New role posted.");
+
 		return new ResponseEntity<RoleEntity>(roleRepo.save(newRole), HttpStatus.OK);
 	}
 
 	/***************************************************************************************
-	 * POST endpoint for administrator looking to create new student
-	 * -- postman code adm002 --
+	 * POST endpoint for administrator looking to create new student -- postman code 002 --
 	 * 
 	 * @param student
 	 * @return if ok, new student
@@ -155,41 +159,49 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newStudent")
 	public ResponseEntity<?> postNewStudent(@Valid @RequestBody CreateStudentDTO student) {
 
+		logger.info("**POST NEW STUDENT** Access to endpoint for posting new student.");
 		// invoke a service for DTO translation to Entity
+		logger.info("**POST NEW STUDENT** Access to service for DTO to Entity translation.");
 		StudentEntity newStudent = userService.createStudentDTOtranslation(student);
 
 		// standard checks for new users, password match, username availability, no students with same IDs allowed
 		if (!newStudent.getPassword().equals(newStudent.getRepeatedPassword())) {
+			logger.warn("**POST NEW STUDENT** Passwords not matching.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newStudent.getUsername()).isPresent()) {
+			logger.warn("**POST NEW STUDENT** Username exists in database.");
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByJmbg(newStudent.getJmbg()).isPresent()) {
+			logger.warn("**POST NEW STUDENT** Student with an existing unique ID number in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1022, "Student with an existing unique ID number in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		if (studentRepo.findByStudentUniqueNumber(newStudent.getStudentUniqueNumber()).isPresent()) {
+			logger.warn("**POST NEW STUDENT** Student with an existing school ID number in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1023, "Student with an existing school ID number in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// encript password and save user
+		logger.info("**POST NEW STUDENT** Accessing service password encription.");
+
 		newStudent.setPassword(Encryption.getPasswordEncoded(newStudent.getPassword()));
 		userRepo.save(newStudent);
 
 		// invoke service for Entity translation to DTO
+		logger.info("**POST NEW STUDENT** Accessing service for output translation.");
 		return userService.createdStudentDTOtranslation(newStudent);
 	}
 
 	/***************************************************************************************
-	 * POST endpoint for administrator looking to create new parent
-	 * -- postman code adm003 --
+	 * POST endpoint for administrator looking to create new parent -- postman code 003 --
 	 * 
 	 * @param parent
 	 * @return if ok, new parent
@@ -199,15 +211,19 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newParent")
 	public ResponseEntity<?> postNewParent(@Valid @RequestBody CreateParentDTO parent) {
 
+		logger.info("**POST NEW PARENT** Access to endpoint for posting new student.");
 		// invoke a service for DTO translation to Entity
+		logger.info("**POST NEW PARENT** Access to service for DTO to Entity translation.");
 		ParentEntity newParent = userService.createParentDTOtranslation(parent);
 
 		// standard checks for new users, password match and username availability
 		if (!newParent.getPassword().equals(newParent.getRepeatedPassword())) {
+			logger.warn("**POST NEW PARENT** Passwords not matching.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1020, "Passwords not matching, please check your entry."), HttpStatus.BAD_REQUEST);
 		}
 		if (userRepo.findByUsername(newParent.getUsername()).isPresent()) {
+			logger.warn("**POST NEW PARENT** Username already in database.");
 			return new ResponseEntity<RESTError>(new RESTError(1021, "Username already in database."),
 					HttpStatus.BAD_REQUEST);
 		}
@@ -215,16 +231,17 @@ public class UserController {
 		//allow for teacher being a parent in the database, no unique ID check
 
 		// encript password and save user
+		logger.info("**POST NEW PARENT** Accessing service password encription.");
 		newParent.setPassword(Encryption.getPasswordEncoded(newParent.getPassword()));
 		userRepo.save(newParent);
 
 		// invoke service for Entity translation to DTO
+		logger.info("**POST NEW PARENT** Accessing service for output translation.");
 		return userService.createdParentDTOtranslation(newParent);
 	}
 
 	/***************************************************************************************
-	 * POST endpoint for administrator looking to create new teacher
-	 * -- postman code adm004 --
+	 * POST endpoint for administrator looking to create new teacher -- postman code 004 --
 	 * 
 	 * @param teacher
 	 * @return if ok, new teacher
@@ -234,8 +251,8 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path = "/admin/newTeacher")
 	public ResponseEntity<?> postNewTeacher(@Valid @RequestBody CreateTeacherDTO teacher) {
 
+		logger.info("**POST NEW TEACHER** Access to endpoint for posting new student.");
 		// invoke a service for DTO translation to Entity
-		logger.info("**POST NEW TEACHER** Endpoint for posting a new teacher entered successfuly.");
 		logger.info("**POST NEW TEACHER** Attempting to translate input DTO to Entity.");
 		TeacherEntity newTeacher = userService.createTeacherDTOtranslation(teacher);
 		logger.info("**POST NEW TEACHER** Translation successful.");
@@ -278,7 +295,7 @@ public class UserController {
 		//allow for teacher being a parent in the database, no unique ID check
 
 		// encript password and save user
-		logger.info("**POST NEW TEACHER** Attempt to encode user password.");
+		logger.info("**POST NEW TEACHER** Accessing service password encription.");
 		newTeacher.setPassword(Encryption.getPasswordEncoded(newTeacher.getPassword()));
 		userRepo.save(newTeacher);
 		logger.info("**POST NEW TEACHER** Encoding complete and teacher saved to db.");
@@ -288,51 +305,58 @@ public class UserController {
 		return userService.createdTeacherDTOtranslation(newTeacher);
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to update general user info
-	 * -- postman code adm010 --
+	/********************************************************************************************
+	 * PUT endpoint for administrator looking to update general user info -- postman code 010 -- 
 	 * 
 	 * @param user
 	 * @param username
 	 * @return if ok update user
-	 **************************************************************************************/
+	 ********************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changeUsers/{username}")
 	public ResponseEntity<?> changeUserGeneral(@Valid @RequestBody UpdateUserDTO updatedUser,
 			@PathVariable String username) {
 
+		logger.info("**PUT USER** Access to endpoint for changing general user data.");
 		// initial check for existance in db
+		logger.info("**PUT USER** Attempt to see if username exists in db.");
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
+			logger.warn("**PUT USER** Existing unique ID number.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
-		if (ogUser.get().getDeleted().equals(true)) {
+		logger.info("**PUT USER** Attempt to see if user is deleted.");
+		if (ogUser.get().getDeleted().equals(1)) {
+			logger.warn("**PUT USER** User deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// chaeck if username taken, see if same as old to avoid RESTError for taken username
+		logger.info("**PUT USER** Attempt to see if username is taken.");
 		if (updatedUser.getUsername() != null && !updatedUser.getUsername().equals(ogUser.get().getUsername())
 				&& userRepo.findByUsername(updatedUser.getUsername()).isPresent()) {
+			logger.warn("**PUT USER** Username taken.");
 			return new ResponseEntity<RESTError>(new RESTError(1032, "Username taken, please choose another."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// invoke a service for DTO translation to Entity
+		logger.info("**PUT USER** Attempting to translate DTO to Entity and save changed user to database.");
 		userRepo.save(userService.updateUserDTOtranslation(updatedUser, ogUser.get()));
 
 		// invoke service for Entity translation to DTO
+		logger.info("**PUT USER** Attempting to translate Entity to DTO.");
 		return userService.updatedUserDTOtranslation(ogUser.get());
 	}
 
 	/***************************************************************************************
-	 * PUT endpoint for administrator looking to change user's role.
-	 * -- postman code adm011 --
+	 * PUT endpoint for administrator looking to change user's role. -- postman code 011 --
 	 * 
 	 * @param role
 	 * @param username
@@ -343,32 +367,41 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changeRole")
 	public ResponseEntity<?> changeUserRole(@RequestParam String role, @RequestParam String username) {
 
+		logger.info("**CHANGE USER ROLE** Access to endpoint for changing user role.");
 		// initial check for existance in db
+		logger.info("**CHANGE USER ROLE** Attempt to see if user exists in db.");
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
+			logger.warn("**CHANGE USER ROLE** Username not found in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
-		if (ogUser.get().getDeleted().equals(true)) {
+		logger.info("**CHANGE USER ROLE** Attempt to see if user is deleted.");
+		if (ogUser.get().getDeleted().equals(1)) {
+			logger.warn("**CHANGE USER ROLE** User deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check for role in db
+		logger.info("**CHANGE USER ROLE** Attempt to see if role exists in database.");
 		if (!userService.isRoleInEnum(role)) {
+			logger.warn("**CHANGE USER ROLE** Role not in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1040, "Role not in the system, contact the Ministry of Education."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// set new role and save user
+		logger.info("**CHANGE USER ROLE** Set the new role and save user.");
 		ogUser.get().setRole(roleRepo.findByName(ERole.valueOf(role)).get());
 		userRepo.save(ogUser.get());
 
 		// fill DTO
+		logger.info("**CHANGE USER ROLE** Populating DTO for output.");
 		UpdatedRoleDTO updatedUserRoleDTO = new UpdatedRoleDTO();
 		updatedUserRoleDTO.setRole(role);
 		updatedUserRoleDTO.setUsername(username);
@@ -376,48 +409,58 @@ public class UserController {
 		return new ResponseEntity<UpdatedRoleDTO>((updatedUserRoleDTO), HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to change user's password.
-	 * -- postman code adm012 --
+	/*******************************************************************************************
+	 * PUT endpoint for administrator looking to change user's password. -- postman code 012 --
 	 * 
 	 * @param passwordsUpdate
 	 * @param username
 	 * @return if ok update user's pasword
-	 **************************************************************************************/
+	 *******************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changePassword/{username}")
 	public ResponseEntity<?> changePassword(@Valid @RequestBody UpdatePasswordDTO passwordsUpdate,
 			@PathVariable String username) {
 
+		logger.info("**CHANGE PASSWORD** Access to endpoint for changing password.");
 		// initial check for existance in db
+		logger.info("**CHANGE PASSWORD** Attempt to see if user exists in db.");
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
+			logger.warn("**CHANGE PASSWORD** Username not found in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
-		if (ogUser.get().getDeleted().equals(true)) {
+		logger.info("**CHANGE PASSWORD** Attempt to see if user is deleted.");
+		if (ogUser.get().getDeleted().equals(1)) {
+			logger.warn("**CHANGE PASSWORD** User deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if old password matches the passwrod stored in db
+		logger.info("**CHANGE PASSWORD** Check for database password matching the user input for old password.");
 		if (!Encryption.validatePassword(passwordsUpdate.getOldPassword(), ogUser.get().getPassword())) {
+			logger.warn("**CHANGE PASSWORD** Passwords not matching.");
 			return new ResponseEntity<RESTError>(new RESTError(1050, "Old password not correct, please try again."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if new and repeated passwords match
+		logger.info("**CHANGE PASSWORD** Check if new and repeated passwords match.");
 		if (!passwordsUpdate.getNewPassword().equals(passwordsUpdate.getRepeatedPassword())) {
+			logger.warn("**CHANGE PASSWORD** Passwords not matching.");
+
 			return new ResponseEntity<RESTError>(
 					new RESTError(1051, "New password and repeated password don't match. Check your inputs."),
 					HttpStatus.BAD_REQUEST);
 		}
 
-		// set new encode password
+		// set new encoded password
+		logger.info("**CHANGE PASSWORD** Trying to encode new password, set to user and save to database.");
 		ogUser.get().setPassword(userService.encodePassword(passwordsUpdate.getNewPassword()));
 		userRepo.save(ogUser.get());
 
@@ -425,51 +468,60 @@ public class UserController {
 
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to change teacher's specific role
-	 * -- postman code adm013 --
+	/*************************************************************************************************
+	 * PUT endpoint for administrator looking to change teacher's specific role -- postman code 013 --
 	 * 
 	 * @param role
 	 * @param username
 	 * @return if ok update teacher's role
-	 **************************************************************************************/
+	 *************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changeTeacherRole")
 	public ResponseEntity<?> changeTeacherRole(@RequestParam String username, @RequestParam String role,
 			@RequestParam Double bonus) {
 
+		logger.info("**CHANGE TEACHER ROLE** Access to endpoint for changing teacher role.");
 		// initial check for existance in db
+		logger.info("**CHANGE TEACHER ROLE** Attempt to see if user exists in db.");
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
+			logger.warn("**CHANGE TEACHER ROLE** Username not found in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is a teacher
+		logger.info("**CHANGE TEACHER ROLE** Attempt to see if user is a teacher.");
 		if (!ogUser.get().getRole().getName().equals(ERole.ROLE_ADMIN)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HEADMASTER)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HOMEROOM)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_TEACHER)) {
+			logger.warn("**CHANGE TEACHER ROLE** User not a teacher.");
 			return new ResponseEntity<RESTError>(new RESTError(1060, "User is not a teacher."), HttpStatus.BAD_REQUEST);
 		}
 
 		// check if new role is valid
+		logger.info("**CHANGE TEACHER ROLE** Attempt to see if role is valid.");
 		if (!role.equals(ERole.ROLE_ADMIN.toString()) && !role.equals(ERole.ROLE_HEADMASTER.toString())
 				&& !role.equals(ERole.ROLE_HOMEROOM.toString()) && !role.equals(ERole.ROLE_TEACHER.toString())) {
+			logger.warn("**CHANGE TEACHER ROLE** Not a teacher role or otherwise invalid.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1061, "You must choose one of teacher roles available in ERole."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if user is deleted
-		if (ogUser.get().getDeleted().equals(true)) {
+		logger.info("**CHANGE TEACHER ROLE** Attempt to see if user is deleted.");
+		if (ogUser.get().getDeleted().equals(1)) {
+			logger.warn("**CHANGE TEACHER ROLE** User deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(31, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// invoke service for salary bonus logic
+		logger.info("**CHANGE TEACHER ROLE** Attempt to invoke a service that handles salary logic fore teachers.");
 		String oldRole = ogUser.get().getRole().getName().toString();
 		userService.updateTeacherRole((TeacherEntity) ogUser.get(), role, bonus);
 		return new ResponseEntity<String>("Teacher " + username + " has undergone a role change, used to be " + oldRole
@@ -477,73 +529,92 @@ public class UserController {
 
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to change teacher's salary
-	 * -- postman code adm014 --
+	/*******************************************************************************************
+	 * PUT endpoint for administrator looking to change teacher's salary -- postman code 014 --
 	 * 
 	 * @param salary
 	 * @param username
 	 * @return if ok update teacher's salary
-	 **************************************************************************************/
+	 *******************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changeTeacherSalary/{username}/{salary}")
 	public ResponseEntity<?> changeTeacherSalary(@PathVariable String username, @PathVariable Double salary) {
 
+		logger.info("**CHANGE TEACHER SALARY** Access to endpoint for changing teacher salary.");
+
 		// initial check for existance in db
+		logger.info("**CHANGE TEACHER SALARY** Attempt to see if user exists in db.");
 		Optional<UserEntity> ogUser = userRepo.findByUsername(username);
 		if (ogUser.isEmpty()) {
+			logger.warn("**CHANGE TEACHER SALARY** Username not found in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1030, "Username not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// check if user is deleted
-		if (ogUser.get().getDeleted().equals(true)) {
+		logger.info("**CHANGE TEACHER SALARY** Attempt to see if user is deleted.");
+		if (ogUser.get().getDeleted().equals(1)) {
+			logger.warn("**CHANGE TEACHER SALARY** User deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(1031, "User previously deleted and not accesible."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if user is a teacher
+		logger.info("**CHANGE TEACHER SALARY** Attempt to see if user is a teacher.");
 		if (!ogUser.get().getRole().getName().equals(ERole.ROLE_ADMIN)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HEADMASTER)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_HOMEROOM)
 				&& !ogUser.get().getRole().getName().equals(ERole.ROLE_TEACHER)) {
+			logger.warn("**CHANGE TEACHER SALARY** User not a teacher.");
 			return new ResponseEntity<RESTError>(new RESTError(1060, "User is not a teacher."), HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**CHANGE TEACHER SALARY** Attempt to set new salary, if null, set to 65000.00.");
 		TeacherEntity ogTeacher = (TeacherEntity) ogUser.get();
 		Double oldSalary = ogTeacher.getSalary();
-		ogTeacher.setSalary(salary);
+		if (salary != null) {
+			ogTeacher.setSalary(salary);
+		} else {
+			ogTeacher.setSalary(65000.00);
+		}
+
+		logger.info("**CHANGE TEACHER SALARY** Save to database and exit.");
 		userRepo.save(ogTeacher);
 
 		return new ResponseEntity<String>("Teacher " + username + " has undergone a salary change, used to be "
 				+ oldSalary + ", and now is " + ogTeacher.getSalary() + ".", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to change parent's phone number
-	 * -- postman code adm015 --
+	/***********************************************************************************************
+	 * PUT endpoint for administrator looking to change parent's phone number -- postman code 015 --
 	 * 
 	 * @param phoneNumber DTO
 	 * @param username
 	 * @return if ok update parent's phone number
-	 **************************************************************************************/
+	 ***********************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/changeParentsPhoneNumber/{username}")
 	public ResponseEntity<?> changeParentsPhonenUmber(@PathVariable String username,
 			@Valid @RequestBody UpdatePhoneNumberDTO phoneNumber) {
 
+		logger.info("**CHANGE PARENT PHONENUMBER** Access to endpoint for changing parents phonenumber.");
+
 		// initial check for active parent existance in db
+		logger.info("**CHANGE PARENT PHONENUMBER** Attempt to see if user exists in db.");
 		Optional<UserEntity> ogUser = userRepo.findByDeletedAndRoleAndUsername(0,
 				roleRepo.findByName(ERole.ROLE_PARENT).get(), username);
 		if (ogUser.isEmpty()) {
+			logger.warn("**CHANGE PARENT PHONENUMBER** Username not found in database.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(1090, "Parent not found in database, please provide a valid username."),
 					HttpStatus.NOT_FOUND);
 		}
 
+		logger.warn(
+				"**CHANGE PARENT PHONENUMBER** Attempting to assign new validated phonenumber and save to database and exit.");
 		ParentEntity ogParent = (ParentEntity) ogUser.get();
 		String oldPhoneNumber = ogParent.getPhoneNumber();
 		ogParent.setPhoneNumber(phoneNumber.getPhoneNumber());
@@ -553,22 +624,23 @@ public class UserController {
 				+ oldPhoneNumber + ", and now is " + ogParent.getPhoneNumber() + ".", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to assign children to parents
-	 * -- postman code adm016 --
+	/*********************************************************************************************
+	 * PUT endpoint for administrator looking to assign children to parents -- postman code 016 --
 	 * 
 	 * @param username child
 	 * @param username parent
 	 * @return if ok update parent's children list
-	 **************************************************************************************/
+	 *********************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Headmaster.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/assignChildToParent")
 	public ResponseEntity<?> assignChildToParent(@RequestParam String usernameParent,
 			@RequestParam String usernameChild) {
+
 		logger.info("**ASSIGN STUDENT TO PARENT** Access to the endpoint for assigning student to parent successful.");
 		// initial check for active parent existance in db
 		logger.info("**ASSIGN STUDENT TO PARENT** Atempt to find the parent in database.");
+
 		Optional<UserEntity> ogParent = userRepo.findByDeletedAndRoleAndUsername(0,
 				roleRepo.findByName(ERole.ROLE_PARENT).get(), usernameParent);
 		if (ogParent.isEmpty()) {
@@ -578,8 +650,10 @@ public class UserController {
 					HttpStatus.NOT_FOUND);
 		}
 		logger.info("**ASSIGN STUDENT TO PARENT** Parent found.");
+
 		// initial check for active student existance in db
 		logger.info("**ASSIGN STUDENT TO PARENT** Atempt to find the student in database.");
+
 		Optional<UserEntity> ogStudent = userRepo.findByDeletedAndRoleAndUsername(0,
 				roleRepo.findByName(ERole.ROLE_STUDENT).get(), usernameChild);
 		if (ogStudent.isEmpty()) {
@@ -630,13 +704,12 @@ public class UserController {
 				HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to soft delete a user.
-	 * -- postman code adm030 --
+	/*********************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete a user. -- postman code 030 --
 	 * 
 	 * @param username
 	 * @return if ok set user to deleted
-	 **************************************************************************************/
+	 *********************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteUser/{username}")
@@ -709,13 +782,12 @@ public class UserController {
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to restore a deleted user.
-	 * -- postman code adm031 --
+	/******************************************************************************************
+	 * PUT endpoint for administrator looking to restore a deleted user. -- postman code 031 --
 	 * 
 	 * @param username
 	 * @return if ok set user to restored
-	 **************************************************************************************/
+	 ******************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreUser/{username}")
@@ -743,18 +815,20 @@ public class UserController {
 		return userService.deletedUserDTOtranslation(ogUser.get());
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all active users.
-	 * postman code adm040
+	/*******************************************************************************************
+	 * GET endpoint for administrator looking to fetch all active users. -- postman code 050 --
 	 * 
 	 * @return list of active users
-	 **************************************************************************************/
+	 *******************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/activeUsers")
 	public ResponseEntity<?> findAllActiveUsers() {
 
+		logger.info("**GET ALL ACTIVE USERS** Access to the endpoint successful.");
+
 		// translate to DTO useng a service
+		logger.info("**GET ALL ACTIVE USERS** Attempting to invoke a service for translation from Entity to DTO.");
 		List<GetUserDTO> activeUsersDTO = new ArrayList<>();
 		List<UserEntity> activeUsers = (List<UserEntity>) userRepo.findAllByDeleted(0);
 		for (UserEntity userEntity : activeUsers) {
@@ -762,26 +836,31 @@ public class UserController {
 		}
 
 		// check if list is empty
+		logger.info("**GET ALL ACTIVE USERS** Attempting to see if there are active users in database.");
 		if (activeUsersDTO.isEmpty()) {
+			logger.warn("**GET ALL ACTIVE USERS** No active users.");
 			return new ResponseEntity<RESTError>(new RESTError(1090, "No active users in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
+		logger.info("**GET ALL ACTIVE USERS** Displaying active users.");
 		return new ResponseEntity<List<GetUserDTO>>(activeUsersDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all deleted users.
-	 * postman code adm041
+	/*******************************************************************************************
+	 * GET endpoint for administrator looking to fetch all deleted users. -- postman code 051 --
 	 * 
 	 * @return list of deleted users
-	 **************************************************************************************/
+	 *******************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/deletedUsers")
 	public ResponseEntity<?> findAllDeletedUsers() {
 
+		logger.info("**GET ALL DELETED USERS** Access to the endpoint successful.");
+
 		// translate to DTO useng a service
+		logger.info("**GET ALL DELETED USERS** Attempting to invoke a service for translation from Entity to DTO.");
 		List<UserEntity> deletedUsers = (List<UserEntity>) userRepo.findAllByDeleted(1);
 		List<GetUserDTO> deletedUsersDTO = new ArrayList<>();
 		for (UserEntity userEntity : deletedUsers) {
@@ -789,30 +868,40 @@ public class UserController {
 		}
 
 		// check if list is empty
+		logger.info("**GET ALL DELETED USERS** Attempting to see if there are deleted users in database.");
 		if (deletedUsersDTO.isEmpty()) {
+			logger.warn("**GET ALL DELETED USERS** No deleted users.");
 			return new ResponseEntity<RESTError>(new RESTError(1090, "No deleted users in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
+		logger.info("**GET ALL ACTIVE USERS** Displaying deleted users.");
+
 		return new ResponseEntity<List<GetUserDTO>>(deletedUsersDTO, HttpStatus.OK);
+
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all users with specific role.
-	 * postman code adm042
+	/*******************************************************************************************************
+	 * GET endpoint for administrator looking to fetch all users with specific role. -- postman code 052 --
 	 * 
 	 * @return list of active users with role
-	 **************************************************************************************/
+	 *******************************************************************************************************/
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/activeUsers/{role}")
 	public ResponseEntity<?> findAllActiveUsersByRole(@PathVariable String role) {
 
+		logger.info("**GET ALL ACTIVE USERS BY ROLE** Access to the endpoint successful.");
+
 		// role check
+		logger.info("**GET ALL ACTIVE USERS BY ROLE** Check if inputted role is valid.");
 		if (!userService.isRoleInEnum(role)) {
+			logger.info("**GET ALL ACTIVE USERS BY ROLE** Role not valid.");
 			return new ResponseEntity<RESTError>(new RESTError(1000, "Role name not allowed, check ERole for details."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// translate to DTO useng a service
+		logger.info(
+				"**GET ALL ACTIVE USERS BY ROLE** Attempting to invoke a service for translation from Entity to DTO.");
 		List<GetUserDTO> activeUsersDTO = new ArrayList<>();
 		List<UserEntity> activeUsersWithRole = (List<UserEntity>) userRepo.findAllByDeletedAndRole(0,
 				roleRepo.findByName(ERole.valueOf(role)).get());
@@ -821,43 +910,52 @@ public class UserController {
 		}
 
 		// check if list is empty
+		logger.info(
+				"**GET ALL ACTIVE USERS BY ROLE** Attempting to see if there are any active users with inputted role.");
 		if (activeUsersDTO.isEmpty()) {
+			logger.info("**GET ALL ACTIVE USERS BY ROLE** No users with inputted role.");
 			return new ResponseEntity<RESTError>(new RESTError(1090, "No active users in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
+		logger.info("**GET ALL ACTIVE USERS BY ROLE** Displaying users with role.");
+
 		return new ResponseEntity<List<GetUserDTO>>(activeUsersDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch a specific active user.
-	 * postman code adm043
+	/************************************************************************************************
+	 * GET endpoint for administrator looking to fetch a specific active user. -- postman code 053 --
 	 * 
 	 * @return specific user
-	 **************************************************************************************/
+	 ************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/user/{username}")
 	public ResponseEntity<?> findActiveUser(@PathVariable String username) {
 
+		logger.info("**GET ACTIVE USER BY USERNAME** Access to the endpoint successful.");
+
 		Optional<UserEntity> activeUser = userRepo.findByDeletedAndUsername(0, username);
+		logger.info("**GET ACTIVE USER BY USERNAME** Attempting to see if user is in database.");
 		if (activeUser.isEmpty()) {
+			logger.warn("**GET ACTIVE USER BY USERNAME** User not in database or not active.");
 			return new ResponseEntity<RESTError>(new RESTError(1090, "No active user in database."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		// translate to DTO useng a service
+		logger.info(
+				"**GET ACTIVE USER BY USERNAME** Attempting to invoke a service for translation from Entity to DTO.");
 		GetUserDTO activeUserDTO = userService.foundUserDTOtranslation(activeUser.get());
 
 		return new ResponseEntity<GetUserDTO>(activeUserDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch children of specific active parent.
-	 * postman code adm044
+	/*************************************************************************************************************
+	 * GET endpoint for administrator looking to fetch children of specific active parent. -- postman code 054 ---
 	 * 
 	 * @return children list
-	 **************************************************************************************/
+	 *************************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/students/{usernameParent}")
@@ -903,12 +1001,11 @@ public class UserController {
 
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch parents of specific active student.
-	 * postman code adm045
+	/************************************************************************************************************
+	 * GET endpoint for administrator looking to fetch parents of specific active student. -- postman code 055 --
 	 * 
 	 * @return parents list
-	 **************************************************************************************/
+	 ************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HOMEROOM" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/admin/parents/{usernameStudent}")
@@ -964,8 +1061,7 @@ public class UserController {
 	}
 
 	/***************************************************************************************
-	 * GET to find logged user's username
-	 * -- postman code whoAmI --
+	 * GET to find logged user's username -- postman code ADMwhoAmI --
 	 * 	
 	 * @return username
 	 **************************************************************************************/
@@ -973,6 +1069,8 @@ public class UserController {
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/whoAmI")
 	public ResponseEntity<?> loggedUser() {
+
+		logger.info("**WHO AM I** Access to the endpoint successful.");
 
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username;
@@ -987,8 +1085,7 @@ public class UserController {
 	}
 
 	/***************************************************************************************
-	 * GET to download logfile
-	 * -- postman code getLogs --
+	 * GET to download logfile -- postman code ADMgetLogs --
 	 * 	
 	 * @return username
 	 **************************************************************************************/
@@ -997,7 +1094,10 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, path = "/downloadLogs")
 	public ResponseEntity<Resource> downloadLogs(@RequestParam String fileName, HttpServletRequest request) {
 
+		logger.info("**GET LOGS** Access to the endpoint successful.");
+
 		// Load file as Resource
+		logger.info("**GET LOGS** Attempt to invoke a service for file laoding.");
 		Resource resource = downloadService.loadFileAsResource(fileName);
 
 		// Try to determine file's content type
@@ -1005,77 +1105,17 @@ public class UserController {
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 		} catch (IOException ex) {
-			logger.info("Could not determine file type.");
+			logger.warn("Could not determine file type.");
 		}
 
 		// Fallback to the default content type if type could not be determined
 		if (contentType == null) {
+			logger.info("**GET LOGS** Content type not determined, fallback to default.");
 			contentType = "application/octet-stream";
 		}
-
+		logger.info("**GET LOGS** Outputting logs.");
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
 }
-
-//TODO 
-
-/**
- * 
- * ****ADMIN PANEL****
- * 
- * 1. add new student -- ok
- * 2. add new teacher/homeroom/admin/principal -- ok
- * 3. add new parent -- ok
- * 4. delete user -- ok
- * 5. change user role -- ok
- * 6. update user -- ok
- * 7. update teacher fetures -- ok
- * 8. update student features -- ok
- * 9. update parent fetures -- ok
- * 10. assign subjects to teachers
- * 11. get info for all entites
- *  # provide admin role to all endpoints throughout, asign specific roles if needed
- * 
- * 
- * ****PRINCIPAL PANEL****
- * 
- * 1. update teacher/homeroom/admin salary -- ok
- * 2. add new student group
- * 3. assign students and homeroom to student group
- * 4. remove students and homeroom from student group
- * 5. assign teachers to student groups
- * 6. remove teachers from student groups
- * 7. add overriden grades
- * 
- * 
- * ****HOMEROOM PANEL****
- *  
- * 1. get results for student group
- * 2. get parents info (for student group assigned)
- *  
- *  
- * ****TEACHER PANEL****
- * 
- * 1. add new assignment
- * 2. update assignments
- * 3. delete assignmets - not graded!
- * 4. assign grades to assignments
- * 5. get assignments for children taking the class
- * 6  get student grades for children taking the class
- * 
- * 
- * ****PARENT PANEL****
- * 
- * 1. get student grades - for related children
- * 2. get grades by subject - for related children
- * 3. get email updates when grade is assigned
- * 
- * 
- * ****STUDENT PANEL****
- * 
- * 1. get my grades
- * 2. get my grades by subject
- * 	 
- * */

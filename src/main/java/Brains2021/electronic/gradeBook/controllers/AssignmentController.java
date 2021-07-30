@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import Brains2021.electronic.gradeBook.dtos.in.CreateAssignmentDTO;
 import Brains2021.electronic.gradeBook.dtos.out.GETAssignmentDTO;
 import Brains2021.electronic.gradeBook.entites.AssignmentEntity;
+import Brains2021.electronic.gradeBook.entites.StudentGroupTakingASubjectEntity;
 import Brains2021.electronic.gradeBook.entites.TeacherSubjectEntity;
 import Brains2021.electronic.gradeBook.entites.users.ParentEntity;
 import Brains2021.electronic.gradeBook.entites.users.StudentEntity;
@@ -81,13 +82,12 @@ public class AssignmentController {
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
-	/***************************************************************************************
-	 * POST endpoint for teaching staff looking to create a new assignment
-	 * -- postman code adm008 --
+	/********************************************************************************************
+	 * POST endpoint for teaching staff looking to create a new assignment -- postman code 008 --
 	 * 
 	 * @param assignment
 	 * @return if ok, new assignment
-	 ***************************************************************************************/
+	 ********************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.POST, path = "/newAssignment")
@@ -140,82 +140,107 @@ public class AssignmentController {
 
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for teaching staff looking to link an assignment to a student
-	 * -- postman code adm019 --
+	/***************************************************************************************************
+	 * PUT endpoint for teaching staff looking to link an assignment to a student -- postman code 019 --
 	 * 
 	 * @param assignment
 	 * @param student
 	 * @return if ok, assignment linked to student
-	 ***************************************************************************************/
+	 ***************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/giveAssignmentToStudent")
 	public ResponseEntity<?> assignToStudent(@RequestParam Long assignmentID, @RequestParam String studentUsername,
 			@RequestParam("dueDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dueDate) {
 
-		Optional<AssignmentEntity> assignment = assignmentRepo.findById(assignmentID);
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Access to the endpoint successful.");
 
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if assignment exists in database.");
+		Optional<AssignmentEntity> assignment = assignmentRepo.findById(assignmentID);
 		// check if id is valid and active
 		if (assignment.isEmpty()) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** No assignment in database.");
 			return new ResponseEntity<RESTError>(new RESTError(5002, "Not a valid assignment id, check and retry."),
 					HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if assignment is deleted.");
 		if (assignment.get().getDeleted() == 1) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Assignment deleted.");
 			return new ResponseEntity<RESTError>(new RESTError(5003, "Not an active assignment."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// check if teacher was the one who issued the assignment
+		logger.info(
+				"**GIVE ASSIGNMENT TO STUDENT** Attempt to find if logged user (teacher) is the one who posted the assignment.");
 		if (!assignment.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
 				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Teacher not the one who posted the assignment, nor an admin.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(5004, "Logged user didn't post the assignment with the give id."),
 					HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if user exists in database.");
 		Optional<UserEntity> user = userRepo.findByUsername(studentUsername);
-
 		if (user.isEmpty()) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** User not in database.");
 			return new ResponseEntity<RESTError>(new RESTError(3003, "Student not in database."),
 					HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if user is deleted.");
 		if (user.get().getDeleted() == 1) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Not an active user.");
 			return new ResponseEntity<RESTError>(new RESTError(3004, "Not an active student."), HttpStatus.BAD_REQUEST);
 		}
 
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to find if user is a student.");
 		if (!user.get().getRole().getName().equals(ERole.ROLE_STUDENT)) {
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** User is not a student.");
 			return new ResponseEntity<RESTError>(new RESTError(3005, "User is not a student."), HttpStatus.BAD_REQUEST);
 		}
 
 		StudentEntity student = (StudentEntity) user.get();
-
-		// check if student belongs to a group taking the subject taught by the teacher ---- FIX THIS ! -----
-		if (studentGroupTakingASubjectRepo.findAllByTeacherSubject(assignment.get().getTeacherIssuing()).isEmpty()
-				&& !userRepo.findByUsername(userService.whoAmI()).get().getRole().getName().equals(ERole.ROLE_ADMIN)) {
-			return new ResponseEntity<RESTError>(
-					new RESTError(5004, "Logged teacher not teaching the student group the student belongs to."),
-					HttpStatus.BAD_REQUEST);
+		// check if student belongs to a group taking the subject taught by the teacher
+		logger.info(
+				"**GIVE ASSIGNMENT TO STUDENT** Attempt to find student belongs to a student group taking the subject taught by the teacher who posted the assignment.");
+		List<StudentGroupTakingASubjectEntity> teacherStudentGroups = studentGroupTakingASubjectRepo
+				.findAllByTeacherSubject(assignment.get().getTeacherIssuing());
+		for (StudentGroupTakingASubjectEntity studentGroupTakingASubjectEntity : teacherStudentGroups) {
+			if (!student.getBelongsToStudentGroup().getSubjectsTaken().contains(studentGroupTakingASubjectEntity)
+					&& !userService.amIAdmin()) {
+				logger.warn(
+						"**GIVE ASSIGNMENT TO STUDENT** Logged teacher not teaching the student group the student belongs to, nor is admin.");
+				return new ResponseEntity<RESTError>(
+						new RESTError(5004,
+								"Logged teacher not teaching the student group the student belongs to, nor is admin."),
+						HttpStatus.BAD_REQUEST);
+			}
 		}
 
 		// check that student attends the study year corresponding with the one in assignment
+		logger.info(
+				"**GIVE ASSIGNMENT TO STUDENT** Check that school year from the assignment corresponds to students.");
 		if (!assignment.get().getTeacherIssuing().getSubject().getYearOfSchooling()
 				.equals(student.getBelongsToStudentGroup().getYear())) {
-
+			logger.warn("**GIVE ASSIGNMENT TO STUDENT** Can't assign, check student's and assignment's study year.");
 			return new ResponseEntity<RESTError>(
 					new RESTError(3006, "Can't assign, check student's and assignment's study year."),
 					HttpStatus.BAD_REQUEST);
 		}
 
 		// asign to student
-
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** All checks complete, assign to student and save to database.");
 		assignment.get().setAssignedTo(student);
 		assignment.get().setDateAssigned(LocalDate.now());
-		assignment.get().setDueDate(dueDate);
+		if (dueDate != null) {
+			assignment.get().setDueDate(dueDate);
+		}
 		assignmentRepo.save(assignment.get());
 
+		logger.info("**GIVE ASSIGNMENT TO STUDENT** Attempt to give a report on assignment process as output.");
 		return new ResponseEntity<String>("Assignment " + assignment.get().getType() + " in subject "
 				+ assignment.get().getTeacherIssuing().getSubject().getName() + " given by "
 				+ assignment.get().getTeacherIssuing().getTeacher().getUsername() + " asigned to student "
@@ -225,64 +250,7 @@ public class AssignmentController {
 	}
 
 	/***************************************************************************************
-	 * PUT endpoint for teaching staff looking to edit an assignment
-	 * -- postman code adm021 --
-	 * 
-	 * @param assignmentID
-	 * @param createAssignmentDTO
-	 * @return if ok, edited assignment
-	 ***************************************************************************************/
-	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
-	@JsonView(Views.Teacher.class)
-	@RequestMapping(method = RequestMethod.PUT, path = "/changeAssignment/{assignmentID}")
-	public ResponseEntity<?> changeAssignement(@Valid @RequestBody CreateAssignmentDTO assignment,
-			@PathVariable Long assignmentID) {
-
-		logger.info("**CHANGE ASSIGNMENT** Access to the endpoint successful.");
-
-		logger.info("**CHANGE ASSIGNMENT** Attempt to change an active assignment.");
-		// initial check for existance in db
-		Optional<AssignmentEntity> ogAssignment = assignmentRepo.findById(assignmentID);
-		if (ogAssignment.isEmpty() || ogAssignment.get().getDeleted() == 1) {
-			logger.warn("**CHANGE ASSIGNMENT** Assignment not in database or deleted.");
-			return new ResponseEntity<RESTError>(
-					new RESTError(7533, "Assignment not found in database or is deleted, please provide a valid id."),
-					HttpStatus.NOT_FOUND);
-		}
-		logger.info("**CHANGE ASSIGNMENT** Assignment accessed successfuly.");
-
-		// check to see if subject name is valid
-		logger.info("**CHANGE ASSIGNMENT** Attempt to find if subject name is allowed.");
-		if (!subjectService.isSubjectInEnum(assignment.getSubject())) {
-			logger.warn("**CHANGE ASSIGNMENT** Subject name is allowed, must be a value from ESubjectName.");
-			return new ResponseEntity<RESTError>(
-					new RESTError(2300, "Subject name not allowed, check ESubjectName for details."),
-					HttpStatus.BAD_REQUEST);
-		}
-		logger.info("**CHANGE ASSIGNMENT** Subject name is allowed.");
-
-		// check to see if logged teacher is the one who issued the assignment
-		logger.info("**CHANGE ASSIGNMENT** Attempt to find if assignment was created by logged teacher or admin.");
-		if (!ogAssignment.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
-				&& !userService.amIAdmin()) {
-			logger.warn("**CHANGE ASSIGNMENT** Loogged user or admin not the one who issued the assignment.");
-			return new ResponseEntity<RESTError>(
-					new RESTError(2360, "Loogged user not the one who issued the assignment, nor is an admin."),
-					HttpStatus.BAD_REQUEST);
-		}
-		logger.info("**CHANGE ASSIGNMENT** Logged teacher issued the assignment, or is an admin.");
-
-		logger.info("**CHANGE ASSIGNMENT** Attempting to save the changed assignment to database.");
-		AssignmentEntity newAssignment = assignmentService.createAssignmentDTOtranslation(assignment);
-		assignmentRepo.save(newAssignment);
-		logger.info("**CHANGE ASSIGNMENT** Assignment saved, invoking service for translation to output DTO.");
-
-		return assignmentService.createdAssignmentDTOtranslation(newAssignment);
-	}
-
-	/***************************************************************************************
-	 * PUT endpoint for teaching staff looking to grade an assignment
-	 * -- postman code adm020 --
+	 * PUT endpoint for teaching staff looking to grade an assignment -- postman code 020 --
 	 * 
 	 * @param assignmentID, grade
 	 * @return if ok, give grade
@@ -360,12 +328,66 @@ public class AssignmentController {
 	}
 
 	/***************************************************************************************
-	 * PUT endpoint for headmaster, teacher issuing or admin looking to override a grade
-	 * -- postman code adm022 --
+	 * PUT endpoint for teaching staff looking to edit an assignment -- postman code 021 --
+	 * 
+	 * @param assignmentID
+	 * @param createAssignmentDTO
+	 * @return if ok, edited assignment
+	 ***************************************************************************************/
+	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
+	@JsonView(Views.Teacher.class)
+	@RequestMapping(method = RequestMethod.PUT, path = "/changeAssignment/{assignmentID}")
+	public ResponseEntity<?> changeAssignement(@Valid @RequestBody CreateAssignmentDTO assignment,
+			@PathVariable Long assignmentID) {
+
+		logger.info("**CHANGE ASSIGNMENT** Access to the endpoint successful.");
+
+		logger.info("**CHANGE ASSIGNMENT** Attempt to change an active assignment.");
+		// initial check for existance in db
+		Optional<AssignmentEntity> ogAssignment = assignmentRepo.findById(assignmentID);
+		if (ogAssignment.isEmpty() || ogAssignment.get().getDeleted() == 1) {
+			logger.warn("**CHANGE ASSIGNMENT** Assignment not in database or deleted.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(7533, "Assignment not found in database or is deleted, please provide a valid id."),
+					HttpStatus.NOT_FOUND);
+		}
+		logger.info("**CHANGE ASSIGNMENT** Assignment accessed successfuly.");
+
+		// check to see if subject name is valid
+		logger.info("**CHANGE ASSIGNMENT** Attempt to find if subject name is allowed.");
+		if (!subjectService.isSubjectInEnum(assignment.getSubject())) {
+			logger.warn("**CHANGE ASSIGNMENT** Subject name is allowed, must be a value from ESubjectName.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2300, "Subject name not allowed, check ESubjectName for details."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**CHANGE ASSIGNMENT** Subject name is allowed.");
+
+		// check to see if logged teacher is the one who issued the assignment
+		logger.info("**CHANGE ASSIGNMENT** Attempt to find if assignment was created by logged teacher or admin.");
+		if (!ogAssignment.get().getTeacherIssuing().getTeacher().getUsername().equals(userService.whoAmI())
+				&& !userService.amIAdmin()) {
+			logger.warn("**CHANGE ASSIGNMENT** Loogged user or admin not the one who issued the assignment.");
+			return new ResponseEntity<RESTError>(
+					new RESTError(2360, "Loogged user not the one who issued the assignment, nor is an admin."),
+					HttpStatus.BAD_REQUEST);
+		}
+		logger.info("**CHANGE ASSIGNMENT** Logged teacher issued the assignment, or is an admin.");
+
+		logger.info("**CHANGE ASSIGNMENT** Attempting to save the changed assignment to database.");
+		AssignmentEntity newAssignment = assignmentService.createAssignmentDTOtranslation(assignment);
+		assignmentRepo.save(newAssignment);
+		logger.info("**CHANGE ASSIGNMENT** Assignment saved, invoking service for translation to output DTO.");
+
+		return assignmentService.createdAssignmentDTOtranslation(newAssignment);
+	}
+
+	/***********************************************************************************************************
+	 * PUT endpoint for headmaster, teacher issuing or admin looking to override a grade -- postman code 022 --
 	 * 
 	 * @param assignmentID
 	 * @return if ok, override grade
-	 ***************************************************************************************/
+	 ***********************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_HOMEROOM", "ROLE_HEADMASTER" })
 	@JsonView(Views.Teacher.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/overrideGrade")
@@ -443,13 +465,12 @@ public class AssignmentController {
 				HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT/DELETE endpoint for administrator looking to soft delete an assignment.
-	 * -- postman code adm036 --
+	/*****************************************************************************************************
+	 * PUT/DELETE endpoint for administrator looking to soft delete an assignment. -- postman code 036 --
 	 * 
 	 * @param assignment id
 	 * @return if ok set deleted to 1
-	 **************************************************************************************/
+	 *****************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/deleteAssignment/{assignmentID}")
@@ -487,13 +508,12 @@ public class AssignmentController {
 		return new ResponseEntity<String>("Assignment with id " + assignmentID + " deleted.", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * PUT endpoint for administrator looking to restore a deleted assignment.
-	 * -- postman code adm037 --
+	/*************************************************************************************************
+	 * PUT endpoint for administrator looking to restore a deleted assignment. -- postman code 037 --
 	 * 
 	 * @param assignment id
 	 * @return if ok set deleted to 0
-	 **************************************************************************************/
+	 *************************************************************************************************/
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.PUT, path = "/admin/restoreAssignment/{assignmentID}")
@@ -521,13 +541,12 @@ public class AssignmentController {
 		return new ResponseEntity<String>("Assignment with id " + assignmentID + " restored.", HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all assignments.
-	 * -- postman code adm046 --
+	/******************************************************************************************
+	 * GET endpoint for administrator looking to fetch all assignments. -- postman code 056 --
 	 * 
 	 * @param 
 	 * @return if ok list of all assignemnts in database
-	 **************************************************************************************/
+	 ******************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/")
@@ -553,13 +572,12 @@ public class AssignmentController {
 		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch an assignment by ID.
-	 * -- postman code adm047 --
+	/**********************************************************************************************
+	 * GET endpoint for administrator looking to fetch an assignment by ID. -- postman code 057 --
 	 * 
 	 * @param assignment id
 	 * @return if ok assignemnts with given id
-	 **************************************************************************************/
+	 **********************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/{assignmentID}")
@@ -581,13 +599,12 @@ public class AssignmentController {
 				HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for administrator looking to fetch all assignments by student.
-	 * -- postman code adm048 --
+	/****************************************************************************************************
+	 * GET endpoint for administrator looking to fetch all assignments by student. -- postman code 058 --
 	 * 
 	 * @param student id
 	 * @return if ok list of assignments given to a student
-	 **************************************************************************************/
+	 ****************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/student/{studentID}")
@@ -620,13 +637,12 @@ public class AssignmentController {
 		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************************
-	 * GET endpoint for administrator looking to fetch all assignments issued by a teacher on a subject.
-	 * -- postman code adm049 --
+	/**************************************************************************************************************************
+	 * GET endpoint for administrator looking to fetch all assignments issued by a teacher on a subject. -- postman code 059 --
 	 * 
 	 * @param teacher id
 	 * @return if ok list of assignments issued by a teacher
-	 ***************************************************************************************************/
+	 **************************************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER", "ROLE_TEACHER", "ROLE_HOMEROOM" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/teacherSubject/{subjectTeacherID}")
@@ -677,13 +693,12 @@ public class AssignmentController {
 		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for student looking to fetch all associated assignments.
-	 * -- postman code adm050 --
+	/**********************************************************************************************
+	 * GET endpoint for student looking to fetch all associated assignments. -- postman code 060 --
 	 * 
 	 * @param student id
 	 * @return if ok list of assignments given to a student
-	 **************************************************************************************/
+	 **********************************************************************************************/
 	@Secured("ROLE_STUDENT")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/student")
@@ -709,13 +724,12 @@ public class AssignmentController {
 		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for parent looking to fetch all student associated assignments.
-	 * -- postman code adm051 --
+	/*****************************************************************************************************
+	 * GET endpoint for parent looking to fetch all student associated assignments. -- postman code 061 --
 	 * 
 	 * @param student id
 	 * @return if ok list of assignments given to a student
-	 **************************************************************************************/
+	 *****************************************************************************************************/
 	@Secured("ROLE_PARENT")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/parent/{student}")
@@ -755,13 +769,12 @@ public class AssignmentController {
 		return new ResponseEntity<List<GETAssignmentDTO>>(ogAssignementsDTO, HttpStatus.OK);
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for admin looking to fetch all assignments with pagination.
-	 * -- postman code adm057 --
+	/*************************************************************************************************
+	 * GET endpoint for admin looking to fetch all assignments with pagination. -- postman code 067 --
 	 * 
 	 * 
 	 * @return if ok list of assignments with options
-	 **************************************************************************************/
+	 *************************************************************************************************/
 	@Secured({ "ROLE_ADMIN", "ROLE_HEADMASTER" })
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/search")
@@ -775,38 +788,12 @@ public class AssignmentController {
 
 	}
 
-	/***************************************************************************************
-	 * GET endpoint for student looking to fetch all associated assignments with pagination.
-	 * -- postman code adm059 --
+	/*********************************************************************************************************************
+	 * GET endpoint for parent looking to fetch all student associated assignments with pagination. -- postman code 068 --
 	 * 
 	 * @param student id
 	 * @return if ok paginated list of assignments given to a student
-	 **************************************************************************************/
-	@Secured("ROLE_STUDENT")
-	@JsonView(Views.Admin.class)
-	@RequestMapping(method = RequestMethod.GET, path = "/search/student")
-	public ResponseEntity<?> getMyPaginatedAssignments(@RequestParam(defaultValue = "0") Integer pageNo,
-			@RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam String sortOrder) {
-
-		logger.info("**GET MY(STUDENT) PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
-
-		Optional<UserEntity> ogStudent = userRepo.findByUsername(userService.whoAmI());
-
-		logger.info(
-				"**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
-
-		return assignmentService.getAssignmentsPaginatedForStudent(ogStudent.get().getId(), pageNo, pageSize, sortBy,
-				sortOrder);
-	}
-
-	/**********************************************************************************************
-	 * GET endpoint for parent looking to fetch all student associated assignments with pagination.
-	 * -- postman code adm058 --
-	 * 
-	 * @param student id
-	 * @return if ok paginated list of assignments given to a student
-	 **********************************************************************************************/
+	 *********************************************************************************************************************/
 	@Secured("ROLE_PARENT")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/search/parent/{student}")
@@ -838,14 +825,37 @@ public class AssignmentController {
 		return assignmentService.getAssignmentsPaginatedForStudent(ogStudent.get().getId(), pageNo, pageSize, sortBy,
 				sortOrder);
 	}
+	
+	/**************************************************************************************************************
+	 * GET endpoint for student looking to fetch all associated assignments with pagination. -- postman code 069 --
+	 * 
+	 * @param student id
+	 * @return if ok paginated list of assignments given to a student
+	 **************************************************************************************************************/
+	@Secured("ROLE_STUDENT")
+	@JsonView(Views.Admin.class)
+	@RequestMapping(method = RequestMethod.GET, path = "/search/student")
+	public ResponseEntity<?> getMyPaginatedAssignments(@RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam String sortOrder) {
 
-	/*******************************************************************************************************
-	 * GET endpoint for homeroom teacher looking to fetch all for student group assignments with pagination.
-	 * -- postman code adm060 --
+		logger.info("**GET MY(STUDENT) PAGINATED ASSIGNMENTS** Access to the endpoint successful.");
+
+		Optional<UserEntity> ogStudent = userRepo.findByUsername(userService.whoAmI());
+
+		logger.info(
+				"**GET MY(CHILDRENS) PAGINATED ASSIGNMENTS** Attempt to invoke service to translate assignemnts to DTOSs.");
+
+		return assignmentService.getAssignmentsPaginatedForStudent(ogStudent.get().getId(), pageNo, pageSize, sortBy,
+				sortOrder);
+	}
+
+	/******************************************************************************************************************************
+	 * GET endpoint for homeroom teacher looking to fetch all for student group assignments with pagination. -- postman code 070 --
 	 * 
 	 * @param
 	 * @return if ok paginated list of assignments for students in homerooms student group
-	 *******************************************************************************************************/
+	 ******************************************************************************************************************************/
 	@Secured("ROLE_HOMEROOM")
 	@JsonView(Views.Admin.class)
 	@RequestMapping(method = RequestMethod.GET, path = "/search/homeroom")
@@ -867,8 +877,7 @@ public class AssignmentController {
 	}
 
 	/*******************************************************************************************************
-	 * GET endpoint for teacher looking to fetch all assignments for he issued.
-	 * -- postman code adm061 --
+	 * GET endpoint for teacher looking to fetch all assignments he issued. -- postman code 071 --
 	 * 
 	 * @param
 	 * @return if ok paginated list of assignments issued by teacher
