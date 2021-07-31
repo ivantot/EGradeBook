@@ -108,7 +108,8 @@ public class AssignmentController {
 
 		// check if subject is in database
 		logger.info("**POST ASSIGNMENT** Attempt to find if subject name is in database.");
-		Optional<SubjectEntity> ogSubject = subjectRepo.findByName(ESubjectName.valueOf(assignment.getSubject()));
+		Optional<SubjectEntity> ogSubject = subjectRepo
+				.findByNameAndYearOfSchooling(ESubjectName.valueOf(assignment.getSubject()), assignment.getYear());
 		if (ogSubject.isEmpty()) {
 			logger.info("**POST ASSIGNMENT** Attempt to find a subject in database.");
 			if (ogSubject.isEmpty()) {
@@ -139,7 +140,9 @@ public class AssignmentController {
 			logger.info("**POST ASSIGNMENT** User is admin.");
 			TeacherSubjectEntity adminTeacherSubject = new TeacherSubjectEntity();
 			adminTeacherSubject.setTeacher(teacherRepo.findByUsername(userService.whoAmI()).get());
-			adminTeacherSubject.setSubject(subjectRepo.findByName(ESubjectName.valueOf(assignment.getSubject())).get());
+			adminTeacherSubject.setSubject(subjectRepo
+					.findByNameAndYearOfSchooling(ESubjectName.valueOf(assignment.getSubject()), assignment.getYear())
+					.get());
 			logger.info("**POST ASSIGNMENT** Attempting to save new dummy teacher-subject.");
 			teacherSubjectRepo.save(adminTeacherSubject);
 			newAssignment.setTeacherIssuing(adminTeacherSubject);

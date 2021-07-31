@@ -80,8 +80,12 @@ public class AssignmentServiceImp implements AssignmentService {
 		newAssignment.setDateCreated(LocalDate.now());
 		newAssignment.setType(EAssignmentType.valueOf(assignment.getType()));
 		newAssignment.setDeleted(0);
-		newAssignment.setDescription(assignment.getDescription());
-		newAssignment.setSemester(assignment.getSemester());
+		if (assignment.getDescription() != null) {
+			newAssignment.setDescription(assignment.getDescription());
+		}
+		if (assignment.getSemester() != null) {
+			newAssignment.setSemester(assignment.getSemester());
+		}
 		if (teacherSubject.isEmpty()) {
 			newAssignment.setTeacherIssuing(null);
 		} else {
@@ -100,13 +104,24 @@ public class AssignmentServiceImp implements AssignmentService {
 		CreatedAssignmentDTO newAssignmentDTO = new CreatedAssignmentDTO();
 
 		logger.info("##ASIGNMENT SERVICE## Translation started.");
-		newAssignmentDTO.setDateCreated(assignment.getDateCreated());
-		newAssignmentDTO.setDescription(assignment.getDescription());
-		newAssignmentDTO.setSemester(assignment.getSemester());
-		newAssignmentDTO.setSubject(assignment.getTeacherIssuing().getSubject().getName().toString());
-		newAssignmentDTO.setTeacher(assignment.getTeacherIssuing().getTeacher().getUsername());
-
-		newAssignmentDTO.setType(assignment.getType().toString());
+		if (assignment.getDateCreated() != null) {
+			newAssignmentDTO.setDateCreated(assignment.getDateCreated());
+		}
+		if (assignment.getDescription() != null) {
+			newAssignmentDTO.setDescription(assignment.getDescription());
+		}
+		if (assignment.getSemester() != null) {
+			newAssignmentDTO.setSemester(assignment.getSemester());
+		}
+		if (assignment.getTeacherIssuing() != null) {
+			newAssignmentDTO.setSubject(assignment.getTeacherIssuing().getSubject().getName().toString());
+		}
+		if (assignment.getTeacherIssuing() != null) {
+			newAssignmentDTO.setTeacher(assignment.getTeacherIssuing().getTeacher().getUsername());
+		}
+		if (assignment.getType() != null) {
+			newAssignmentDTO.setType(assignment.getType().toString());
+		}
 		logger.info("##ASIGNMENT SERVICE## Translation complete, return to controller. " + newAssignmentDTO.toString());
 
 		return new ResponseEntity<CreatedAssignmentDTO>(newAssignmentDTO, HttpStatus.OK);
